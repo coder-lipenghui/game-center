@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'gameId',
-            'distributionId',
+            'distributions',
             'title',
             'body:ntext',
             'starttime:datetime',

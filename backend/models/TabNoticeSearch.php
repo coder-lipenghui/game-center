@@ -17,7 +17,7 @@ class TabNoticeSearch extends TabNotice
     public function rules()
     {
         return [
-            [['id', 'gameId', 'distributionId', 'starttime', 'endtime', 'rank'], 'integer'],
+            [['id', 'gameId', 'distributions', 'starttime', 'endtime', 'rank'], 'integer'],
             [['title', 'body'], 'safe'],
         ];
     }
@@ -60,7 +60,7 @@ class TabNoticeSearch extends TabNotice
         $query->andFilterWhere([
             'id' => $this->id,
             'gameId' => $this->gameId,
-            'distributionId' => $this->distributionId,
+            'distributions' => $this->distributions,
             'starttime' => $this->starttime,
             'endtime' => $this->endtime,
             'rank' => $this->rank,

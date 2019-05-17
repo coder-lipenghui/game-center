@@ -69,7 +69,41 @@ class TabPermission extends \yii\db\ActiveRecord
             [['distributorId'], 'exist', 'skipOnError' => true, 'targetClass' => TabDistributor::className(), 'targetAttribute' => ['distributorId' => 'id']],
         ];
     }
+    public  function allowAccessGame()
+    {
+        $query=TabPermission::find();
+        $query->select(['name','tab_games.id'])
+            ->asArray()
+            ->join('LEFT JOIN','tab_games','tab_games.id=tab_permission.gameId')
+            ->where(['tab_permission.uid'=>Yii::$app->user->id]);
 
+        $data=ArrayHelper::map($query->all(),'id','name');
+
+        return $data;
+    }
+    public  function allowAccessDistribution($gameId,$did,$uid)
+    {
+        $query=TabPermission::find();
+        if ($gameId && $uid) {
+            $query->select(['id'=>'tab_permission.distributionId', 'tab_distribution.distributorId', 'tab_distribution.platform'])
+                ->join('LEFT JOIN', 'tab_distribution', 'tab_permission.distributionId=tab_distribution.id')
+                ->where(['tab_permission.uid' => 1, 'tab_permission.gameId' => $gameId])
+                ->andFilterWhere(['distributorId'=>$did])
+                ->asArray();
+//            exit($query->createCommand()->getRawSql());
+            $data = $query->all();
+            for ($i = 0; $i < count($data); $i++) {
+                $distribution = $data[$i];
+                $distributorQuery = TabDistributor::find()->where(['id' => (int)$distribution['distributorId']]);
+                $tempData = $distributorQuery->one();
+                if ($tempData != null) {
+                    $data[$i]['name'] = $tempData->name;
+                }
+            }
+            return $data;
+        }
+        return [];
+    }
     /**
      * @return \yii\db\ActiveQuery
      */

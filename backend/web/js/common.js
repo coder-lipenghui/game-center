@@ -41,14 +41,16 @@ function getGame(documentid, async,selectedId,url) {
  * @param selectedId
  * @param url
  */
-function getDistribution(documentid, gameid,url) {
+function getDistribution(documentid, gid,url) {
     var async = arguments[1] ? arguments[1] : false;
     $(documentid).empty();
     $.ajax({
-        type: 'post',
-        data: {},
+        type: 'get',
+        data: {
+            gameId:gid,
+        },
         dataType: "json",
-        url: (url==null?"":url)+"../permission/get-games",
+        url: (url==null?"":url)+"../permission/get-distribution",
         async: async,
         success: function(data) {
             $.each(data, function(i) {
@@ -56,7 +58,12 @@ function getDistribution(documentid, gameid,url) {
                 // {
                 //     $("<option selected = 'selected' value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
                 // }else{
-                    $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
+                    var platform="安卓";
+                    if (data[i].platform==2)
+                    {
+                        platform="IOS";
+                    }
+                    $("<option value='" + data[i].distributionId + "'>" + data[i].distributor + "("+platform+")</option>").appendTo(documentid);
                 // }
             });
             $(documentid).selectpicker('refresh');

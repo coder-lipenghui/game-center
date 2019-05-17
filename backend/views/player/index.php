@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-
+use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\TabPlayersSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Yii::t('app', 'Create Tab Players'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
+    <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
@@ -26,22 +27,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-//            'id',
-            'distributor',
+            'id',
+            'distributionId',
             'gameId',
-            'distributorPlayerId',
-            'nickname',
-            'uniqueKey',
-            'regdeviceId',
-            'regtime:date',
-            'regip',
-            //'totalrecharge',
-            //'rechargetimes:datetime',
-            //'timestamp',
+            'account',
+            'distributionUserId',
+            //'distributionUserAccount',
+            //'regdeviceId',
+            //'regtime',
+            //'regip',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 
+    <?php Pjax::end(); ?>
 
 </div>

@@ -14,7 +14,7 @@ namespace backend\controllers\center;
  */
 class YijieController extends CenterController
 {
-    public function loginValidate($request,$distributor)
+    public function loginValidate($request,$distribution)
     {
         //正式地址
         $login_url='http://sync.1sdk.cn/login/check.html?';
@@ -30,9 +30,9 @@ class YijieController extends CenterController
         $response = execRequest($login_url.$param);
         if ($response==0) {
             $player = array(
-                'distributorPlayerId' => $request['accountId'],
-                'nickname'            => $request['accountId'],
-                'distributor'         => $distributor->distributor,
+                'distributionUserId'        => $request['accountId'],
+                'distributionUserAccount'   => $request['accountId'],
+                'distributionId'            => $distribution->id,
             );
             return $player;
         }

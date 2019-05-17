@@ -41,7 +41,7 @@ $this->registerJs('$(function(){
                 ?>
             </div>
             <div class="col-md-1">
-                <?= $form->field($model,'distributionId')->dropDownList(
+                <?= $form->field($model,'distributions')->dropDownList(
                     [],
                     [
                         "class"=>"selectpicker form-control col-xs-2",

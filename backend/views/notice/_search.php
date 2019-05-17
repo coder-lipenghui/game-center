@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'gameId') ?>
 
-    <?= $form->field($model, 'distributionId') ?>
+    <?= $form->field($model, 'distributions') ?>
 
     <?= $form->field($model, 'title') ?>
 

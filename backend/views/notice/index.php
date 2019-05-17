@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         )?>
                     </div>
                     <div class="col-md-1">
-                        <?=$form->field($searchModel,'distributionId')->dropDownList(
+                        <?=$form->field($searchModel,'distributions')->dropDownList(
                             [],
                             [
                                 "class"=>"selectpicker form-control col-xs-2",
@@ -73,15 +73,16 @@ $this->params['breadcrumbs'][] = $this->title;
                             'attribute'=>'gameId',
                             'value'=>'game.name'
                         ],
-                        [
-                            'attribute'=>'distributionId',
-                            'label'=>'分销商',
-                            'value'=>function($model){
-                                $distribution=\backend\models\TabDistribution::findOne($model->distributionId);
-                                $distributor=\backend\models\TabDistributor::findOne($distribution->distributorId);
-                                return $distributor->name."(".$distribution->platform.")";
-                            }
-                        ],
+                        'distributions',
+//                        [
+//                            'attribute'=>'distributions',
+//                            'label'=>'分销商',
+//                            'value'=>function($model){
+//                                $distribution=\backend\models\TabDistribution::findOne($model->distributions);
+//                                $distributor=\backend\models\TabDistributor::findOne($distribution->distributorId);
+//                                return $distributor->name."(".$distribution->platform.")";
+//                            }
+//                        ],
                         'title',
                         [
                             'attribute'=>'body',

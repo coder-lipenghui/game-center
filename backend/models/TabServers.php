@@ -58,7 +58,7 @@ class TabServers extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'gameId' => Yii::t('app', '游戏ID'),
-            'distributions' => Yii::t('app', '设备平台'),
+            'distributions' => Yii::t('app', '分销渠道'),
             'name' => Yii::t('app', '区服名称'),
             'index' => Yii::t('app', '显示ID'),
             'status' => Yii::t('app', '状态'),

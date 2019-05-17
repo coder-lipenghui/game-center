@@ -30,17 +30,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'distributor',
+            'distributionId',
             'gameId',
-            'distributorPlayerId',
-            'nickname',
-            'uniqueKey',
+            'account',
+            'distributionUserId',
+            'distributionUserAccount',
             'regdeviceId',
             'regtime',
             'regip',
-            'totalrecharge',
-            'rechargetimes:datetime',
-            'timestamp',
         ],
     ]) ?>
 

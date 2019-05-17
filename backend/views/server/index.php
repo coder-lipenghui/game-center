@@ -28,23 +28,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'dataProvider' => $dataProvider,
 //        'filterModel' => $searchModel,
                 'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-//            'id',
+//                    ['class' => 'yii\grid\SerialColumn'],
+            'id',
 //            'gameId',
                     [
                         'attribute'=>'gameId',
                         'value'=>'game.name'
                     ],
-//            'distributionId',
-                    [
-                        'attribute'=>'distributions',
-                        'label'=>'分销渠道',
-                        'value'=>function($model){
-                            $distribution=\backend\models\TabDistribution::findOne($model->distributions);
-                            $distributor=\backend\models\TabDistributor::findOne($distribution->distributorId);
-                            return $distributor->name;
-                        }
-                    ],
+            'distributions',
+//                    [
+//                        'attribute'=>'distributions',
+//                        'label'=>'分销渠道',
+//                        'value'=>function($model){
+//                            $distribution=\backend\models\TabDistribution::findOne($model->distributions);
+//                            $distributor=\backend\models\TabDistributor::findOne($distribution->distributorId);
+//                            return $distributor->name;
+//                        }
+//                    ],
                     'name',
                     'index',
                     'status',

@@ -12,19 +12,17 @@ use backend\models\TabLogLogin;
 class Login extends TabLogLogin
 {
     public $sku;
-    public $accountId;
+    public $uid;
     public $dist;
     public $versionCode;
     public $versionName;
     public function rules()
     {
         return [
-            [['deviceOs', 'deviceVender', 'deviceId', 'deviceType','token','accountId','sku','dist','versionCode','versionName'], 'required'],
-            [['gameid', 'playerId','dist'], 'integer'],
-            [['sku','accountId','versionCode','versionName'],'string'],
-//            [['timestamp'], 'safe'],
-            [['distributor'], 'string', 'max' => 255],
-            [['ipAddress', 'deviceOs', 'deviceVender', 'deviceType'], 'string', 'max' => 45],
+            [['token','sku','uid','dist'], 'required'],
+            [['gameId', 'distributionId', 'playerId','dist'], 'integer'],
+            [['loginTime'], 'safe'],
+            [['ip', 'deviceOs', 'deviceVender', 'deviceType','versionCode','versionName','uid','sku'], 'string', 'max' => 45],
             [['deviceId'], 'string', 'max' => 50],
             [['loginKey'], 'string', 'max' => 100],
             [['token'], 'string', 'max' => 512],

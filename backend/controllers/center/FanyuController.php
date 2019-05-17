@@ -11,32 +11,32 @@ namespace backend\controllers\center;
 use common\helps\CurlHelper;
 class FanyuController extends CenterController
 {
-    public function loginValidate($request, $distributor)
+    public function loginValidate($request, $distribution)
     {
 
         $player = array(
-            'distributorPlayerId' => 'lph_'.time(),
-            'nickname'            => 'lph_'.time(),
-            'distributor'         => $distributor->distributor,
+            'distributionUserId'        => 'lph_'.time(),
+            'distributionUserAccount'   => 'lph_'.time(),
+            'distributionId'            => $distribution->id,
         );
         return $player;
 
         $login_url='http://i.killi.com.cn/api/check?';
         $body = array(
-            'supplier_id'   => $distributor->appKey,
+            'supplier_id'   => $distribution->appKey,
             't'             => time(),
-            'uid'           => $request['accountId'],
-            'access_token'  => $request['token'],
+            'uid'           => $request['distributorUserId'],
+            'access_token'  => $request['distributorUserAccount'],
         );
-        $result=$this->getSign($body,$distributor->publicKey);
+        $result=$this->getSign($body,$distribution->publicKey);
         $response = CurlHelper::execRequest($login_url,$body);
         $body['sign']=$result['sign'];
         $response = json_decode($response);
         if ($response->code===1) {
             $player = array(
-                'distributorPlayerId' => $request['accountId'],
-                'nickname'            => $request['accountId'],
-                'distributor'         => $distributor->distributor,
+                'distributionUserId'        => $request['accountId'],
+                'distributionUserAccount'   => $request['accountId'],
+                'distributionId'            => $distribution->id,
             );
             return $player;
         }else{

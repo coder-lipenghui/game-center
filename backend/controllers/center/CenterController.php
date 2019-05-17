@@ -10,11 +10,13 @@ namespace backend\controllers\center;
 
 use backend\models\center\EnterGame;
 use backend\models\center\Login;
+use backend\models\MyTabNotice;
+use backend\models\MyTabServers;
+use backend\models\TabDistribution;
 use backend\models\TabDists;
 use backend\models\TabGames;
 use backend\models\TabNoticeSearch;
 use backend\models\TabPlayers;
-use backend\models\TabServersSearch;
 use yii\web\Controller;
 
 /**
@@ -56,66 +58,69 @@ class CenterController extends Controller
             {
                 $this->send(CenterController::$ERROR_GAME_NOT_FOUND,\Yii::t('app',"未知游戏"));
             }
-            $distributor=TabDists::findOne(['distributor'=>$loginModel->dist]);
-            if ($distributor===null)
+            $distribution=TabDistribution::findOne(['id'=>$loginModel->dist,'gameId'=>$game->id]);
+            if ($distribution===null)
             {
                 $this->send(CenterController::$ERROR_DISTRIBUTOR_NOT_FOUND,\Yii::t('app',"分销渠道不存在"));
             }
             $cache=\Yii::$app->cache;
 //            $cache->flush();//清理缓存
 //            $cache->delete($tokenKey);//根据key清理缓存
-            $tokenKey=md5($requestData['accountId'].$requestData['dist'].$this->getClientIP());
+            $tokenKey=md5($requestData['uid'].$requestData['dist'].$this->getClientIP());
 
             $token=$cache->get($tokenKey);
             if(empty($token) || $token===null)
             {
-                $user=$this->loginValidate($requestData,$distributor);
+                $user=$this->loginValidate($requestData,$distribution);
                 if (empty($user) || $user===null)
                 {
                     $this->send(CenterController::$ERROR_USER_VALIDATE_FAILED,\Yii::t('app',"用户验证失败"));
                 }
-                $player=$this->savePlayer($user,$requestData,$distributor);
+                $player=$this->savePlayer($user,$requestData,$distribution);
                 if($player===null)
                 {
                     $this->send(CenterController::$ERROR_USER_SAVE_FAILED,\Yii::t('app',"用户信息存储失败"));
                 }
                 $cache->set($tokenKey,
                     [
-                        'distributorPlayerId'=>$user['distributorPlayerId'],
-                        'uniqueKey'=>$player->uniqueKey
+                        'distributionId'=>$user['distributionId'],
+                        'account'=>$player->account
                     ],
                     10);
                 $data['player']=[
                     'token'=>$tokenKey,
-                    'uid'=>$player->distributorPlayerId
+                    'uid'=>$player->distributionUserId
                 ];
             }else{
                 $data['player']=[
                     'token'=>$tokenKey,
-                    'uid'=>$token['distributorPlayerId']
+                    'uid'=>$token['distributionUserId']
                 ];
             }
-            //TODO 公告的表需要重新设计一下 新增一个distribute字段，从分销商表中去掉公告id一列
             //TODO 构建公告信息 ###title|||content###title|||content
-            $notice=TabNoticeSearch::searchGameNotice($game->id,$distributor->distributor);
+            $notice=MyTabNotice::searchGameNotice($game->id,$distribution->id);
             if (count($notice)==0)//默认构建一条公告
             {
                 $notice="欢迎|||亲爱的玩家您好，欢迎来到<".$game->name.">。如果您在游戏内遇到问题，请先联系我们的客服 我们将尽快为您解决问题。";
             }
-            $servers=TabServersSearch::searchGameServers($game->id,$distributor->distributor);
+            $servers=MyTabServers::searchGameServers($game->id,$distribution->id);
 
             $data['serverInfo']=$servers;
             $data['anncInfo']=$notice;
         }else{
+            print_r($loginModel->getErrors());
             $this->send(CenterController::$ERROR_PARAMS,\Yii::t('app',"参数错误"));
         }
         $this->send(1,'success',$data);
     }
+    public function actionCreateOrder()
+    {
 
+    }
     /**
      * 供分销商调用的支付回调接口
      */
-    public function actionPayment()
+    public function actionPaymentCallBack()
     {
 
     }
@@ -162,11 +167,11 @@ class CenterController extends Controller
 
     /**
      * 登录验证，需要在派生类中实现
-     * @param $request
-     * @param $distributor
+     * @param $request 请求参数
+     * @param $distribution 分销渠道
      * @return player对象|null
      */
-    protected function loginValidate($request,$distributor)
+    protected function loginValidate($request,$distribution)
     {
         //成功后返回一个player对象
         return null;
@@ -193,29 +198,29 @@ class CenterController extends Controller
     {
         return false;
     }
-    private function savePlayer($user,$request,$distributor)
+    private function savePlayer($user,$request,$distribution)
     {
-        $did=$distributor->distributor;
+        $did=$distribution->id;
 //        TODO 新的dist表中需要增加一个互通ID 用于处理安卓跟IOS的账号数据互通
 //        if($distributor->intercommunicate)
 //        {
 //            $did=$distributor->intercommunicate;
 //        }
-        $uid=md5($distributor->gameId.$user['distributorPlayerId'].$did);
-        $player=TabPlayers::findOne(['uniqueKey'=>$uid]);
+        $uid=md5($distribution->gameId.$user['distributionUserId'].$did);
+        $player=TabPlayers::findOne(['account'=>$uid]);
         if ($player===null)
         {
             //TODO 需要支持分表 增加登录验证速度
             $player=new TabPlayers();
-            $player->distributor=$distributor->distributor;
-            $player->gameId=$distributor->gameId;
-            $player->distributorPlayerId=$user['distributorPlayerId'];
-            $player->nickname=$user['nickname'];
-            $player->uniqueKey=$uid;
+            $player->distributionId=$distribution->id;
+            $player->gameId=$distribution->gameId;
+            $player->distributionUserId=$user['distributionUserId'];
+            $player->distributionUserAccount=$user['distributionUserAccount'];
+            $player->account=$uid;
             $player->regdeviceId=$request['deviceId'];
             $player->regtime=date('Y-m-d H:i:s',time());
             $player->regip=$_SERVER["REMOTE_ADDR"];
-            $player->timestamp=date('Y-m-d H:i:s',time());
+//            $player->timestamp=date('Y-m-d H:i:s',time());
             if($player->save())
             {
                 return $player;

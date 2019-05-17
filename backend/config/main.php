@@ -26,7 +26,8 @@ return [
             'site/*',
             'site/logout',
             'site/login',
-            'center/*'
+            'center/*',
+            'permission/get-distribution',
         ]
     ],
     'components' => [

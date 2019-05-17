@@ -17,9 +17,8 @@ class TabPlayersSearch extends TabPlayers
     public function rules()
     {
         return [
-            [['id', 'distributor', 'gameId', 'rechargetimes'], 'integer'],
-            [['distributorPlayerId', 'nickname', 'uniqueKey', 'regdeviceId', 'regtime', 'regip', 'timestamp'], 'safe'],
-            [['totalrecharge'], 'number'],
+            [['id', 'distributionId', 'gameId'], 'integer'],
+            [['account', 'distributionUserId', 'distributionUserAccount', 'regdeviceId', 'regtime', 'regip'], 'safe'],
         ];
     }
 
@@ -60,17 +59,14 @@ class TabPlayersSearch extends TabPlayers
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'distributor' => $this->distributor,
+            'distributionId' => $this->distributionId,
             'gameId' => $this->gameId,
             'regtime' => $this->regtime,
-            'totalrecharge' => $this->totalrecharge,
-            'rechargetimes' => $this->rechargetimes,
-            'timestamp' => $this->timestamp,
         ]);
 
-        $query->andFilterWhere(['like', 'distributorPlayerId', $this->distributorPlayerId])
-            ->andFilterWhere(['like', 'nickname', $this->nickname])
-            ->andFilterWhere(['like', 'uniqueKey', $this->uniqueKey])
+        $query->andFilterWhere(['like', 'account', $this->account])
+            ->andFilterWhere(['like', 'distributionUserId', $this->distributionUserId])
+            ->andFilterWhere(['like', 'distributionUserAccount', $this->distributionUserAccount])
             ->andFilterWhere(['like', 'regdeviceId', $this->regdeviceId])
             ->andFilterWhere(['like', 'regip', $this->regip]);
 

@@ -2,9 +2,11 @@
 
 namespace backend\controllers;
 
+use backend\models\TabPermission;
 use Yii;
 use backend\models\TabServers;
 use backend\models\TabServersSearch;
+use yii\base\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -56,7 +58,6 @@ class ServerController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
-
     /**
      * Creates a new TabServers model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -65,12 +66,43 @@ class ServerController extends Controller
     public function actionCreate()
     {
         $model = new TabServers();
-//        exit("?");
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $permissionModel=new TabPermission();
+        $request=Yii::$app->request;
+        $dist=[];
+        $games=[];
+        $games=$permissionModel->allowAccessGame();
+        if ($request->isAjax)
+        {
+            $requestParams=$request->getQueryParams();
+            $gid=$requestParams['gameId'];
+            $did=null;
+            try{
+                $did=$requestParams['distributorId'];
+            }catch (Exception $e)
+            {}
+            if ($gid)
+            {
+                $dist=$permissionModel->allowAccessDistribution($gid,$did,Yii::$app->user->id);
+            }
+        }else{
+            $bodyParams=$request->getBodyParams();
+            if (count($bodyParams)>0)
+            {
+                $distributions=$bodyParams['TabServers']['distributions'];
+                $bodyParams['TabServers']['distributions']=implode(",",$distributions);
+                $model->load($bodyParams);
+                if ($model->validate())
+                {
+                    if ($model->save()) {
+                        return $this->redirect(['view', 'id' => $model->id]);
+                    }
+                }
+            }
         }
         return $this->render('create', [
             'model' => $model,
+            'games' => $games,
+            'distributions'=>$dist,
         ]);
     }
 
@@ -93,7 +125,6 @@ class ServerController extends Controller
             'model' => $model,
         ]);
     }
-
     /**
      * Deletes an existing TabServers model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

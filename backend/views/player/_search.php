@@ -13,31 +13,28 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
+        'options' => [
+            'data-pjax' => 1
+        ],
     ]); ?>
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'distributor') ?>
+    <?= $form->field($model, 'distributionId') ?>
 
     <?= $form->field($model, 'gameId') ?>
 
-    <?= $form->field($model, 'distributorPlayerId') ?>
+    <?= $form->field($model, 'account') ?>
 
-    <?= $form->field($model, 'nickname') ?>
+    <?= $form->field($model, 'distributionUserId') ?>
 
-    <?php // echo $form->field($model, 'uniqueKey') ?>
+    <?php // echo $form->field($model, 'distributionUserAccount') ?>
 
     <?php // echo $form->field($model, 'regdeviceId') ?>
 
     <?php // echo $form->field($model, 'regtime') ?>
 
     <?php // echo $form->field($model, 'regip') ?>
-
-    <?php // echo $form->field($model, 'totalrecharge') ?>
-
-    <?php // echo $form->field($model, 'rechargetimes') ?>
-
-    <?php // echo $form->field($model, 'timestamp') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

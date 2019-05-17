@@ -1,35 +1,23 @@
-<p align="center">
-    <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
-    </a>
-    <h1 align="center">Yii 2 Advanced Project Template</h1>
-    <br>
-</p>
+# 奇游游戏中控后台
+项目分两部分
+* 中控管理
+    * 用户群组及权限管理
+    * 游戏开区、公告、更新等相关操作
+    * 游戏数据分析：玩家生态环境、活动参与度等
+    * 数据分析：活跃、留存等
+* API功能
+    * 玩家日志查询
 
-Yii 2 Advanced Project Template is a skeleton [Yii 2](http://www.yiiframework.com/) application best for
-developing complex Web applications with multiple tiers.
+## 注意事项
+1. *model操作需要继承Gii生成的model
 
-The template includes three tiers: front end, back end, and console, each of which
-is a separate Yii application.
-
-The template is designed to work in a team development environment. It supports
-deploying the application in different environments.
-
-Documentation is at [docs/guide/README.md](docs/guide/README.md).
-
-[![Latest Stable Version](https://img.shields.io/packagist/v/yiisoft/yii2-app-advanced.svg)](https://packagist.org/packages/yiisoft/yii2-app-advanced)
-[![Total Downloads](https://img.shields.io/packagist/dt/yiisoft/yii2-app-advanced.svg)](https://packagist.org/packages/yiisoft/yii2-app-advanced)
-[![Build Status](https://travis-ci.org/yiisoft/yii2-app-advanced.svg?branch=master)](https://travis-ci.org/yiisoft/yii2-app-advanced)
-
-DIRECTORY STRUCTURE
--------------------
-
+目录概要：
 ```
 common
     config/              contains shared configurations
     mail/                contains view files for e-mails
     models/              contains model classes used in both backend and frontend
-    tests/               contains tests for common classes    
+    tests/               contains tests for common classes    ß
 console
     config/              contains console configurations
     controllers/         contains console controllers (commands)
@@ -41,6 +29,8 @@ backend
     config/              contains backend configurations
     controllers/         contains Web controller classes
     models/              contains backend-specific model classes
+        api/             游戏API接口部分
+        center/          中控管理部分
     runtime/             contains files generated during runtime
     tests/               contains tests for backend application    
     views/               contains view files for the Web application

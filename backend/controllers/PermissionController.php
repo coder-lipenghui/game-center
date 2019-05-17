@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use backend\models\TabDistributor;
+use mdm\admin\models\searchs\User;
 use Yii;
 use backend\models\TabPermission;
 use backend\models\TabPermissionSearch;
@@ -116,7 +118,7 @@ class PermissionController extends Controller
      */
     public function actionGetGames()
     {
-
+        exit("???");
     }
 
     /**
@@ -124,7 +126,25 @@ class PermissionController extends Controller
      */
     public function actionGetDistribution()
     {
-        TabPermission::find();
+//        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+//        上面写一下，下面可以直接用 return array的形式返回json值了
+
+        $model=new TabPermission();
+        $response = Yii::$app->response;
+        $requestParams=Yii::$app->request->getQueryParams();
+        if (count($requestParams)>0)
+        {
+            $gid=$requestParams['gameId'];
+            $did=null;
+            if ($requestParams['distributorId'])
+            {
+                $did=$requestParams['distributorId'];
+            }
+            $response->format = \yii\web\Response::FORMAT_JSON;
+            $response->data=$model->allowAccessDistribution($gid,$did,Yii::$app->user->id);
+            $response->send();
+        }
+
     }
     /**
      * Finds the TabPermission model based on its primary key value.
