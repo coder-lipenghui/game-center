@@ -7,43 +7,49 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\TabOrdersSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', '订单详情');
+$this->title = Yii::t('app', 'Tab Orders');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-orders-index">
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <?php Pjax::begin(); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-            <?= GridView::widget([
-                'dataProvider' => $dataProvider,
-//        'filterModel' => $searchModel,
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-//            'id',
-                    'gameId',
-                    'distributionId',
-                    'orderId',
-                    'distributorOrderId',
-                    'playerId',
-                    'gameRoleId',
-                    'gameRoleName',
-                    'gameServerId',
-                    'gameAccount',
-                    'goodName',
-                    'payAmount',
-                    'payStatus',
-                    'payMode',
-                    'payTime',
-                    'createTime',
-                    'delivered',
+    <h1><?= Html::encode($this->title) ?></h1>
 
-//            ['class' => 'yii\grid\ActionColumn'],
-                ],
-            ]); ?>
+    <p>
+        <?= Html::a(Yii::t('app', 'Create Tab Orders'), ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
 
-            <?php Pjax::end(); ?>
-        </div>
-    </div>
+    <?php Pjax::begin(); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'id',
+            'gameId',
+            'distributionId',
+            'orderId',
+            'distributionOrderId',
+            //'distributionUserId',
+            //'gameRoleId',
+            //'gameRoleName',
+            //'gameServerId',
+            //'gameServername',
+            //'gameAccount',
+            //'productName',
+            //'payAmount',
+            //'payStatus',
+            //'payMode',
+            //'payTime:datetime',
+            //'createTime:datetime',
+            //'delivered',
+
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+
+    <?php Pjax::end(); ?>
+
 </div>

@@ -17,8 +17,8 @@ class TabOrdersSearch extends TabOrders
     public function rules()
     {
         return [
-            [['id', 'gameId', 'distributionId', 'gameServerId'], 'integer'],
-            [['orderId', 'distributorOrderId', 'playerId', 'gameRoleId', 'gameRoleName', 'gameAccount', 'goodName', 'payStatus', 'payMode', 'payTime', 'createTime', 'delivered'], 'safe'],
+            [['id', 'gameId', 'distributionId', 'gameServerId', 'payTime', 'createTime'], 'integer'],
+            [['orderId', 'distributionOrderId', 'distributionUserId', 'gameRoleId', 'gameRoleName', 'gameServername', 'gameAccount', 'productName', 'payStatus', 'payMode', 'delivered'], 'safe'],
             [['payAmount'], 'number'],
         ];
     }
@@ -69,12 +69,13 @@ class TabOrdersSearch extends TabOrders
         ]);
 
         $query->andFilterWhere(['like', 'orderId', $this->orderId])
-            ->andFilterWhere(['like', 'distributorOrderId', $this->distributorOrderId])
-            ->andFilterWhere(['like', 'playerId', $this->playerId])
+            ->andFilterWhere(['like', 'distributionOrderId', $this->distributionOrderId])
+            ->andFilterWhere(['like', 'distributionUserId', $this->distributionUserId])
             ->andFilterWhere(['like', 'gameRoleId', $this->gameRoleId])
             ->andFilterWhere(['like', 'gameRoleName', $this->gameRoleName])
+            ->andFilterWhere(['like', 'gameServername', $this->gameServername])
             ->andFilterWhere(['like', 'gameAccount', $this->gameAccount])
-            ->andFilterWhere(['like', 'goodName', $this->goodName])
+            ->andFilterWhere(['like', 'productName', $this->productName])
             ->andFilterWhere(['like', 'payStatus', $this->payStatus])
             ->andFilterWhere(['like', 'payMode', $this->payMode])
             ->andFilterWhere(['like', 'delivered', $this->delivered]);

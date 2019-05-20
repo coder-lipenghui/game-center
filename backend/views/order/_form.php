@@ -18,9 +18,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'orderId')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'distributorOrderId')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'distributionOrderId')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'playerId')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'distributionUserId')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'gameRoleId')->textInput(['maxlength' => true]) ?>
 
@@ -28,9 +28,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'gameServerId')->textInput() ?>
 
+    <?= $form->field($model, 'gameServername')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'gameAccount')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'goodName')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'productName')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'payAmount')->textInput() ?>
 

@@ -26,9 +26,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'orderId') ?>
 
-    <?= $form->field($model, 'distributorOrderId') ?>
+    <?= $form->field($model, 'distributionOrderId') ?>
 
-    <?php // echo $form->field($model, 'playerId') ?>
+    <?php // echo $form->field($model, 'distributionUserId') ?>
 
     <?php // echo $form->field($model, 'gameRoleId') ?>
 
@@ -36,9 +36,11 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'gameServerId') ?>
 
+    <?php // echo $form->field($model, 'gameServername') ?>
+
     <?php // echo $form->field($model, 'gameAccount') ?>
 
-    <?php // echo $form->field($model, 'goodName') ?>
+    <?php // echo $form->field($model, 'productName') ?>
 
     <?php // echo $form->field($model, 'payAmount') ?>
 
