@@ -13,14 +13,15 @@ class FanyuController extends CenterController
 {
     public function loginValidate($request, $distribution)
     {
-
-        $player = array(
-            'distributionUserId'        => 'lph_'.time(),
-            'distributionUserAccount'   => 'lph_'.time(),
-            'distributionId'            => $distribution->id,
-        );
-        return $player;
-
+        if(false)//测试用
+        {
+            $player = array(
+                'distributionUserId'        => 'lph_'.time(),
+                'distributionUserAccount'   => 'lph_'.time(),
+                'distributionId'            => $distribution->id,
+            );
+            return $player;
+        }
         $login_url='http://i.killi.com.cn/api/check?';
         $body = array(
             'supplier_id'   => $distribution->appKey,
@@ -40,15 +41,7 @@ class FanyuController extends CenterController
             );
             return $player;
         }else{
-//            echo("url:".$login_url);
-//            echo("<br/>");
-//            echo("supplier_key:".$distributor->publicKey);
-//            echo("<br>");
-//            echo("params:".$result['params']);
-//            echo("<br/>");
-//            echo("sign:".$result['sign']);
-//            echo("<br/>");
-//            echo("code:".$response->code);
+            //ERROR 登录验证失败
         }
         return null;
     }
@@ -68,5 +61,40 @@ class FanyuController extends CenterController
             'sign'=> strtolower(md5($_sign . $key)),
             'params'=> $_sign,
         );
+    }
+
+    protected function orderValidate($distribution)
+    {
+        $request=\Yii::$app->request;
+        $myOrderId=$request->post('cpparam');
+        $distributionOrderId=$request->post('oid');
+        if ($request->isPost)
+        {
+            $body=[
+                'supplier_id'   =>  $request->post('supplier_id'),
+                'uid'           =>  $request->post('uid'),
+                'gid'           =>  $request->post('gid'),
+                'sid'           =>  $request->post('sid'),
+                'oid'           =>  $distributionOrderId,
+                'goods_id'      =>  $request->post('goods_id'),
+                'payway'        =>  $request->post('payway'),
+                'gold'          =>  $request->post('gold'),
+                'money'         =>  $request->post('money'),
+                'cpparam'       =>  $myOrderId,
+                'paytime'       =>  $request->post('paytime'),
+                'time'          =>  $request->post('time'),
+            ];
+            $result=$this->getSign($body,$distribution->appPaymentKey);
+            if ($result['sign'] == $request->post('sign')) {
+                return [
+                    'orderId'=>$myOrderId,
+                    'distributionOrderId'=>$distributionOrderId,
+                    'payTime'=>$request->post('paytime'),
+                    'payAmount'=>$request->post('money')*100,
+                    'payMode'=>$request->post('payway'),
+                ];
+            }
+        }
+        return null;
     }
 }

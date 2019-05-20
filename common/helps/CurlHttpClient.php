@@ -1,6 +1,6 @@
 <?php
 
-namespace Dinke;
+namespace common\helps;
 
 /**
  * @version   2.0.x
