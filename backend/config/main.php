@@ -57,6 +57,28 @@ return [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'categories' => ['payment'],
+                    'levels' => ['error'],
+                    'logVars' => ['*'],
+                    'logFile' => '@runtime/logs/payment.log',//TODO 后面使用匿名函数将log按照日期来划分
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'categories' => ['login'],
+                    'levels' => ['error'],
+                    'logVars' => ['*'],
+                    'logFile' => '@runtime/logs/login.log',
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'categories' => ['order'],
+                    'levels' => ['error'],
+//                    'logVars' => ['_POST','_GET','_FILES','_COOKIE'],
+                    'logVars' => ['*'],
+                    'logFile' => '@runtime/logs/order.log',
+                ],
             ],
         ],
         'errorHandler' => [
@@ -70,7 +92,8 @@ return [
             'suffix'=>'',
             'rules' => [
                 '<controller:\w+>/<id:\d+>'=>'<controller>/view',
-                '<controller:\w+>/<action:\w+>'=>'<controller>/<action>'
+                '<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+                'center/<controller:\w+>/payment-call-back/<distributionId:\d>'=>'center/<controller>/payment-call-back',
             ],
         ],
     ],
