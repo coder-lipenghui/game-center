@@ -20,7 +20,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'sku')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'createtime')->textInput() ?>
+    <?= $form->field($model, 'loginKey')->textInput() ?>
+
+    <?= $form->field($model, 'paymentKey')->textInput() ?>
+
+    <?= $form->field($model, 'createTime')->textInput() ?>
 
     <?= $form->field($model, 'copyright_number')->textInput(['maxlength' => true]) ?>
 

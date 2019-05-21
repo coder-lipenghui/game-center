@@ -28,7 +28,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'sku') ?>
 
-    <?php // echo $form->field($model, 'createtime') ?>
+    <?= $form->field($model, 'loginKey') ?>
+
+    <?= $form->field($model, 'paymentKey') ?>
+
+    <?php // echo $form->field($model, 'createTime') ?>
 
     <?php // echo $form->field($model, 'copyright_number') ?>
 

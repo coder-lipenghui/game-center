@@ -12,7 +12,9 @@ use Yii;
  * @property string $logo 游戏LOGO
  * @property string $info 游戏描述信息
  * @property string $sku
- * @property string $createtime 入库时间
+ * @property string $loginKey 登录验证KEY
+ * @property string $paymentKey 发货验证KEY
+ * @property string $createTime 入库时间
  * @property string $copyright_number 新广出审号
  * @property string $copyright_isbn 出版物号
  * @property string $copyright_press 出版社
@@ -40,11 +42,12 @@ class TabGames extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'sku', 'createtime'], 'required'],
+            [['name', 'sku', 'createTime','loginKey','paymentKey'], 'required'],
             [['info'], 'string'],
-            [['createtime'], 'safe'],
+            [['createTime'], 'safe'],
             [['name', 'sku'], 'string', 'max' => 45],
-            [['logo'], 'string', 'max' => 200],
+            [['name', 'sku'], 'string', 'max' => 45],
+            [['loginKey','paymentKey'], 'string', 'max' => 64],
             [['copyright_number', 'copyright_isbn', 'copyright_press', 'copyright_author'], 'string', 'max' => 100],
             [['sku'], 'unique'],
         ];
@@ -61,7 +64,9 @@ class TabGames extends \yii\db\ActiveRecord
             'logo' => Yii::t('app', 'LOGO'),
             'info' => Yii::t('app', '描述'),
             'sku' => Yii::t('app', 'Sku'),
-            'createtime' => Yii::t('app', '创建时间'),
+            'loginKey'=>Yii::t('app', '登录验证KEY'),
+            'paymentKey'=>Yii::t('app', '发货验证KEY'),
+            'createTime' => Yii::t('app', '创建时间'),
             'copyright_number' => Yii::t('app', '新广审号'),
             'copyright_isbn' => Yii::t('app', 'ISBN'),
             'copyright_press' => Yii::t('app', '出版单位'),
@@ -82,7 +87,7 @@ class TabGames extends \yii\db\ActiveRecord
      */
     public function getTabNotices()
     {
-        return $this->hasMany(TabNotice::className(), ['gameid' => 'id']);
+        return $this->hasMany(TabNotice::className(), ['gameId' => 'id']);
     }
 
     /**

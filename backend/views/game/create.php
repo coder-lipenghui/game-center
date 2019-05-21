@@ -41,8 +41,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
             </div>
             <div class="row">
-                <div class="col-md-2">
-                    <?= $form->field($model, 'createtime')->widget(DateTimePicker::classname(), [
+                <div class="col-md-3">
+                    <?= $form->field($model, 'createTime')->widget(DateTimePicker::classname(), [
 
                         'options' => [
                             'placeholder' => '创建时间',
@@ -55,6 +55,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]); ?>
                 </div>
             </div>
+            </div>
+            <div class="panel-heading">
+                <span>游戏服务器登录、发货验证KEY：<small>用在cklogin.php与ckcharge.php中</small></span>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <?= $form->field($model, 'loginKey')->textInput(['maxlength' => true,'placeholder'=>'登录验证KEY','value'=>substr(md5(time().'涛哥说不知道用什么规则'),0,20)]) ?>
+                    </div>
+                    <div class="col-md-2">
+                        <?= $form->field($model, 'paymentKey')->textInput(['maxlength' => true,'placeholder'=>'发货验证KEY','value'=>substr(md5(time().'轮子说服务器有一个什么算法'),0,20)]) ?>
+                    </div>
+                </div>
             </div>
             <div class="panel-heading">
                 <span>版号相关</span>

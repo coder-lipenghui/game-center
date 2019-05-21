@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     }],
                     'sku',
-                    ['attribute'=>'createtime','value'=>function($model){return date('Y-m-d',strtotime($model->createtime));}],
+                    ['attribute'=>'createTime','value'=>function($model){return date('Y-m-d',strtotime($model->createTime));}],
                     'copyright_number',
                     'copyright_isbn',
                     'copyright_press',

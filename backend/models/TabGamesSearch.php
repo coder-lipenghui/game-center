@@ -18,7 +18,7 @@ class TabGamesSearch extends TabGames
     {
         return [
             [['id'], 'integer'],
-            [['name', 'logo', 'info', 'sku', 'createtime', 'copyright_number', 'copyright_isbn', 'copyright_press', 'copyright_author'], 'safe'],
+            [['name', 'logo', 'info', 'sku','loginKey','paymentKey', 'createTime', 'copyright_number', 'copyright_isbn', 'copyright_press', 'copyright_author'], 'safe'],
         ];
     }
 
@@ -59,13 +59,15 @@ class TabGamesSearch extends TabGames
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'createtime' => $this->createtime,
+            'createTime' => $this->createTime,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'logo', $this->logo])
             ->andFilterWhere(['like', 'info', $this->info])
             ->andFilterWhere(['like', 'sku', $this->sku])
+            ->andFilterWhere(['like', 'loginKey', $this->loginKey])
+            ->andFilterWhere(['like', 'paymentKey', $this->paymentKey])
             ->andFilterWhere(['like', 'copyright_number', $this->copyright_number])
             ->andFilterWhere(['like', 'copyright_isbn', $this->copyright_isbn])
             ->andFilterWhere(['like', 'copyright_press', $this->copyright_press])
