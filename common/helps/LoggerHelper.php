@@ -17,7 +17,6 @@ class LoggerHelper
     }
     public static function OrderError($gameId,$distributionId,$message,$errorInfo)
     {
-//        \Yii::error($message,"order");
         LoggerHelper::log(['gameId'=>$gameId,'DistributionId'=>$distributionId,'Error'=>$message,'ErrorInfo'=>$errorInfo],'order');
     }
     public static function LoginError($gameId,$distributionId,$message,$errorInfo)

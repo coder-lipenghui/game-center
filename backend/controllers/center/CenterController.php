@@ -169,20 +169,15 @@ class CenterController extends Controller
                     if ($order->payAmount==$orderArray['payAmount'])
                     {
                         //更新支付状态
-
-//                        $order->distributionOrderId=$orderArray['distributionOrderId'];
-//                        $order->payStatus=1; //支付状态 0：未支付 1：已支付
-
                         $order->setAttribute('distributionOrderId',$orderArray['distributionOrderId']);
                         $order->setAttribute('payStatus','1');
+                        $order->setAttribute('payTime',$orderArray['payTime']);
                         try{
                             if($order->save())
                             {
                                 //通知分销渠道充值成功
                                 if (!$this->deliver($order['orderId']))
                                 {
-                                    $msg="发货失败";
-                                    \Yii::error($msg,"order");
                                     return $this->paymentDeliverFailed;
                                 }
                                 return $this->paymentSuccess;
@@ -291,7 +286,7 @@ class CenterController extends Controller
                 'channelId'=>$distribution->id,
                 'paytouser'=>$order->gameAccount,
                 'paynum'=>$order->orderId,
-                'paygold'=>$order->payAmount/100*1,//发放元宝数量= 分/100*比例
+                'paygold'=>$order->payAmount/100*100,//发放元宝数量= 分/100*比例
                 'paymoney'=>$order->payAmount/100,
                 'flags'=>1,// 1：充值发放 其他：非充值发放
                 'paytime'=>$order->payTime,
@@ -307,20 +302,42 @@ class CenterController extends Controller
             $curl=new CurlHttpClient();
             $resultJson=$curl->fetchUrl($url);
             $result=json_decode($resultJson,true);
-            if ($result['code']==1 || $result['code']==-5) //1成功，-5 重复订单
+            $msg="";
+            switch ($result['code'])
             {
-                $order->delivered=1;//发货状态：0：未发货 1：已发货
-                if(!$order->save())
-                {
-                    $msg="更新订单发货状态失败";
-                    LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
-                }
-            }else{
-                $msg="发货失败";
-                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$result['code']);
-                return false;
+                case 1:  //发货成功
+                case -5: //订单重复
+                    $order->delivered=1;//发货状态：0：未发货 1：已发货
+                    if(!$order->save())
+                    {
+                        $msg="更新订单发货状态失败";
+                        LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
+                    }
+                    return true;
+                    break;
+                case -1: //防沉迷数据库连接失败
+                    $msg="防沉迷数据库连接失败";
+                    break;
+                case -2: //账号未找到
+                    $msg="[".$requestBody['paytouser']."]账号未找到";
+                    break;
+                case -3: //IP限制，暂时废弃
+                    $msg="IP限制";
+                    break;
+                case -4: //sign验证出错
+                    $msg="sign验证出错";
+                    break;
+                case -6: //超时，暂时废弃
+                    $msg="超时";
+                    break;
+                case -8: //发货参数不全
+                    $msg="发货参数不全";
+                    break;
+                case -9: //发货数与金额比例不正确，服务器侧写死了【paymoney*100=paygold】
+                    $msg="发货数与金额比例不正确";
+                    break;
             }
-            $curl->close();
+            LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$resultJson);
         }else{
             $msg="订单未支付成功";
             LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
@@ -405,7 +422,9 @@ class CenterController extends Controller
      */
     public function actionNotifyLogin()
     {
+        //TODO 账号、IP需要做白名单检测：测试服、进入
         // 下发参数： uid,token token=md5(uid.)
+
         //TODO 检测用户、获取游戏url、前往验证
         //参数:
         $enterModle=new EnterGame();
@@ -413,6 +432,8 @@ class CenterController extends Controller
         $enterModle->load($request->queryParams);
         if ($enterModle->validate())
         {
+
+        }else{
             $this->send(CenterController::$ERROR_PARAMS,\Yii::t('app','参数错误'));
         }
 
