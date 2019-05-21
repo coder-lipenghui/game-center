@@ -13,19 +13,16 @@ use yii\base\Model;
 
 class EnterGame extends Model
 {
-    public $loginKey;
     public $serverId;
-    public $platformid;
     public $deviceId;
-    public $loginip;
     public $token;
 
     public function rules()
     {
         return [
-            [['loginKey','serverId','platformid','deviceId'],'required'],
-            [['loginKey','deviceId'],'string'],
-            [['platformid','serverid'],'integer'],
+            [['token','serverId','deviceId'],'required'],
+            [['token','deviceId'],'string'],
+            [['serverId'],'integer'],
         ];
     }
 }
