@@ -8,7 +8,8 @@
 
 namespace backend\controllers\center;
 
-use common\helps\CurlHelper;
+use common\helps\CurlHttpClient;
+
 class FanyuController extends CenterController
 {
 
@@ -27,17 +28,18 @@ class FanyuController extends CenterController
         $body = array(
             'supplier_id'   => $distribution->appKey,
             't'             => time(),
-            'uid'           => $request['distributorUserId'],
-            'access_token'  => $request['distributorUserAccount'],
+            'uid'           => $request['uid'],
+            'access_token'  => $request['token'],
         );
-        $result=$this->getSign($body,$distribution->publicKey);
-        $response = CurlHelper::execRequest($login_url,$body);
+        $result=$this->getSign($body,$distribution->appLoginKey);
         $body['sign']=$result['sign'];
+        $curl=new CurlHttpClient();
+        $response = $curl->sendPostData($login_url,$body);
         $response = json_decode($response);
         if ($response->code===1) {
             $player = array(
-                'distributionUserId'        => $request['accountId'],
-                'distributionUserAccount'   => $request['accountId'],
+                'distributionUserId'        => $request['uid'],
+                'distributionUserAccount'   => $request['uid'],
                 'distributionId'            => $distribution->id,
             );
             return $player;
@@ -46,24 +48,12 @@ class FanyuController extends CenterController
         }
         return null;
     }
-    /**
-     * 获取Sign
-     */
-    private  function getSign($params,$key)
-    {
-        $_data = array();
-        ksort($params);
-        reset($params);
-        foreach($params as $k => $v){
-            $_data[] = $k . "=" . urlencode($v);
-        }
-        $_sign = implode('&', $_data);
-        return array(
-            'sign'=> strtolower(md5($_sign . $key)),
-            'params'=> $_sign,
-        );
-    }
 
+    /**
+     * 订单验证接口
+     * @param 分销渠道 $distribution
+     * @return array|null
+     */
     protected function orderValidate($distribution)
     {
         $request=\Yii::$app->request;
@@ -84,16 +74,16 @@ class FanyuController extends CenterController
                 'uid'           =>  $request->post('uid'),
                 'gid'           =>  $request->post('gid'),
                 'sid'           =>  $request->post('sid'),
-                'oid'           =>  $distributionOrderId,
+                'oid'           =>  $request->post('oid'),
                 'goods_id'      =>  $request->post('goods_id'),
                 'payway'        =>  $request->post('payway'),
                 'gold'          =>  $request->post('gold'),
                 'money'         =>  $request->post('money'),
-                'cpparam'       =>  $myOrderId,
+                'cpparam'       =>  $request->post('cpparam'),
                 'paytime'       =>  $request->post('paytime'),
                 'time'          =>  $request->post('time'),
             ];
-            $result=$this->getSign($body,$distribution->appPaymentKey);
+            $result=$this->getSign($body,"cMct7FnmpzCv2Ts6S6W31Kn4VJ9D39AW");
             if ($result['sign'] == $request->post('sign')) {
 
                 return [
@@ -103,10 +93,21 @@ class FanyuController extends CenterController
                     'payAmount'=>$request->post('money')*100,
                     'payMode'=>$request->post('payway'),
                 ];
+            }else{
+                exit($result['sign']." ".$request->post('sign'));
             }
         }
         return null;
     }
+
+    /**
+     * 支付返回信息
+     * @param $code
+     * @param $msg
+     * @param $oid
+     * @param $fid
+     * @return false|string
+     */
     private function getReturnInfo($code,$msg,$oid,$fid)
     {
         $returnMsg=[
@@ -118,5 +119,22 @@ class FanyuController extends CenterController
             ]
         ];
         return json_encode($returnMsg);
+    }
+    /**
+     * 获取Sign
+     */
+    private  function getSign($params,$key)
+    {
+        $_data = array();
+        ksort($params);
+        reset($params);
+        foreach($params as $k => $v){
+            $_data[] = $k . "=" . urlencode($v);
+        }
+        $_sign = implode('&', $_data);
+        return array(
+            'sign'=> strtolower(md5($_sign . $key)),
+            'params'=> $_sign,
+        );
     }
 }
