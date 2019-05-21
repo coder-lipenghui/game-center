@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\TabDistributor;
+use backend\models\TabServers;
 use mdm\admin\models\searchs\User;
 use Yii;
 use backend\models\TabPermission;
@@ -116,19 +117,26 @@ class PermissionController extends Controller
     /**
      * 获取拥有权限的游戏列表
      */
-    public function actionGetGames()
+    public function actionGetGame()
     {
         exit("???");
     }
-
+    public function actionGetDistributor()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $model=new TabPermission();
+        $request=Yii::$app->request;
+        if ($request->get('gameId'))
+        {
+            return $model->allowAccessDistributor($request->get('gameId'));
+        }
+        return ['code'=>-1,'msg'=>'获取分销商失败'];
+    }
     /**
      * get distribution by game id
      */
     public function actionGetDistribution()
     {
-//        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-//        上面写一下，下面可以直接用 return array的形式返回json值了
-
         $model=new TabPermission();
         $response = Yii::$app->response;
         $requestParams=Yii::$app->request->getQueryParams();
@@ -145,6 +153,17 @@ class PermissionController extends Controller
             $response->send();
         }
 
+    }
+    public function actionGetServer()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $model=new TabPermission();
+        $request=Yii::$app->request;
+        if($request->get('gameId') && $request->get('distributorId'))
+        {
+            return $model->allowAccessServer($request->get('gameId'),$request->get('distributorId'));
+        }
+        return ['code'=>-1,'msg'=>'获取区服失败'];
     }
     /**
      * Finds the TabPermission model based on its primary key value.

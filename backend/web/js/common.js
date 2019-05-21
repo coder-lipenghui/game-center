@@ -82,19 +82,17 @@ function getDistribution(documentid, gid,url) {
  * @param pid 平台id
  * @param url 目录追加
  */
-function getServers(documentid,async,gid,pid,selectedid,url) {
+function getServers(documentid,async,gameId,distributorId,selectedid,url) {
     var async = arguments[1] ? arguments[1] : false;
-    var gameid=gid;
-    var ptid=pid;
     $(documentid).empty();
     $.ajax({
         type: 'get',
         data: {
-            gameid: gameid,
-            pt_flag:pid
+            gameId: gameId,
+            distributorId: distributorId
         },
         dataType: "json",
-        url: (url==null?"":url)+"../server/allowable",
+        url: (url==null?"":url)+"../permission/get-server",
         async: async,
         success: function(data) {
             $.each(data, function(i) {
@@ -112,25 +110,24 @@ function getServers(documentid,async,gid,pid,selectedid,url) {
         }
     });
 }
-function getDistributor(documentid,async,gameid,selectedId,url) {
+function getDistributor(documentid,async,gameId,selectedId,url) {
     var async = arguments[1] ? arguments[1] : false;
-    var gameid=gameid;
     $(documentid).empty();
     $.ajax({
         type: 'get',
         data: {
-            gameid: gameid
+            gameId: gameId
         },
         dataType: "json",
-        url: (url==null?"":url)+"../pt/allowable",
+        url: (url==null?"":url)+"../permission/get-distributor",
         async: async,
         success: function(data) {
             $.each(data, function(i) {
-                if (selectedId==data[i].pt_flag)
+                if (selectedId==data[i].id)
                 {
-                    $("<option selected = 'selected' value='" + data[i].pt_flag + "'>" + data[i].pt_name + "</option>").appendTo(documentid);
+                    $("<option selected = 'selected' value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
                 }else{
-                    $("<option value='" + data[i].pt_flag + "'>" + data[i].pt_name + "</option>").appendTo(documentid);
+                    $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
                 }
             });
             $(documentid).selectpicker('refresh');

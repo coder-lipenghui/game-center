@@ -26,8 +26,8 @@ class RoleInfo extends Model
             [['gameid','pid','serverid'],'required'],
             [['gameid', 'serverid'], 'integer'],
             [['pid','chrname','account'],'string'],
-            [['gameid'], 'exist', 'skipOnError' => true, 'targetClass' => TabPermission::className(), 'targetAttribute' => ['gameid' => 'gid']],
-            [['pid'], 'exist', 'skipOnError' => true, 'targetClass' => TabPermission::className(), 'targetAttribute' => ['pid' => 'pid'],'filter'=>['uid'=>Yii::$app->user->id]],
+            [['gameid'], 'exist', 'skipOnError' => true, 'targetClass' => TabPermission::className(), 'targetAttribute' => ['gameid' => 'gameId']],
+            [['pid'], 'exist', 'skipOnError' => true, 'targetClass' => TabPermission::className(), 'targetAttribute' => ['pid' => 'distributorId'],'filter'=>['uid'=>Yii::$app->user->id]],
         ];
     }
 

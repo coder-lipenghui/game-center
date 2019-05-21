@@ -4,6 +4,7 @@ namespace backend\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tab_permission".
@@ -81,7 +82,17 @@ class TabPermission extends \yii\db\ActiveRecord
 
         return $data;
     }
-    public  function allowAccessDistribution($gameId,$did,$uid)
+    public function allowAccessDistributor($gameId)
+    {
+        $query=TabPermission::find();
+        $query->select('name,tab_distributor.id')
+            ->join('LEFT JOIN','tab_distributor','tab_permission.distributorId=tab_distributor.id')
+            ->where(['uid'=>Yii::$app->user->id,'gameId'=>$gameId])
+            ->asArray();
+        $data=$query->all();
+        return $data;
+    }
+    public function allowAccessDistribution($gameId,$did,$uid)
     {
         $query=TabPermission::find();
         if ($gameId && $uid) {
@@ -102,6 +113,32 @@ class TabPermission extends \yii\db\ActiveRecord
             }
             return $data;
         }
+        return [];
+    }
+    public function allowAccessServer($gameId,$distributorId)
+    {
+        $distribution=TabPermission::find()->select(['distributionId'])->where(['uid'=>Yii::$app->user->id,'gameId'=>$gameId,'distributorId'=>$distributorId])->asArray()->all();
+        if ($distribution)
+        {
+//            exit(json_encode($distribution));
+            $i=0;
+            $where=['or'];
+            $i = 0;
+
+            foreach($distribution as $v){
+                $where[] = new Expression("FIND_IN_SET(:field_$i, distributions)",[":field_$i"=>$v['distributionId']]);
+                $i++;
+            }
+//            exit(json_encode($where));
+            $query=TabServers::find()
+                ->select(['name','id'])
+                ->where(['gameId'=>$gameId])
+                ->andWhere($where)
+                ->asArray();
+            $data=$query->all();
+            return $data;
+        }
+
         return [];
     }
     /**

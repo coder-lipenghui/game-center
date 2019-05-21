@@ -23,7 +23,7 @@ use yii\widgets\Pjax;
 $this->registerJsFile('@web/js/common.js');
 $this->registerJsFile('@web/js/api/dropdown_menu.js',['depends'=>'yii\web\YiiAsset']);
 $this->registerJs('$(function(){
-    getGame("#games",true,null,"../");
+    //getGame("#games",true,null,"../");
 })');
 ?>
 
@@ -39,7 +39,7 @@ $this->registerJs('$(function(){
     <div class="row">
         <div class="col-md-1">
             <?=$form->field($searchModel,'gameid')->dropDownList(
-                [],
+                $games,
                 [
                     "class"=>"selectpicker form-control col-xs-2",
                     "data-width"=>"fit",

@@ -10,10 +10,9 @@ namespace backend\controllers\api;
 use backend\models\command\CmdKick;
 use common\helps\ItemDefHelper;
 use Yii;
-use yii\data\ArrayDataProvider;
 use yii\data\Pagination;
-use yii\web\Controller;
 use backend\models\api\RoleInfo;
+use backend\models\TabPermission;
 class RoleController extends BaseController
 {
     public $apiName="players/search";
@@ -60,6 +59,10 @@ class RoleController extends BaseController
         $searchModel=new RoleInfo();
         $request=Yii::$app->request;
         $searchModel->load($request->queryParams);
+
+        $permissionModel=new TabPermission();
+        $games=$permissionModel->allowAccessGame();
+
         if ($searchModel->validate())
         {
             $page=1;
@@ -70,7 +73,9 @@ class RoleController extends BaseController
             $queryBody=http_build_query($searchModel->getAttributes());
             if($this->initApiUrl( $searchModel->gameid,$searchModel->pid , $searchModel->serverid,$queryBody."&page=".$page)) {
                 $result=$this->getJsonData();
+                exit($result);
                 $result = json_decode($result, true);
+
                 $players = $result['items'];
                 for ($i = 0; $i < count($players); $i++) {
                     $result['items'][$i]['item_bag'] = $this->itemParser($result['items'][$i]['item_bag']);
@@ -89,7 +94,8 @@ class RoleController extends BaseController
                 ]);
                 return $this->render('index', [
                     'searchModel'=>$searchModel,
-                    'kickModel'=>new CmdKick()
+                    'kickModel'=>new CmdKick(),
+                    'games'=>$games,
                 ]);
             }
         }

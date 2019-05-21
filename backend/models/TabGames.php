@@ -95,7 +95,7 @@ class TabGames extends \yii\db\ActiveRecord
      */
     public function getTabPermissions()
     {
-        return $this->hasMany(TabPermission::className(), ['gid' => 'id']);
+        return $this->hasMany(TabPermission::className(), ['gameId' => 'id']);
     }
 
     /**

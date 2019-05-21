@@ -69,7 +69,6 @@ class ServerController extends Controller
         $permissionModel=new TabPermission();
         $request=Yii::$app->request;
         $dist=[];
-        $games=[];
         $games=$permissionModel->allowAccessGame();
         if ($request->isAjax)
         {
