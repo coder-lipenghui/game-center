@@ -90,8 +90,7 @@ class CenterController extends Controller
             $cache=\Yii::$app->cache;
 //            $cache->flush();//清理缓存
 //            $cache->delete($tokenKey);//根据key清理缓存
-            $tokenKey=md5($requestData['uid'].$requestData['dist'].$this->getClientIP());
-
+            $tokenKey=md5($requestData['uid'].$requestData['dist'].$this->getClientIP().time());
             $token=$cache->get($tokenKey);
             if(empty($token) || $token===null)
             {
@@ -107,10 +106,11 @@ class CenterController extends Controller
                 }
                 $cache->set($tokenKey,
                     [
+                        'gameId'=>$game->id,
                         'distributionId'=>$user['distributionId'],
-                        'account'=>$player->account
+                        'account'=>$player->account,
                     ],
-                    10);
+                    600);
                 $data['player']=[
                     'token'=>$tokenKey,
                     'uid'=>$player->distributionUserId
@@ -132,7 +132,6 @@ class CenterController extends Controller
             $data['serverInfo']=$servers;
             $data['anncInfo']=$notice;
         }else{
-            print_r($loginModel->getErrors());
             $this->send(CenterController::$ERROR_PARAMS,\Yii::t('app',"参数错误"));
         }
         $this->send(1,'success',$data);
@@ -203,7 +202,7 @@ class CenterController extends Controller
                     return false;
                 }
             }else{
-                $msg="订单验证失败";
+                $msg="订单验证失败".json_encode($orderArray);
                 \Yii::error($msg,"order");
                 return false;
             }
@@ -292,52 +291,58 @@ class CenterController extends Controller
                 'paytime'=>$order->payTime,
                 'serverid'=>$order->gameServerId,
             ];
-
-            $paymentKey='MkH3!9f*KW1BguWS6cOEzn1EPq%TRA'; //TODO 支付key需要放到tab_distribution 中 或者 tab_games中
-
-            $requestBody['flag'] = md5($requestBody['paynum'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
-
-            $url="http://".$server->url."/app/ckcharge.php?".http_build_query($requestBody);
-
-            $curl=new CurlHttpClient();
-            $resultJson=$curl->fetchUrl($url);
-            $result=json_decode($resultJson,true);
-            $msg="";
-            switch ($result['code'])
+            $game=TabGames::find()->where(['id'=>$server->gameId])->one();
+            if($game)
             {
-                case 1:  //发货成功
-                case -5: //订单重复
-                    $order->delivered=1;//发货状态：0：未发货 1：已发货
-                    if(!$order->save())
-                    {
-                        $msg="更新订单发货状态失败";
-                        LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
-                    }
-                    return true;
-                    break;
-                case -1: //防沉迷数据库连接失败
-                    $msg="防沉迷数据库连接失败";
-                    break;
-                case -2: //账号未找到
-                    $msg="[".$requestBody['paytouser']."]账号未找到";
-                    break;
-                case -3: //IP限制，暂时废弃
-                    $msg="IP限制";
-                    break;
-                case -4: //sign验证出错
-                    $msg="sign验证出错";
-                    break;
-                case -6: //超时，暂时废弃
-                    $msg="超时";
-                    break;
-                case -8: //发货参数不全
-                    $msg="发货参数不全";
-                    break;
-                case -9: //发货数与金额比例不正确，服务器侧写死了【paymoney*100=paygold】
-                    $msg="发货数与金额比例不正确";
-                    break;
+                $paymentKey=$game->paymentKey;
+
+                $requestBody['flag'] = md5($requestBody['paynum'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
+
+                $url="http://".$server->url."/app/ckcharge.php?".http_build_query($requestBody);
+
+                $curl=new CurlHttpClient();
+                $resultJson=$curl->fetchUrl($url);
+                $result=json_decode($resultJson,true);
+                $msg="";
+                switch ($result['code'])
+                {
+                    case 1:  //发货成功
+                    case -5: //订单重复
+                        $order->delivered=1;//发货状态：0：未发货 1：已发货
+                        if(!$order->save())
+                        {
+                            $msg="更新订单发货状态失败";
+                            LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
+                        }
+                        return true;
+                        break;
+                    case -1: //防沉迷数据库连接失败
+                        $msg="防沉迷数据库连接失败";
+                        break;
+                    case -2: //账号未找到
+                        $msg="[".$requestBody['paytouser']."]账号未找到";
+                        break;
+                    case -3: //IP限制，暂时废弃
+                        $msg="IP限制";
+                        break;
+                    case -4: //sign验证出错
+                        $msg="sign验证出错";
+                        break;
+                    case -6: //超时，暂时废弃
+                        $msg="超时";
+                        break;
+                    case -8: //发货参数不全
+                        $msg="发货参数不全";
+                        break;
+                    case -9: //发货数与金额比例不正确，服务器侧写死了【paymoney*100=paygold】
+                        $msg="发货数与金额比例不正确";
+                        break;
+                }
+                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$resultJson);
+            }else{
+                $msg="游戏不存在";
+                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$game->getFirstError());
             }
-            LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$resultJson);
         }else{
             $msg="订单未支付成功";
             LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
@@ -424,19 +429,93 @@ class CenterController extends Controller
     {
         //TODO 账号、IP需要做白名单检测：测试服、进入
         // 下发参数： uid,token token=md5(uid.)
-
-        //TODO 检测用户、获取游戏url、前往验证
-        //参数:
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
         $enterModle=new EnterGame();
         $request=\Yii::$app->request;
-        $enterModle->load($request->queryParams);
+        $enterModle->load(['EnterGame'=>$request->queryParams]);
         if ($enterModle->validate())
         {
-
+            $cache=\Yii::$app->cache;
+            $token=$cache->get($request->get('token'));
+            if ($token)
+            {
+                $gameId=$token['gameId'];
+                $account=$token['account'];
+                $distributionId=$token['distributionId'];
+                $loginTime=time();
+//                $loginKey="";//游戏服务器侧配置的key
+                $game=TabGames::find()->where(['id'=>$gameId])->one();
+                if($game)
+                {
+                    $player=TabPlayers::find()->where(['account'=>$account,'gameId'=>$gameId])->one();
+                    if ($player)
+                    {
+                        $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$enterModle->serverId])->one();
+                        if ($server)
+                        {
+                            $sign      = md5($account . $loginTime . $game->loginKey);
+                            $requestBody=[
+                                'uname'     => $account,
+                                'channelId' => $distributionId,
+                                'deviceId'  => $enterModle->deviceId,
+                                'time'      => $loginTime,
+                                'sign'      => $sign,
+                                'isAdult'   => '1',
+                                'serverid'  => $server->id,
+                                'onlineip'  => $this->getClientIP(), //getIP(),
+                            ];
+                            $url="http://".$server->url."/app/cklogin.php?".http_build_query($requestBody);
+                            $curl=new CurlHttpClient();
+                            $resultJson=$curl->fetchUrl($url);
+                            $result=json_decode($resultJson,true);
+                            $msg="";
+                            $code=$result['error_code'];
+                            switch ($code)
+                            {
+                                case 1:
+                                    break;
+                                case -1:
+                                    $msg="参数不正确";
+                                    break;
+                                case -2:
+                                    $msg="登录会话过期";
+                                    break;
+                                case -3:
+                                    $msg="sign验证失败";
+                                    break;
+                                case -4:
+                                    $msg="数据库连接失败";
+                                    break;
+                                case -5:
+                                    $msg="记录玩家登录数据出错";
+                                    break;
+                                case -6:
+                                    $msg="玩家登录数据更新失败";
+                                    break;
+                                case -7:
+                                    $msg="防沉迷数据库连接失败";
+                                    break;
+                                case -8:
+                                    $msg="玩家数据记录失败";
+                                    break;
+                            }
+                            return ['code'=>$code,'msg'=>$msg];
+                        }else{
+                            return ['code'=>-9,'msg'=>'无效区服'];
+                        }
+                    }else{
+                        return ['code'=>-10,'msg'=>'无效玩家'];
+                    }
+                }else{
+                    return ['code'=>-11,'msg'=>'登录会话过期'];
+                }
+            }else{
+                return ['code'=>-12,'msg'=>'登录会话过期'];
+            }
         }else{
-            $this->send(CenterController::$ERROR_PARAMS,\Yii::t('app','参数错误'));
-        }
 
+            return ['code'=>-13,'msg'=>'参数错误','data'=>$enterModle->getErrors()];
+        }
     }
 
     /**
