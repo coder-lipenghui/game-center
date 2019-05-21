@@ -14,6 +14,7 @@
 
 namespace backend\controllers\api;
 
+use backend\models\TabServers;
 use Yii;
 use yii\web\Controller;
 
@@ -38,10 +39,14 @@ class BaseController extends Controller
      */
     protected function initApiUrl($gid,$pid,$sid,$params)
     {
-        //TODO 这边后续需要获取真实的区服url
-        $this->apiUrl="http://gameapi.com:8888"."/".$this->apiName."?".$params;
-//        $this->apiUrl="http://s1.chiyue.314yx.com/api"."/".$this->apiName."?".$params;
-        $this->inited=true;
+        $server=TabServers::find()->where(['id'=>$sid])->one();
+        if($server)
+        {
+            $this->apiUrl="http://".$server->url."/".$this->apiName."?".$params;
+            $this->inited=true;
+        }else{
+            $this->inited=false;
+        }
         return $this->inited;
     }
     /**
