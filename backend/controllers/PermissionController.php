@@ -2,13 +2,10 @@
 
 namespace backend\controllers;
 
-use backend\models\TabDistributor;
-use backend\models\TabServers;
-use mdm\admin\models\searchs\User;
 use Yii;
 use backend\models\TabPermission;
 use backend\models\TabPermissionSearch;
-use yii\helpers\ArrayHelper;
+use backend\models\MyTabPermission;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -124,7 +121,7 @@ class PermissionController extends Controller
     public function actionGetDistributor()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $model=new TabPermission();
+        $model=new MyTabPermission();
         $request=Yii::$app->request;
         if ($request->get('gameId'))
         {
@@ -137,7 +134,7 @@ class PermissionController extends Controller
      */
     public function actionGetDistribution()
     {
-        $model=new TabPermission();
+        $model=new MyTabPermission();
         $response = Yii::$app->response;
         $requestParams=Yii::$app->request->getQueryParams();
         if (count($requestParams)>0)
@@ -157,7 +154,7 @@ class PermissionController extends Controller
     public function actionGetServer()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $model=new TabPermission();
+        $model=new MyTabPermission();
         $request=Yii::$app->request;
         if($request->get('gameId') && $request->get('distributorId'))
         {

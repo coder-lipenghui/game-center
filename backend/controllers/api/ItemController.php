@@ -10,7 +10,7 @@ namespace backend\controllers\api;
 
 use backend\models\api\ItemRecord;
 use yii\data\ArrayDataProvider;
-use backend\models\TabPermission;
+use backend\models\MyTabPermission;
 class ItemController extends BaseController
 {
     public $apiName="itemadd";
@@ -28,7 +28,7 @@ class ItemController extends BaseController
             $params=$request->post();
         }
         $searchModel->load($params);
-        $permissionModel=new TabPermission();
+        $permissionModel=new MyTabPermission();
         $games=$permissionModel->allowAccessGame();
         if ($searchModel->validate())
         {

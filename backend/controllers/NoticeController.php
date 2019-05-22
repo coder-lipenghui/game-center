@@ -2,7 +2,7 @@
 
 namespace backend\controllers;
 
-use backend\models\TabPermission;
+use backend\models\MyTabPermission;
 use Yii;
 use backend\models\TabNotice;
 use backend\models\TabNoticeSearch;
@@ -36,7 +36,7 @@ class NoticeController extends Controller
      */
     public function actionIndex()
     {
-        $games=TabPermission::getGames();
+        $games=MyTabPermission::getGames();
         $searchModel = new TabNoticeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', [

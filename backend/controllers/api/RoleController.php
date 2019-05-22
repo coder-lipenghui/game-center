@@ -12,7 +12,7 @@ use common\helps\ItemDefHelper;
 use Yii;
 use yii\data\Pagination;
 use backend\models\api\RoleInfo;
-use backend\models\TabPermission;
+use backend\models\MyTabPermission;
 class RoleController extends BaseController
 {
     public $apiName="players/search";
@@ -60,7 +60,7 @@ class RoleController extends BaseController
         $request=Yii::$app->request;
         $searchModel->load($request->queryParams);
 
-        $permissionModel=new TabPermission();
+        $permissionModel=new MyTabPermission();
         $games=$permissionModel->allowAccessGame();
 
         if ($searchModel->validate())

@@ -2,7 +2,7 @@
 
 namespace backend\controllers;
 
-use backend\models\TabPermission;
+use backend\models\MyTabPermission;
 use Yii;
 use backend\models\TabServers;
 use backend\models\TabServersSearch;
@@ -66,7 +66,7 @@ class ServerController extends Controller
     public function actionCreate()
     {
         $model = new TabServers();
-        $permissionModel=new TabPermission();
+        $permissionModel=new MyTabPermission();
         $request=Yii::$app->request;
         $dist=[];
         $games=$permissionModel->allowAccessGame();
