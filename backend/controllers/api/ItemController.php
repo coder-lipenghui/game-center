@@ -9,9 +9,8 @@
 namespace backend\controllers\api;
 
 use backend\models\api\ItemRecord;
-use Yii;
 use yii\data\ArrayDataProvider;
-
+use backend\models\TabPermission;
 class ItemController extends BaseController
 {
     public $apiName="itemadd";
@@ -29,6 +28,8 @@ class ItemController extends BaseController
             $params=$request->post();
         }
         $searchModel->load($params);
+        $permissionModel=new TabPermission();
+        $games=$permissionModel->allowAccessGame();
         if ($searchModel->validate())
         {
             $page=1;
@@ -43,7 +44,6 @@ class ItemController extends BaseController
             }
             if($this->initApiUrl($searchModel->gameid,$searchModel->pid,$searchModel->serverid,$queryBody."&page=".$page))
             {
-//                exit($this->apiUrl);
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);
                 $dataProvider->setModels($arrayData['items']);
@@ -55,6 +55,7 @@ class ItemController extends BaseController
         return $this->render('index',[
             'searchModel'=>$searchModel,
             'dataProvider'=>$dataProvider,
+            'games'=>$games,
         ]);
     }
 }

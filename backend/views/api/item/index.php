@@ -24,7 +24,7 @@ $this->registerJsFile('@web/js/api/itemSearch.js',['depends'=>'yii\web\YiiAsset'
  * TODO 因为没有搞通yii2的Pjax+ActiveForm不刷新ActiveForm部分 暂时用了这种特别操蛋的方式
  */
 $jsStart="$(function(){";
-$jsGetGame='getGame("#games",true,"'.$searchModel->gameid.'","../");';
+$jsGetGame='//getGame("#games",true,"'.$searchModel->gameid.'","../");';
 $jsGetPt="";
 $jsGetServer="";
 if($searchModel->pid){
@@ -36,12 +36,12 @@ if ($searchModel->serverid)
 }
 $jsEnd="})";
 $js=$jsStart.$jsGetGame.$jsGetPt.$jsGetServer.$jsEnd;
-$this->registerJs($js);
+//$this->registerJs($js);
 ?>
 <div class="panel panel-default">
 
     <?php
-        echo $this->render('_search', ['searchModel' => $searchModel]);
+        echo $this->render('_search', ['searchModel' => $searchModel,'games'=>$games]);
     ?>
     <?php
     Pjax::begin(['id'=>'myTest']);
