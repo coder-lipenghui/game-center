@@ -11,7 +11,7 @@ namespace backend\controllers\api;
 use backend\models\command\CmdMail;
 use yii\web\Controller;
 use backend\models\command\CmdKick;
-
+use backend\models\MyTabPermission;
 class CmdController extends Controller
 {
     /**
@@ -43,6 +43,10 @@ class CmdController extends Controller
         $request=\Yii::$app->request;
         $mailModel=new CmdMail();
         $mailModel->load($request->queryParams);
+
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
+
         if ($mailModel->validate()) {
             $code = $mailModel->execu();
             $msg=$mailModel->errorMessage;
@@ -59,6 +63,7 @@ class CmdController extends Controller
         }
         return $this->render('mail',[
             'searchModel'=>$mailModel,
+            'games'=>$games,
         ]);
     }
 }

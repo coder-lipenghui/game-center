@@ -33,7 +33,7 @@ if ($searchModel->sid)
 }
 $jsEnd="})";
 $js=$jsStart.$jsGetGame.$jsGetPt.$jsGetServer.$jsEnd;
-$this->registerJs($js);
+//$this->registerJs($js);
 ?>
 <div class="panel panel-default">
     <?php
@@ -51,7 +51,7 @@ $this->registerJs($js);
                 <tr>
                     <td>
                         <?=$form->field($searchModel,'gameid')->dropDownList(
-                            [],
+                            $games,
                             [
                                 "class"=>"selectpicker form-control col-xs-2",
                                 "data-width"=>"fit",
