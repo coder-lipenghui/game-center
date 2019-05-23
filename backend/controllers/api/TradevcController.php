@@ -9,8 +9,8 @@
 namespace backend\controllers\api;
 
 use backend\models\api\TradeVcInfo;
-use Yii;
 use yii\data\ArrayDataProvider;
+use backend\models\MyTabPermission;
 
 class TradevcController extends BaseController
 {
@@ -29,6 +29,10 @@ class TradevcController extends BaseController
         {
             $params=$request->post();
         }
+
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
+
         $searchModel->load($params);
         if ($searchModel->validate())
         {
@@ -52,6 +56,7 @@ class TradevcController extends BaseController
         return $this->render('index',[
             'searchModel'=>$searchModel,
             'dataProvider'=>$dataProvider,
+            'games'=>$games,
         ]);
     }
 }

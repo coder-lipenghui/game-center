@@ -25,7 +25,7 @@ use yii\widgets\Pjax;
 ?>
 <div class="panel-body">
         <?=$form->field($searchModel,'gameid')->dropDownList(
-            [],
+            $games,
             [
                 "class"=>"selectpicker form-control col-xs-2",
                 "data-width"=>"fit",

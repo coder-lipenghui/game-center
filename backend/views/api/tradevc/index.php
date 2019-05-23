@@ -29,12 +29,12 @@ if ($searchModel->serverid)
 }
 $jsEnd="})";
 $js=$jsStart.$jsGetGame.$jsGetPt.$jsGetServer.$jsEnd;
-$this->registerJs($js);
+//$this->registerJs($js);
 ?>
 <div class="panel panel-default">
 
     <?php
-        echo $this->render('_search', ['searchModel' => $searchModel]);
+        echo $this->render('_search', ['searchModel' => $searchModel,'games'=>$games]);
     ?>
     <?php
     Pjax::begin();
