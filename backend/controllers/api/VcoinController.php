@@ -10,7 +10,7 @@ namespace backend\controllers\api;
 
 use backend\models\api\VcoinRecord;
 use yii\data\ArrayDataProvider;
-
+use backend\models\MyTabPermission;
 class VcoinController extends BaseController
 {
     public $api="vcoin";
@@ -24,6 +24,8 @@ class VcoinController extends BaseController
         $request=\Yii::$app->request;
         $params=$request->queryParams;
         $searchModel->load($params);
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
         if ($searchModel->validate())
         {
             $page=1;
@@ -55,6 +57,7 @@ class VcoinController extends BaseController
         return $this->render('index',[
             'searchModel'=>$searchModel,
             'dataProvider'=>$dataProvider,
+            'games'=>$games,
         ]);
     }
 }
