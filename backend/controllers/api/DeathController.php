@@ -8,10 +8,9 @@
 
 namespace backend\controllers\api;
 
-use Yii;
 use backend\models\api\Death;
 use yii\data\ArrayDataProvider;
-
+use backend\models\MyTabPermission;
 class DeathController extends BaseController
 {
     public $apiName="death";
@@ -28,6 +27,10 @@ class DeathController extends BaseController
         {
             $params=$request->post();
         }
+
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
+
         $searchModel->load($params);
         if ($searchModel->validate())
         {
@@ -50,6 +53,7 @@ class DeathController extends BaseController
         return $this->render('index',[
             'searchModel'=>$searchModel,
             'dataProvider'=>$dataProvider,
+            'games'=>$games,
         ]);
     }
 }
