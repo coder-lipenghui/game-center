@@ -71,6 +71,7 @@ class CenterController extends Controller
         $loginModel=new Login();
         $jsonData=file_get_contents("php://input");
         $requestData=json_decode($jsonData,true);
+        //exit($jsonData);
         $loginModel->load(['Login'=>$requestData]);
         if ($loginModel->validate())
         {
@@ -82,15 +83,16 @@ class CenterController extends Controller
             {
                 $this->send(CenterController::$ERROR_GAME_NOT_FOUND,\Yii::t('app',"未知游戏"));
             }
-            $distribution=TabDistribution::findOne(['id'=>$loginModel->dist,'gameId'=>$game->id]);
+            $distribution=TabDistribution::find()->where(['id'=>$loginModel->distributionId,'gameId'=>$game->id])->one();
             if ($distribution===null)
             {
+                echo($distribution->id.$distribution->name.$game->id);
                 $this->send(CenterController::$ERROR_DISTRIBUTOR_NOT_FOUND,\Yii::t('app',"分销渠道不存在"));
             }
             $cache=\Yii::$app->cache;
 //            $cache->flush();//清理缓存
 //            $cache->delete($tokenKey);//根据key清理缓存
-            $tokenKey=md5($requestData['uid'].$requestData['dist'].$this->getClientIP().time());
+            $tokenKey=md5($requestData['uid'].$requestData['distributionId'].$this->getClientIP().time());
             $token=$cache->get($tokenKey);
             if(empty($token) || $token===null)
             {
@@ -428,7 +430,6 @@ class CenterController extends Controller
     public function actionNotifyLogin()
     {
         //TODO 账号、IP需要做白名单检测：测试服、进入
-        // 下发参数： uid,token token=md5(uid.)
         \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
         $enterModle=new EnterGame();
         $request=\Yii::$app->request;
@@ -570,7 +571,7 @@ class CenterController extends Controller
                 return null;
             }
         }
-        return null;
+        return $player;
     }
 
 
@@ -583,7 +584,6 @@ class CenterController extends Controller
     {
         $responseData=['code'=>$code,'message'=>$message,'data'=>$data];
         $response = \Yii::$app->response;
-//        $response->isSent=true;
         $response->format = \yii\web\Response::FORMAT_JSON;
         $response->data=$responseData;
         $response->send();
