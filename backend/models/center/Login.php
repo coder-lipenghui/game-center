@@ -13,14 +13,14 @@ class Login extends TabLogLogin
 {
     public $sku;
     public $uid;
-    public $dist;
+    public $distributionId;
     public $versionCode;
     public $versionName;
     public function rules()
     {
         return [
-            [['token','sku','uid','dist'], 'required'],
-            [['gameId', 'distributionId', 'playerId','dist'], 'integer'],
+            [['token','sku','uid','distributionId'], 'required'],
+            [['gameId', 'distributionId', 'playerId'], 'integer'],
             [['loginTime'], 'safe'],
             [['ip', 'deviceOs', 'deviceVender', 'deviceType','versionCode','versionName','uid','sku'], 'string', 'max' => 45],
             [['deviceId'], 'string', 'max' => 50],
