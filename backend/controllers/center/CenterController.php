@@ -393,6 +393,30 @@ class CenterController extends Controller
     }
 
     /**
+     * 获取游戏版号相关信息
+     * @return array|\yii\db\ActiveRecord|null
+     */
+    public function actionGameCopyright()
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        $result=[];
+
+        $request=\Yii::$app->request;
+        if ($request->get("sku"))
+        {
+            $game=TabGames::find()
+                ->select(['copyright_number','copyright_author','copyright_press','copyright_isbn'])
+                ->where(['sku'=>$request->get('sku')])
+                ->asArray()
+                ->one();
+            if ($game!=null && count($game)>0)
+            {
+                return $game;
+            }
+        }
+        return $result;
+    }
+    /**
      * 从渠道侧获取订单号接口,需要在派生类中重写该方法
      * return array 包含渠道订单号码及其他参数的数组
      */
