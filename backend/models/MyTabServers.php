@@ -16,7 +16,7 @@ class MyTabServers extends TabServers
 //        exit($gameId." ".$distributionId);
         self::openServer($gameId,$distributionId);
         $query=TabServers::find()
-            ->select(['id','name','index'])
+            ->select(['id','name','index','status','socket'=>'CONCAT_WS(":",url,netPort)'])
             ->where(['gameid'=>$gameId])
             ->where(new Expression('FIND_IN_SET(:distributions, distributions)'))
             ->addParams(['distributions'=>$distributionId])
