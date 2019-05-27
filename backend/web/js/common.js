@@ -139,16 +139,14 @@ function getDistributor(documentid,async,gameId,selectedId,url) {
 }
 function getItems(documentid,gid,url) {
     var async = arguments[1] ? arguments[1] : false;
-    // var form=$(formid);
-    var gameid=gid;
     $(documentid).empty();
     $.ajax({
         type: 'get',
         data:{
-            gameid:gameid
+            gameId:gid
         },
         dataType: "json",
-        url: (url==null?"":url)+"../itemdef/items",
+        url: (url==null?"":url)+"../permission/get-items",
         async: async,
         success: function(data) {
             $.each(data, function(i) {

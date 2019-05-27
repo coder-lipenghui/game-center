@@ -9,6 +9,7 @@ use backend\models\MyTabPermission;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use backend\models\TabItemdefDzy;
 
 /**
  * PermissionController implements the CRUD actions for TabPermission model.
@@ -161,6 +162,16 @@ class PermissionController extends Controller
             return $model->allowAccessServer($request->get('gameId'),$request->get('distributorId'));
         }
         return ['code'=>-1,'msg'=>'获取区服失败'];
+    }
+    public function actionGetItems()
+    {
+        $request=Yii::$app->request;
+        if ($request->get('gameId'))
+        {
+            $data=TabItemdefDzy::find()->select(['id','name'])->asArray()->all();
+            return json_encode($data);
+        }
+        return json_encode([]);
     }
     /**
      * Finds the TabPermission model based on its primary key value.

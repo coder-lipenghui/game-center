@@ -25,15 +25,15 @@ $jsGetGame='getGame("#games",true,"'.$searchModel->gameid.'","../");';
 $jsGetPt="";
 $jsGetServer="";
 if($searchModel->pid){
-    $jsGetPt='getDistributor("#platform",true,"'.$searchModel->gameid.'","'.$searchModel->pid.'","../");';
+    $jsGetPt='//getDistributor("#platform",true,"'.$searchModel->gameid.'","'.$searchModel->pid.'","../");';
 }
 if ($searchModel->sid)
 {
-    $jsGetServer='getServers("#servers",false,"'.$searchModel->gameid.'","'.$searchModel->pid.'","'.$searchModel->sid.'","../");';
+    $jsGetServer='//getServers("#servers",false,"'.$searchModel->gameid.'","'.$searchModel->pid.'","'.$searchModel->sid.'","../");';
 }
 $jsEnd="})";
-$js=$jsStart.$jsGetGame.$jsGetPt.$jsGetServer.$jsEnd;
-//$this->registerJs($js);
+$js=$jsStart.$jsEnd;
+$this->registerJs($js);
 ?>
 <div class="panel panel-default">
     <?php
