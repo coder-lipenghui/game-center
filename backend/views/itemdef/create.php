@@ -3,13 +3,13 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\TabItemdef */
+/* @var $model backend\models\TabItemdefDzy */
 
-$this->title = Yii::t('app', 'Create Tab Itemdef');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tab Itemdefs'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Create Tab Itemdef Dzy');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tab Itemdef Dzies'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="tab-itemdef-create">
+<div class="tab-itemdef-dzy-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

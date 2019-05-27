@@ -2,16 +2,15 @@
 
 namespace backend\controllers;
 
-use backend\models\TabItemdefAjax;
 use Yii;
-use backend\models\TabItemdef;
-use backend\models\TabItemdefSearch;
+use backend\models\TabItemdefDzy;
+use backend\models\TabItemdefDzySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ItemdefController implements the CRUD actions for TabItemdef model.
+ * ItemdefController implements the CRUD actions for TabItemdefDzy model.
  */
 class ItemdefController extends Controller
 {
@@ -31,12 +30,12 @@ class ItemdefController extends Controller
     }
 
     /**
-     * Lists all TabItemdef models.
+     * Lists all TabItemdefDzy models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new TabItemdefSearch();
+        $searchModel = new TabItemdefDzySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -46,7 +45,7 @@ class ItemdefController extends Controller
     }
 
     /**
-     * Displays a single TabItemdef model.
+     * Displays a single TabItemdefDzy model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -59,13 +58,13 @@ class ItemdefController extends Controller
     }
 
     /**
-     * Creates a new TabItemdef model.
+     * Creates a new TabItemdefDzy model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new TabItemdef();
+        $model = new TabItemdefDzy();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -77,7 +76,7 @@ class ItemdefController extends Controller
     }
 
     /**
-     * Updates an existing TabItemdef model.
+     * Updates an existing TabItemdefDzy model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -97,7 +96,7 @@ class ItemdefController extends Controller
     }
 
     /**
-     * Deletes an existing TabItemdef model.
+     * Deletes an existing TabItemdefDzy model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -109,28 +108,17 @@ class ItemdefController extends Controller
 
         return $this->redirect(['index']);
     }
-    public function actionItems()
-    {
-        $request=Yii::$app->request;
-        $searchModel=new TabItemdefAjax();
-        $searchModel->load($request->queryParams);
-        if ($searchModel->validate())
-        {
-            $data=$searchModel->getAllItems();
-            return json_encode($data);
-        }
-        return json_encode([]);
-    }
+
     /**
-     * Finds the TabItemdef model based on its primary key value.
+     * Finds the TabItemdefDzy model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TabItemdef the loaded model
+     * @return TabItemdefDzy the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TabItemdef::findOne($id)) !== null) {
+        if (($model = TabItemdefDzy::findOne($id)) !== null) {
             return $model;
         }
 
