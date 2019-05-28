@@ -7,15 +7,14 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\TabItemdefDzySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tab Itemdef Dzies');
+$this->title = Yii::t('app', '单职业物品表');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-itemdef-dzy-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
+    <div class="panel panel-default">
+        <div class="panel-body">
     <p>
-        <?= Html::a(Yii::t('app', 'Create Tab Itemdef Dzy'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?php Html::a(Yii::t('app', '新增'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php Pjax::begin(); ?>
@@ -25,20 +24,19 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
+//            ['class' => 'yii\grid\SerialColumn'],
             'id',
-            'wear_pos',
-            'sub_type',
-            'res_id',
-            'icon_id',
-            //'script',
-            //'name',
-            //'color',
+//            'wear_pos',
+//            'sub_type',
+//            'res_id',
+//            'icon_id',
+            'script',
+            'name',
+            'color',
             //'weight',
             //'stackmax',
-            //'job',
-            //'gender',
+            'job',
+            'gender',
             //'needlevel',
             //'needzslv',
             //'equip_lv',
@@ -113,12 +111,13 @@ $this->params['breadcrumbs'][] = $this->title;
             //'huishou_exp',
             //'huishou_jinbi',
             //'huishou_vcoin',
-            //'description',
+            'description',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 
     <?php Pjax::end(); ?>
-
+        </div>
+    </div>
 </div>
