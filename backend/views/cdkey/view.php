@@ -17,7 +17,9 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-cdkey-view">
     <div class="panel panel-default">
-        <?php $form = ActiveForm::begin(); ?>
+        <?php $form = ActiveForm::begin([
+            'fieldConfig' => ['template' => '{input}'],
+        ]); ?>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-1">

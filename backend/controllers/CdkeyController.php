@@ -91,28 +91,26 @@ class CdkeyController extends Controller
             if ($model->validate())
             {
                 AutoCDKEYModel::TabSuffix($model->gameId,$model->distributorId);//设定表后缀"游戏_分销商"进行操作
+
                 $myModel=new AutoCDKEYModel();
+
                 $db=Yii::$app->getDb();
-                $builder=$db->getQueryBuilder();
-                for ($i=0;$i<100;$i++)
+
+                $values=[];
+                for ($j=0;$j<$model->generateNum;$j++)
                 {
-                    $values=[];
-                    for ($j=0;$j<1000;$j++)
-                    {
-                        $values[]=[
-                            $model->gameId,
-                            $model->distributorId,
-                            $model->varietyId,
-                            AutoCDKEYModel::generateCDKEY(8),
-                            $model->createTime
-                        ];
-                    }
-                    $cmd=$db->createCommand();
-                    $cmd->batchInsert($myModel::tableName(),['gameId','distributorId','varietyId','cdkey','createTime'],$values);
-                    $cmd->query();
+                    $values[]=[
+                        $model->gameId,
+                        $model->distributorId,
+                        $model->varietyId,
+                        AutoCDKEYModel::generateCDKEY(8),
+                        $model->createTime
+                    ];
                 }
-            }else{
-                exit(json_encode($model->getErrors()));
+                $cmd=$db->createCommand();
+                $cmd->batchInsert($myModel::tableName(),['gameId','distributorId','varietyId','cdkey','createTime'],$values);
+                $cmd->query();
+                return $this->redirect(['view']);
             }
         }
         return $this->render('create', [
