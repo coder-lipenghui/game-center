@@ -8,11 +8,15 @@
 
 namespace backend\controllers\center;
 
+use backend\models\AutoCDKEYModel;
+use backend\models\center\ActivateCdkey;
 use backend\models\center\CreateOrder;
 use backend\models\center\EnterGame;
 use backend\models\center\Login;
 use backend\models\MyTabNotice;
 use backend\models\MyTabServers;
+use backend\models\TabCdkeyRecord;
+use backend\models\TabCdkeyVariety;
 use backend\models\TabDistribution;
 use backend\models\TabGames;
 use backend\models\TabOrders;
@@ -232,20 +236,21 @@ class CenterController extends Controller
     /**
      * 支付回调验证，需要在派生类中实现
      * @param $distribution 分销渠道
-     * @return Array|null
+     * @return array
+     * [
+     *  'orderId'=>'',
+     *  'distributionOrderId'=>'',
+     *  'payAmount'=>0,
+     *  'payTime'=>time(),
+     *  'payMode'=>'',
+     * ];
      * 验证失败 返回null
      * 验证成功 必须包含 'orderId'、'distributionOrderId'、'payAmount'、'payTime'的数组,'payMode'可选
      */
     protected function orderValidate($distribution)
     {
 //        固定返回格式
-//        return [
-//            'orderId'=>'',
-//            'distributionOrderId'=>'',
-//            'payAmount'=>0,
-//            'payTime'=>time(),
-//            'payMode'=>'',
-//        ];
+
         return null;
     }
 
@@ -542,7 +547,91 @@ class CenterController extends Controller
             return ['code'=>-13,'msg'=>'参数错误','data'=>$enterModle->getErrors()];
         }
     }
+    public function actionCdkey()
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
 
+        $request=\Yii::$app->request;
+        $model=new ActivateCdkey();
+        $model->load($request->get());
+        if ($model->validate())
+        {
+            //游戏检测
+            $game=TabGames::find()->where(['sku'=>$model->sku])->one();
+            if ($game)
+            {
+                //渠道检测
+                $distribution=TabDistribution::findOne(['id'=>$model->distributionId]);
+//                if($distribution){
+                    //玩家检测
+                    $player=TabPlayers::find()->where(['account'=>$model->account])->one();
+                    if ($player)
+                    {
+                        //激活码检测
+                        AutoCDKEYModel::TabSuffix($game->id,$distribution->distributorId);
+                        $cdkey=AutoCDKEYModel::find()->where(['cdkey'=>$model->cdkey])->one();
+                        $variety=TabCdkeyVariety::findOne(['id'=>$cdkey->varietyId]);
+                        if ($cdkey)
+                        {
+                            //激活码状态更改
+                            $cdkey->setAttribute('used',1);
+                            if($cdkey->save())
+                            {
+                                //记录使用信息
+                                $model->setAttribute('gameId',$game->id);
+                                $model->setAttribute('logTime',time());
+                                if ($model->save())
+                                {
+                                    //发货
+                                    $server=TabServers::findOne(['id'=>$model->serverId]);
+                                    $curl=new CurlHttpClient();
+                                    $url='http://'.$server->url;
+                                    $sign=md5($model->roleId.$model->roleName.$model->cdkey.$variety->items.$variety->name.$game->paymentKey);
+                                    $body=[
+                                        'roleId'=>$model->roleId,
+                                        'roleName'=>$model->roleName,
+                                        'cdkey'=>$model->cdkey,
+                                        'variety'=>$variety->name,
+                                        'item'=>$variety->items,
+                                        'sign'=>$sign
+                                    ];
+                                    $json=$curl->sendPostData($url,$body);
+                                    if ($curl->getHttpResponseCode()==200)
+                                    {
+                                        $result=json_decode($json,true);
+                                        $code=$result['code'];
+                                        if ($code==1)
+                                        {
+                                            return ['code'=>1,'激活成功,请打开背包查看'];
+                                        }else{
+                                            //-1：参数错误 -2：连接失败 -3：数据库选取失败 -4：数据写入失败 -5：sign验证失败
+                                            return ['code'=>-8,'激活失败['.$code.']'];
+                                        }
+                                    }else{
+                                        return ['code'=>-7,'msg'=>'激活出现异常'];
+                                    }
+                                }else{
+                                    return ['code'=>-6,'msg'=>'激活码激活失败'];
+                                }
+                            }else{
+                                return ['code'=>-6,'msg'=>'激活码状态更新失败'];
+                            }
+                        }else{
+                            return ['code'=>-5,'msg'=>'激活码不存在'];
+                        }
+                    }else{
+                        return ['code'=>-4,'msg'=>'玩家不存在'];
+                    }
+//                }else{
+//                    return ['code'=>-3,'msg'=>'分销渠道不存在'];
+//                }
+            }else{
+                return ['code'=>-2,'msg'=>'游戏不存在'];
+            }
+        }else{
+            return ['code'=>-1,'msg'=>'参数不正确'];
+        }
+    }
     /**
      * 登录验证，需要在派生类中实现
      * @param $request 请求参数

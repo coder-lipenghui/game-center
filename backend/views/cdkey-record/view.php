@@ -33,6 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'gameId',
             'distributionId',
             'account',
+            'serverId',
             'roleId',
             'roleName',
             'cdkey',

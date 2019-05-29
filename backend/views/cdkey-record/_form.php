@@ -18,6 +18,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'account')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'serverId')->textInput() ?>
+
     <?= $form->field($model, 'roleId')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'roleName')->textInput(['maxlength' => true]) ?>

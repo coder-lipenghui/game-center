@@ -17,7 +17,7 @@ class TabCdkeyRecordSearch extends TabCdkeyRecord
     public function rules()
     {
         return [
-            [['id', 'gameId', 'distributionId', 'logTime'], 'integer'],
+            [['id', 'gameId', 'distributionId', 'serverId', 'logTime'], 'integer'],
             [['account', 'roleId', 'roleName', 'cdkey'], 'safe'],
         ];
     }
@@ -61,6 +61,7 @@ class TabCdkeyRecordSearch extends TabCdkeyRecord
             'id' => $this->id,
             'gameId' => $this->gameId,
             'distributionId' => $this->distributionId,
+            'serverId' => $this->serverId,
             'logTime' => $this->logTime,
         ]);
 
