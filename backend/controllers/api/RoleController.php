@@ -13,6 +13,7 @@ use Yii;
 use yii\data\Pagination;
 use backend\models\api\RoleInfo;
 use backend\models\MyTabPermission;
+use yii\helpers\ArrayHelper;
 class RoleController extends BaseController
 {
     public $apiName="players/search";
@@ -62,18 +63,19 @@ class RoleController extends BaseController
 
         $permissionModel=new MyTabPermission();
         $games=$permissionModel->allowAccessGame();
-
+        $distributors=[];
+        $servers=[];
         if ($searchModel->validate())
         {
+
             $page=1;
             if ($request->get('page'))
             {
                 $page=$request->get('page');
             }
             $queryBody=http_build_query($searchModel->getAttributes());
-            if($this->initApiUrl( $searchModel->gameid,$searchModel->pid , $searchModel->serverid,$queryBody."&page=".$page)) {
+            if($this->initApiUrl( $searchModel->gameId,$searchModel->distributorId , $searchModel->serverId,$queryBody."&page=".$page)) {
                 $result=$this->getJsonData();
-//                exit($this->apiUrl."|".$result);
                 $result = json_decode($result, true);
                 $players = $result['items'];
                 for ($i = 0; $i < count($players); $i++) {
@@ -88,6 +90,9 @@ class RoleController extends BaseController
         }else{
             if (!$request->isAjax)
             {
+                $distributors=ArrayHelper::map($permissionModel->allowAccessDistributor($searchModel->gameId),'id','name');
+                $servers=ArrayHelper::map($permissionModel->allowAccessServer($searchModel->gameId,$searchModel->distributorId),'id','name');
+
                 $page=new Pagination([
                     'totalCount'=>0,
                 ]);
@@ -95,6 +100,8 @@ class RoleController extends BaseController
                     'searchModel'=>$searchModel,
                     'kickModel'=>new CmdKick(),
                     'games'=>$games,
+                    'distributors'=>$distributors,
+                    'servers'=>$servers,
                 ]);
             }
         }

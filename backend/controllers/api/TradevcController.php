@@ -11,7 +11,7 @@ namespace backend\controllers\api;
 use backend\models\api\TradeVcInfo;
 use yii\data\ArrayDataProvider;
 use backend\models\MyTabPermission;
-
+use yii\helpers\ArrayHelper;
 class TradevcController extends BaseController
 {
     public $apiName="tradevc";
@@ -29,22 +29,25 @@ class TradevcController extends BaseController
         {
             $params=$request->post();
         }
+        $searchModel->load($params);
 
         $permissionModel=new MyTabPermission();
         $games=$permissionModel->allowAccessGame();
+        $distributors=[];
+        $servers=[];
 
-        $searchModel->load($params);
         if ($searchModel->validate())
         {
+            $distributors=ArrayHelper::map($permissionModel->allowAccessDistributor($searchModel->gameId),'id','name');
+            $servers=ArrayHelper::map($permissionModel->allowAccessServer($searchModel->gameId,$searchModel->distributorId),'id','name');
             $page=1;
             if ($request->get('page'))
             {
                 $page=$request->get('page');
             }
             $queryBody=http_build_query($searchModel->getAttributes());
-            if($this->initApiUrl( $searchModel->gameid,$searchModel->pid , $searchModel->serverid,$queryBody."&page=".$page))
+            if($this->initApiUrl( $searchModel->gameId,$searchModel->distributorId , $searchModel->serverId,$queryBody."&page=".$page))
             {
-//                exit($this->apiUrl);
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);
                 $dataProvider->setModels($arrayData['items']);
@@ -57,6 +60,8 @@ class TradevcController extends BaseController
             'searchModel'=>$searchModel,
             'dataProvider'=>$dataProvider,
             'games'=>$games,
+            'distributors'=>$distributors,
+            'servers'=>$servers,
         ]);
     }
 }

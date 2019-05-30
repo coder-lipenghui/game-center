@@ -25,7 +25,7 @@ use yii\widgets\Pjax;
     ]);
 ?>
 <div class="panel-body">
-        <?=$form->field($searchModel,'gameid')->dropDownList(
+        <?=$form->field($searchModel,'gameId')->dropDownList(
             $games,
             [
                 "class"=>"selectpicker form-control col-xs-2",
@@ -35,8 +35,8 @@ use yii\widgets\Pjax;
                 "title"=>"选择游戏"
             ]
         );?>
-        <?=$form->field($searchModel,'pid')->dropDownList(
-            [],
+        <?=$form->field($searchModel,'distributorId')->dropDownList(
+            $distributors,
             [
                 "class"=>"selectpicker form-control col-xs-2",
                 "data-width"=>"fit",
@@ -45,8 +45,8 @@ use yii\widgets\Pjax;
                 "title"=>"选择平台"
             ]
         );?>
-        <?=$form->field($searchModel,'serverid')->dropDownList(
-            [],
+        <?=$form->field($searchModel,'serverId')->dropDownList(
+            $servers,
             [
                 "class"=>"selectpicker form-control col-xs-2",
                 "data-width"=>"fit",

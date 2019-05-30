@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\LinkPager;
-use backend\models\TabActionLog;
+use backend\models\TabActionType;
 use yii\helpers\ArrayHelper;
 
 $this->title = Yii::t('app', '元宝获取/移除日志');
@@ -19,27 +19,11 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/api/itemSearch.js',['depends'=>'yii\web\YiiAsset']);
 $this->registerJsFile('@web/js/common.js');
 $this->registerJsFile('@web/js/api/dropdown_menu.js',['depends'=>'yii\web\YiiAsset']);
-//$this->registerJsFile('@web/js/api/deathSearch.js',['depends'=>'yii\web\YiiAsset']);
-
-$jsStart="$(function(){";
-$jsGetGame='getGame("#games",true,"'.$searchModel->gameid.'","../");';
-$jsGetPt="";
-$jsGetServer="";
-if($searchModel->pid){
-    $jsGetPt='getDistributor("#platform",true,"'.$searchModel->gameid.'","'.$searchModel->pid.'","../");';
-}
-if ($searchModel->serverid)
-{
-    $jsGetServer='getServers("#servers",false,"'.$searchModel->gameid.'","'.$searchModel->pid.'","'.$searchModel->serverid.'","../");';
-}
-$jsEnd="})";
-$js=$jsStart.$jsGetGame.$jsGetPt.$jsGetServer.$jsEnd;
-//$this->registerJs($js);
 ?>
 <div class="panel panel-default">
 
     <?php
-        echo $this->render('_search', ['searchModel' => $searchModel,'games'=>$games]);
+        echo $this->render('_search', ['searchModel' => $searchModel,'games'=>$games,'distributors'=>$distributors,'servers'=>$servers]);
     ?>
     <?php
     Pjax::begin();

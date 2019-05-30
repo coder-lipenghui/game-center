@@ -14,7 +14,6 @@ class BaseApiModel extends Model
 {
     public $gameId;
     public $serverId;
-    public $pid;//pt_flag
     public $distributorId;
     /**角色名称*/
     public $playerName;

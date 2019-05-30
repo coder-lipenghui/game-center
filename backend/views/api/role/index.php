@@ -15,7 +15,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
 ?>
 <div class="panel panel-default">
     <?php
-    echo $this->render('../commonSearch', ['searchModel' => $searchModel,'games'=>$games]);
+        echo $this->render('../commonSearch', ['searchModel' => $searchModel,'games'=>$games,'distributors'=>$distributors,'servers'=>$servers]);
     ?>
     <div class="panel-heading"><label>常规操作</label></div>
     <div class="panel-body">

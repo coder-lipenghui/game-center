@@ -26,7 +26,7 @@ use yii\widgets\Pjax;
 <div class="panel-body">
     <div class="row">
         <div class="col-sm-1">
-            <?=$form->field($searchModel,'gameid')->dropDownList(
+            <?=$form->field($searchModel,'gameId')->dropDownList(
                 $games,
                 [
                     "class"=>"selectpicker form-control col-xs-2",
@@ -38,8 +38,8 @@ use yii\widgets\Pjax;
             );?>
         </div>
         <div class="col-sm-1">
-            <?=$form->field($searchModel,'pid')->dropDownList(
-                [],
+            <?=$form->field($searchModel,'distributorId')->dropDownList(
+                $distributors,
                 [
                     "class"=>"selectpicker form-control col-xs-2",
                     "data-width"=>"fit",
@@ -50,8 +50,8 @@ use yii\widgets\Pjax;
             );?>
         </div>
         <div class="col-sm-1">
-            <?=$form->field($searchModel,'serverid')->dropDownList(
-                [],
+            <?=$form->field($searchModel,'serverId')->dropDownList(
+                $servers,
                 [
                     "class"=>"selectpicker form-control col-xs-2",
                     "data-width"=>"fit",
