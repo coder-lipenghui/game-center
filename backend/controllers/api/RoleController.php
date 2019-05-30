@@ -73,9 +73,8 @@ class RoleController extends BaseController
             $queryBody=http_build_query($searchModel->getAttributes());
             if($this->initApiUrl( $searchModel->gameid,$searchModel->pid , $searchModel->serverid,$queryBody."&page=".$page)) {
                 $result=$this->getJsonData();
-                exit($result);
+//                exit($this->apiUrl."|".$result);
                 $result = json_decode($result, true);
-
                 $players = $result['items'];
                 for ($i = 0; $i < count($players); $i++) {
                     $result['items'][$i]['item_bag'] = $this->itemParser($result['items'][$i]['item_bag']);

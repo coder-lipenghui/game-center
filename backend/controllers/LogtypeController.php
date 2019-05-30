@@ -3,14 +3,14 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\TabActionLog;
-use backend\models\TabActionLogSearch;
+use backend\models\TabActionType;
+use backend\models\TabActionTypeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * LogtypeController implements the CRUD actions for TabActionLog model.
+ * LogtypeController implements the CRUD actions for TabActionType model.
  */
 class LogtypeController extends Controller
 {
@@ -30,12 +30,12 @@ class LogtypeController extends Controller
     }
 
     /**
-     * Lists all TabActionLog models.
+     * Lists all TabActionType models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new TabActionLogSearch();
+        $searchModel = new TabActionTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -45,7 +45,7 @@ class LogtypeController extends Controller
     }
 
     /**
-     * Displays a single TabActionLog model.
+     * Displays a single TabActionType model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -58,13 +58,13 @@ class LogtypeController extends Controller
     }
 
     /**
-     * Creates a new TabActionLog model.
+     * Creates a new TabActionType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new TabActionLog();
+        $model = new TabActionType();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -76,7 +76,7 @@ class LogtypeController extends Controller
     }
 
     /**
-     * Updates an existing TabActionLog model.
+     * Updates an existing TabActionType model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -96,7 +96,7 @@ class LogtypeController extends Controller
     }
 
     /**
-     * Deletes an existing TabActionLog model.
+     * Deletes an existing TabActionType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -110,15 +110,15 @@ class LogtypeController extends Controller
     }
 
     /**
-     * Finds the TabActionLog model based on its primary key value.
+     * Finds the TabActionType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TabActionLog the loaded model
+     * @return TabActionType the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TabActionLog::findOne($id)) !== null) {
+        if (($model = TabActionType::findOne($id)) !== null) {
             return $model;
         }
 
