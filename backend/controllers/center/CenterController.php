@@ -503,6 +503,7 @@ class CenterController extends Controller
                             switch ($code)
                             {
                                 case 1:
+                                    $msg=$result['ticket'];
                                     break;
                                 case -1:
                                     $msg="参数不正确";
