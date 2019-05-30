@@ -9,13 +9,13 @@
 namespace common\helps;
 
 
-use backend\models\TabActionLog;
+use backend\models\TabActionType;
 
 class RecordHelper
 {
-    public static function getNameById($gameid,$id)
+    public static function getNameById($gameId,$id)
     {
-        $record=TabActionLog::find()->where(['actionId'=>$id])->asArray()->one();
+        $record=TabActionType::find()->where(['actionId'=>$id])->asArray()->one();
         $name=null;
         try{
             $name=$record['actionName'];

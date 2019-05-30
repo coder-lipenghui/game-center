@@ -8,6 +8,7 @@
 
 namespace common\helps;
 use backend\models\TabItemdef;
+use backend\models\TabItemdefDzy;
 use yii\helpers\ArrayHelper;
 
 class ItemDefHelper
@@ -19,7 +20,7 @@ class ItemDefHelper
      */
     public static function getNameById($gameid,$id)
     {
-        $itemdef=TabItemdef::find()->where(['id'=>$id])->asArray()->one();
+        $itemdef=TabItemdefDzy::find()->where(['id'=>$id])->asArray()->one();
         $name=null;
         try{
 
@@ -32,7 +33,7 @@ class ItemDefHelper
     }
     public static function getIdByName($gameid,$name)
     {
-        $itemdef=TabItemdef::find()->where(['name'=>$name])->asArray()->one();
+        $itemdef=TabItemdefDzy::find()->where(['name'=>$name])->asArray()->one();
         $id=null;
         try{
            $id=$itemdef['id'];
@@ -45,7 +46,7 @@ class ItemDefHelper
     public static function getItemInfoById($gameid,$id)
     {
         //TODO 将查询的结果按照 itemid:[id,name,xxx]的形式存cookie
-        $itemdef=TabItemdef::find()->select(['id','name','icon_id','res_id','description'])->where(['id'=>$id])->asArray()->one();
+        $itemdef=TabItemdefDzy::find()->select(['id','name','icon_id','res_id','description'])->where(['id'=>$id])->asArray()->one();
         return $itemdef;
     }
 }

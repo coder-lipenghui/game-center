@@ -12,10 +12,10 @@ use yii\base\Model;
 
 class BaseApiModel extends Model
 {
-    public $gameid;
-    public $serverid;
+    public $gameId;
+    public $serverId;
     public $pid;//pt_flag
-
+    public $distributorId;
     /**角色名称*/
     public $playerName;
     /**角色账号，中控后台分配*/
@@ -27,9 +27,9 @@ class BaseApiModel extends Model
     public function attributeLabels()
     {
         return [
-            'gameid' => Yii::t('app', '游戏'),
-            'pid' => Yii::t('app', '平台'),
-            'serverid' => Yii::t('app', '区服'),
+            'gameId' => Yii::t('app', '游戏'),
+            'distributorId'=>Yii::t('app','分销商'),
+            'serverId' => Yii::t('app', '区服'),
             'playerName'=>Yii::t('app','角色名称'),
             'playerAccount'=>Yii::t('app','角色账号'),
             'from' => Yii::t('app', '开始时间'),
@@ -39,9 +39,9 @@ class BaseApiModel extends Model
     public function rules()
     {
         return [
-            [['gameid','pid','serverid'],'required'],
-            [['gameid', 'serverid'], 'integer'],
-            [['pid','playerName','playerAccount'],'string'],
+            [['gameId','distributorId','serverId'],'required'],
+            [['gameId', 'serverId','distributorId'], 'integer'],
+            [['playerName','playerAccount'],'string'],
             [['from', 'to'], 'date','format'=>'yyyy-MM-dd HH:mm:ss'],
         ];
     }

@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\TabActionLogSearch */
+/* @var $model backend\models\TabActionTypeSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

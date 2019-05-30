@@ -6,7 +6,7 @@
  * Time: 23:39
  */
 namespace backend\models\api;
-use backend\models\TabActionLog;
+use backend\models\TabActionType;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -81,7 +81,7 @@ class ItemRecord extends BaseApiModel
         return [];
         /* @var $class ActiveRecordInterface */
         /* @var $query ActiveQuery */
-//        $query = TabActionLog::find();
+//        $query = TabActionType::find();
 //        $query->primaryModel = new ActiveRecord();
 //        $query->link = ['actionId'=>'src'];
 //        $query->multiple = false;

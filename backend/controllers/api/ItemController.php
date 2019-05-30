@@ -11,6 +11,8 @@ namespace backend\controllers\api;
 use backend\models\api\ItemRecord;
 use yii\data\ArrayDataProvider;
 use backend\models\MyTabPermission;
+use yii\helpers\ArrayHelper;
+
 class ItemController extends BaseController
 {
     public $apiName="itemadd";
@@ -30,8 +32,12 @@ class ItemController extends BaseController
         $searchModel->load($params);
         $permissionModel=new MyTabPermission();
         $games=$permissionModel->allowAccessGame();
+        $distributors=[];
+        $servers=[];
         if ($searchModel->validate())
         {
+            $distributors=ArrayHelper::map($permissionModel->allowAccessDistributor($searchModel->gameId),'id','name');
+            $servers=ArrayHelper::map($permissionModel->allowAccessServer($searchModel->gameId,$searchModel->distributorId),'id','name');
             $page=1;
             if ($request->get('page'))
             {
@@ -42,7 +48,7 @@ class ItemController extends BaseController
             {
                 $this->apiName="itemrem";
             }
-            if($this->initApiUrl($searchModel->gameid,$searchModel->pid,$searchModel->serverid,$queryBody."&page=".$page))
+            if($this->initApiUrl($searchModel->gameId,$searchModel->distributorId,$searchModel->serverId,$queryBody."&page=".$page))
             {
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);
@@ -56,6 +62,8 @@ class ItemController extends BaseController
             'searchModel'=>$searchModel,
             'dataProvider'=>$dataProvider,
             'games'=>$games,
+            'distributors'=>$distributors,
+            'servers'=>$servers,
         ]);
     }
 }

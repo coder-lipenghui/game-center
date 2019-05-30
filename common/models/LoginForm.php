@@ -5,7 +5,7 @@ use common\helps\ItemDefHelper;
 use Yii;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
-use backend\models\TabActionLog;
+use backend\models\TabActionType;
 
 /**
  * Login form
