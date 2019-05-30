@@ -42,7 +42,7 @@ class BaseController extends Controller
         $server=TabServers::find()->where(['id'=>$sid])->one();
         if($server)
         {
-            $this->apiUrl="http://".$server->url."/".$this->apiName."?".$params;
+            $this->apiUrl="http://".$server->url."/api/".$this->apiName."?".$params;
             $this->inited=true;
         }else{
             $this->inited=false;
