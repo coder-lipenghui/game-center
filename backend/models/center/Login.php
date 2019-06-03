@@ -13,6 +13,7 @@ class Login extends TabLogLogin
 {
     public $sku;
     public $uid;
+    public $userName;
     public $distributionId;
     public $versionCode;
     public $versionName;
@@ -22,6 +23,7 @@ class Login extends TabLogLogin
             [['token','sku','uid','distributionId'], 'required'],
             [['gameId', 'distributionId', 'playerId'], 'integer'],
             [['loginTime'], 'safe'],
+            [['userName'],'string'],
             [['ip', 'deviceOs', 'deviceVender', 'deviceType','versionCode','versionName','uid','sku'], 'string', 'max' => 45],
             [['deviceId'], 'string', 'max' => 50],
             [['loginKey'], 'string', 'max' => 100],

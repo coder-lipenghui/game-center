@@ -119,7 +119,8 @@ class CenterController extends Controller
                     600);
                 $data['player']=[
                     'token'=>$tokenKey,
-                    'uid'=>$player->distributionUserId
+                    'uid'=>$player->distributionUserId,
+                    'account'=>$player->account,
                 ];
             }else{
                 $data['player']=[
