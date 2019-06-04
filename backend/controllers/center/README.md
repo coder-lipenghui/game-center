@@ -73,8 +73,14 @@
 * 参数说明
 
     | 参数 | 是否为空 | 说明 | 类型 | 示例 |
+	
     | --- | --- | --- | --- | --- | --- |
+	
     | sku | 否 | 游戏SKU | string | MYSC |
+	
     | distid | 否 | 分销编号 | int | 1 |
+	
     | uid | 否 | 用户ID | string | abc |
+	
     | token | 否 | token | string | abc | 
+	
