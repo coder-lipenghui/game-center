@@ -52,9 +52,6 @@ class QuickController extends CenterController
     }
     public function orderValidate($distribution)
     {
-        $request=\Yii::$app->request;
-
-        $ntData=$request->get('nt_data');
         //构建返回信息
         $this->paymentDeliverFailed     = "DELIVER FAILED";
         $this->paymentAmountFailed      = "AMOUNT FAILED";
@@ -62,14 +59,16 @@ class QuickController extends CenterController
         $this->paymentValidateFailed    = "VALIDATE FAILED";
         $this->paymentSuccess           = "SUCCESS";
 
+        $request=\Yii::$app->request;
+        $ntData=$request->post('nt_data');
         $body = array(
             'nt_data' => $ntData,
-            'sign'=>$request->get('sign'),
+            'sign'=>$request->post('sign'),
         );
 
         $mySign=$this->getSign($body,$distribution->appPaymentKey);
 
-        $sign=$request['md5Sign'];
+        $sign=$request->post('md5Sign');
 
         if ($mySign==$sign ) {
 
@@ -79,15 +78,22 @@ class QuickController extends CenterController
             return [
                 'orderId'=>$xmlArray['message']['game_order'],
                 'distributionOrderId'=>$xmlArray['message']['order_no'],
-                'payTime'=>$xmlArray['message']['pay_time'],
+                'payTime'=>strtotime($xmlArray['message']['pay_time']),
                 'payAmount'=>$xmlArray['message']['amount']*100,
             ];
         }else
         {
+            LoggerHelper::OrderError($distribution->gameId,$distribution->distributionId,"验证失败",$request->getBodyParams());
             return false;
         }
     }
-
+    public function getOrderFromDistribution($request)
+    {
+        return [
+            'distributionOrderId'=>'testorderid',
+            'accessKey'=>'其他字段'
+        ];
+    }
     //-----------------------------------------//
     //          qucik侧用到的一些方法            //
     //-----------------------------------------//
@@ -124,7 +130,16 @@ class QuickController extends CenterController
             return $strEncode;
         }
     }
-
+    /**
+     * 转成字符数据
+     */
+    private function getBytes($string) {
+        $bytes = array();
+        for($i = 0; $i < strlen($string); $i++){
+            $bytes[] = ord($string[$i]);
+        }
+        return $bytes;
+    }
     /**
      * @param $xmlstring
      * @return mixed
