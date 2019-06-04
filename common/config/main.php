@@ -10,7 +10,7 @@ return [
             'class' => 'yii\db\Connection',
             'dsn' => 'mysql:host=127.0.0.1;dbname=qiyou_center',
             'username' => 'root',
-            'password' => '7Uyd$%xyzkRD8p',
+            'password' => '7youNew7DBs',
             'charset' => 'utf8',
         ],
         'cache' => [
