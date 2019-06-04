@@ -52,19 +52,23 @@ class CenterController extends Controller
     public $enableCsrfValidation=false; //允许post访问
 
     /**支付成功返回信息，需要在派生类中重写*/
-    protected $paymentSuccess;
+    protected $paymentSuccess="SUCCESS";
 
     /**支付验证失败信息,需要在派生类中重写*/
-    protected $paymentValidateFailed;
+    protected $paymentValidateFailed="VALIDATE FAILED";
 
     /**订单号重复信息*/
-    protected $paymentRepeatingOrder;
+    protected $paymentRepeatingOrder="ORDER REPEAT";
 
     /**订单金额不匹配*/
-    protected $paymentAmountFailed;
+    protected $paymentAmountFailed="ORDER AMOUNT FAILED";
 
     /***/
-    protected $paymentDeliverFailed;
+    protected $paymentDeliverFailed="DELIVER FAILED";
+
+    protected $paymentOrderNotFound="ORDER NOT FOUND";
+
+    protected $paymentOrderStatusFailed="ORDER STATUS FAILED";
 
     /**
      * 供SDK调用的登录验证接口
@@ -189,34 +193,34 @@ class CenterController extends Controller
                                 return $this->paymentSuccess;
                             }else{
                                 $msg="支付状态更新失败";
-                                \Yii::error($msg,"order");
-                                return false;
+                                \Yii::error($order->getErrors(),"order");
+                                return $this->paymentOrderStatusFailed;
                             }
                         }catch (\yii\db\Exception $exception)
                         {
                             $msg="支付状态更新失败";
                             \Yii::error($msg,"order");
-                            return false;
+                            return "SYSTEM EXCEPTION";
                         }
                     }else{
                         $msg="支付金额不匹配";
                         \Yii::error($msg,"order");
-                        return false;
+                        return $this->paymentAmountFailed;
                     }
                 }else{
                     $msg="订单不存在";
                     \Yii::error($msg,"order");
-                    return false;
+                    return $this->paymentOrderNotFound;
                 }
             }else{
                 $msg="订单验证失败".json_encode($orderArray);
                 \Yii::error($msg,"order");
-                return false;
+                return $this->paymentValidateFailed;
             }
         }else{
             $msg="获取渠道失败";
             \Yii::error($msg,"order");
-            return false;
+            return self::$ERROR_DISTRIBUTOR_NOT_FOUND;
         }
     }
     /**
@@ -320,7 +324,7 @@ class CenterController extends Controller
                         if(!$order->save())
                         {
                             $msg="更新订单发货状态失败";
-                            LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
+                            LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getErrors());
                         }
                         return true;
                         break;
@@ -367,7 +371,7 @@ class CenterController extends Controller
         $result=[];
         $model=new CreateOrder();
         $jsonData=file_get_contents("php://input");
-        $requestData=json_decode($jsonData,true);
+        $requestData=json_decode(urldecode($jsonData),true);
         $model->load(['CreateOrder'=>$requestData]);
 
         if ($model->validate())
@@ -384,13 +388,14 @@ class CenterController extends Controller
                     'orderId'=>$order->orderId,
                     'distributionOrderId'=>$distributionOrderId
                 ];
-
                 if ($distributionOrder!=null)
                 {
-                    $result=array_merge($result,$distributionOrder);
+                    $data=array_merge($result['data'],$distributionOrder);
+                    $result['data']=$data;
                 }
                 return $result;
             }else{
+                LoggerHelper::OrderError($model->gameId,$model->distributionId,"订单创建失败",$model->getErrors());
                 return ['code'=>-2,'msg'=>'订单创建失败','data'=>[]];
             }
         }else{
