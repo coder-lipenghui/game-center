@@ -71,7 +71,7 @@ class CreateOrder extends TabOrders
                     $this->gameServername=$this->serverName;
                     $this->gameRoleId=$this->roleId;
                     $this->gameRoleName=$this->roleName;
-//                    $this->orderId=$orderId;
+                    $this->orderId=$orderId;
                     $this->gameAccount=$this->account;
                     $this->payAmount=$this->money;
                     if ($this->save())
