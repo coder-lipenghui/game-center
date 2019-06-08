@@ -3,12 +3,14 @@
 namespace backend\controllers;
 
 use backend\models\ExportCDKEYModel;
+use backend\models\MyCdkeySearch;
 use backend\models\TabCdkeyVariety;
 use Yii;
 use backend\models\TabCdkey;
 use backend\models\TabCdkeySearch;
 use backend\models\GenerateCDKEYModel;
 use backend\models\AutoCDKEYModel;
+use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -40,12 +42,43 @@ class CdkeyController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new TabCdkeySearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $request=Yii::$app->request;
+        $gameId=0;
+        $distributorId=0;
+        $msg=null;//测试用的msg信息
+        $page=$request->get('page');
+        if(!$page)
+        {
+            $page=1;
+        }
+        if ($request->getBodyParam('MyCdkeySearch'))
+        {
+            $page=1;
+            $params=$request->getBodyParam('MyCdkeySearch');
+            if ($params['gameId'])
+            {
+                $gameId=$params['gameId'];
+            }
+            if($params['distributorId'])
+            {
+                $distributorId=$params['distributorId'];
+            }
+            MyCdkeySearch::TabSuffix($gameId,$distributorId);
+        }else{
+            if ($request->get('gameId') && $request->get('distributorId'))
+            {
+                $gameId=$request->get('gameId');
+                $distributorId=$request->get('distributorId');
+                MyCdkeySearch::TabSuffix($gameId,$distributorId);
+            }
+        }
+        $searchModel = new MyCdkeySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->bodyParams);
+        $dataProvider->setPagination(['params'=>['gameId'=>$gameId,'distributorId'=>$distributorId,'page'=>$page]]);
         return $this->render('index', [
-            'searchModel' => $searchModel,
+            'model' => $searchModel,
             'dataProvider' => $dataProvider,
+            'msg'=>$msg
         ]);
     }
 
@@ -61,7 +94,7 @@ class CdkeyController extends Controller
         $model=new ExportCDKEYModel();
         $request=Yii::$app->request;
         $dataProvider=new ArrayDataProvider();
-        if ($model->load($request->getBodyParams()))
+        if ($model->load($request->queryParams))
         {
             if($model->validate())
             {

@@ -59,7 +59,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::submitButton(Yii::t('app', '查询'), ['class' => 'btn btn-success']) ?>
                 </div>
             </div>
-
             <hr/>
         </div>
         <?php ActiveForm::end(); ?>
@@ -69,6 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                'filterModel' => $searchModel,
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
+
                     [
                         'attribute'=>'varietyId',
                         'label'=>'礼包类型',
