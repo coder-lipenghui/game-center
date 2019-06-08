@@ -557,10 +557,9 @@ class CenterController extends Controller
     public function actionCdkey()
     {
         \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
-
         $request=\Yii::$app->request;
         $model=new ActivateCdkey();
-        $model->load($request->get());
+        $model->load(['ActivateCdkey'=>$request->queryParams]);
         if ($model->validate())
         {
             //游戏检测
@@ -580,48 +579,58 @@ class CenterController extends Controller
                         $variety=TabCdkeyVariety::findOne(['id'=>$cdkey->varietyId]);
                         if ($cdkey)
                         {
-                            //激活码状态更改
-                            $cdkey->setAttribute('used',1);
-                            if($cdkey->save())
+                            if (!$cdkey->used)
                             {
-                                //记录使用信息
-                                $model->setAttribute('gameId',$game->id);
-                                $model->setAttribute('logTime',time());
-                                if ($model->save())
+                                //TODO 激活码类型限制：账号、角色只能使用一次
+
+                                //激活码状态更改
+                                $cdkey->setAttribute('used',1);
+                                if($cdkey->save())
                                 {
-                                    //发货
-                                    $server=TabServers::findOne(['id'=>$model->serverId]);
-                                    $curl=new CurlHttpClient();
-                                    $url='http://'.$server->url;
-                                    $sign=md5($model->roleId.$model->roleName.$model->cdkey.$variety->items.$variety->name.$game->paymentKey);
-                                    $body=[
-                                        'roleId'=>$model->roleId,
-                                        'roleName'=>$model->roleName,
-                                        'cdkey'=>$model->cdkey,
-                                        'variety'=>$variety->name,
-                                        'item'=>$variety->items,
-                                        'sign'=>$sign
-                                    ];
-                                    $json=$curl->sendPostData($url,$body);
-                                    if ($curl->getHttpResponseCode()==200)
+                                    //记录使用信息
+                                    $model->setAttribute('gameId',$game->id);
+                                    $model->setAttribute('logTime',time());
+                                    if ($model->save())
                                     {
-                                        $result=json_decode($json,true);
-                                        $code=$result['code'];
-                                        if ($code==1)
+                                        //发货
+                                        $server=TabServers::findOne(['id'=>$model->serverId]);
+                                        $curl=new CurlHttpClient();
+                                        $url='http://'.$server->url.'/app/ckgift.php?';
+                                        $sign=md5($model->roleId.$model->roleName.$model->cdkey.$variety->items.$variety->name.$game->paymentKey);
+                                        $body=[
+                                            'roleId'=>$model->roleId,
+                                            'roleName'=>$model->roleName,
+                                            'cdkey'=>$model->cdkey,
+                                            'variety'=>$variety->name,
+                                            'item'=>$variety->items,
+                                            'sign'=>$sign
+                                        ];
+                                        $json=$curl->fetchUrl($url.http_build_query($body));
+                                        if ($curl->getHttpResponseCode()==200)
                                         {
-                                            return ['code'=>1,'激活成功,请打开背包查看'];
+                                            exit($json);
+                                            $result=json_decode($json,true);
+                                            $code=$result['code'];
+                                            if ($code==1)
+                                            {
+                                                return ['code'=>1,'msg'=>'激活成功,请打开背包查看'];
+                                            }else{
+                                                //-1：参数错误 -2：连接失败 -3：数据库选取失败 -4：数据写入失败 -5：sign验证失败
+                                                \Yii::error($body,'order');
+                                            return ['code'=>-10,'msg'=>"激活失败[$code]"];
+                                            }
                                         }else{
-                                            //-1：参数错误 -2：连接失败 -3：数据库选取失败 -4：数据写入失败 -5：sign验证失败
-                                            return ['code'=>-8,'激活失败['.$code.']'];
+                                            \Yii::error($url,'cdkey');
+                                            return ['code'=>-9,'msg'=>'激活出现异常'];
                                         }
                                     }else{
-                                        return ['code'=>-7,'msg'=>'激活出现异常'];
+                                        return ['code'=>-8,'msg'=>'激活码激活失败'];
                                     }
                                 }else{
-                                    return ['code'=>-6,'msg'=>'激活码激活失败'];
+                                    return ['code'=>-7,'msg'=>'激活码状态更新失败'];
                                 }
                             }else{
-                                return ['code'=>-6,'msg'=>'激活码状态更新失败'];
+                                return ['code'=>-6,'msg'=>'该激活码已使用'];
                             }
                         }else{
                             return ['code'=>-5,'msg'=>'激活码不存在'];
@@ -636,7 +645,8 @@ class CenterController extends Controller
                 return ['code'=>-2,'msg'=>'游戏不存在'];
             }
         }else{
-            return ['code'=>-1,'msg'=>'参数不正确'];
+            \Yii::error($model->getErrors(),'ckdey');
+            return ['code'=>-1,'msg'=>'参数不正确','data'=>$model->getErrors()];
         }
     }
     /**
