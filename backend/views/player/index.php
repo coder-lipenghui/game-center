@@ -7,40 +7,40 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\TabPlayersSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tab Players');
+$this->title = Yii::t('app', '账号信息');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="tab-players-index">
+<div class="panel panel-default">
+    <div class="panel-body">
+        <?php Pjax::begin(); ?>
+        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Tab Players'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+//                'id',
+                [
+                    'attribute'=>'gameId',
+                    'value'=>'game.name'
+                ],
+                'distributionId',
+                'account',
+                'distributionUserId',
+                //'distributionUserAccount',
+                //'regdeviceId',
+                'regtime',
+                //'regip',
 
-    <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template'=>'{view}'
+                ],
+            ],
+        ]); ?>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'distributionId',
-            'gameId',
-            'account',
-            'distributionUserId',
-            //'distributionUserAccount',
-            //'regdeviceId',
-            //'regtime',
-            //'regip',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-
-    <?php Pjax::end(); ?>
-
+        <?php Pjax::end(); ?>
+    </div>
 </div>

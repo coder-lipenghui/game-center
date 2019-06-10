@@ -88,6 +88,14 @@ return [
                     'logVars' => ['*'],
                     'logFile' => '@runtime/logs/order.log',
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'categories' => ['cdkey'],
+                    'levels' => ['error'],
+//                    'logVars' => ['_POST','_GET','_FILES','_COOKIE'],
+                    'logVars' => ['*'],
+                    'logFile' => '@runtime/logs/cdkey.log',
+                ],
             ],
         ],
         'errorHandler' => [
