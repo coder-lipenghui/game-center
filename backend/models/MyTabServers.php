@@ -13,7 +13,6 @@ class MyTabServers extends TabServers
 {
     public static function searchGameServers($gameId,$distributionId)
     {
-//        exit($gameId." ".$distributionId);
         self::openServer($gameId,$distributionId);
         $query=TabServers::find()
             ->select(['id','name','index','status','socket'=>'CONCAT_WS(":",url,netPort)'])
@@ -26,13 +25,6 @@ class MyTabServers extends TabServers
     }
     public static function openServer($gameId,$distributionId)
     {
-////        多值操作
-//        $params=[$did.''];
-//        $i=0;
-//        $where=[];
-//        foreach($params as $v){
-//            $where[] = new Expression("FIND_IN_SET(:field_$i, field)",[":field_$i"=>$v]);
-//        }
         TabServers::updateAll(
         //attributes
             ['status'=>1],
@@ -43,5 +35,18 @@ class MyTabServers extends TabServers
                 ['>=','openDateTime',date('Y-m-d H:i:i',time())],
                 new Expression('FIND_IN_SET(:value, distributions)'),
             ],['value'=>$distributionId]);
+    }
+    public static function todayOpen()
+    {
+        $cond=['between','openDateTime',strtotime(date('Y-m-d')." 00:00:00"),strtotime(date('Y-m-d')."23:59:59")];
+        $query=TabServers::find()
+            ->asArray()
+            ->where($cond);
+
+        $todayOpen=$query->count('*');
+//        exit($query->createCommand()->getRawSql());
+        $todayOpen=$todayOpen?$todayOpen:0;
+
+        return $todayOpen;
     }
 }

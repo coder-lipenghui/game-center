@@ -1,6 +1,10 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\MyTabOrders;
+use backend\models\MyTabPlayers;
+use backend\models\MyTabServers;
+use backend\models\TabOrders;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -60,7 +64,22 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $msg="";
+        $totalToday=MyTabOrders::todayAmount();
+        $totalMonth=MyTabOrders::currentMonthAmount();
+        $todayOpen=MyTabServers::todayOpen();
+        $todayRegister=MyTabPlayers::todayRegister();
+        $amountGroupByDistributor=MyTabOrders::amountGroupByDistributor();
+        $userGroupByDistributor=MyTabPlayers::numberGroupByDistributor();
+        return $this->render('index',[
+            'totalToday'=>$totalToday,
+            'totalMonth'=>$totalMonth,
+            'todayOpen'=>$todayOpen,
+            'todayRegister'=>$todayRegister,
+            'amountGroupByDistributor'=>$amountGroupByDistributor,
+            'userGroupByDistributor'=>$userGroupByDistributor,
+            'msg'=>$msg,
+        ]);
     }
 
     /**
