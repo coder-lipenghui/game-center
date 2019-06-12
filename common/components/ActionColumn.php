@@ -6,12 +6,12 @@
  * Time: 17:31
  */
 namespace common\components;
-
+use yii\helpers\Html;
 class ActionColumn extends \yii\grid\ActionColumn
 {
 
     public $template = '{:view} {:update} {:delete}';
-
+    public $label="";
     /**
      * 重写了标签渲染方法。
      * @param mixed $model
@@ -37,5 +37,9 @@ class ActionColumn extends \yii\grid\ActionColumn
             return call_user_func($this->buttons[$type], $url, $model, $key);
         }, $this->template);
 
+    }
+    protected function getHeaderCellLabel()
+    {
+       return Html::a($this->label,'javascript:;' , $this->headerOptions);
     }
 }

@@ -10,12 +10,78 @@ use backend\models\TabDistributor;
 
 $this->title = Yii::t('app', '分销渠道管理');
 $this->params['breadcrumbs'][] = $this->title;
+$this->registerJs("
+$('#paramModal').on('show.bs.modal', function (event) {
 
+    var button = $(event.relatedTarget);
+    
+    var game = button.data('game');
+    var distributor = button.data('distributor');
+    
+    var appID = button.data('appid');
+    var appKey = button.data('appkey');
+    var appLoginKey = button.data('apploginkey');
+    var appPaymentKey = button.data('apppaymentkey');
+    var appPublicKey = button.data('apppublickey');
+    
+    var modal = $(this)
+    modal.find('.game').text(game);
+    modal.find('.distributor').text(distributor);
+    modal.find('.appID').text(appID);
+    modal.find('.appKey').text(appKey);
+    modal.find('.appLoginKey').text(appLoginKey);
+    modal.find('.appPaymentKey').text(appPaymentKey);
+    modal.find('.appPublicKey').text(appPublicKey);
+});
+");
 ?>
+<div class="modal fade" id="paramModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">参数详情:</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover">
+                    <tr>
+                        <td>游戏名称:</td>
+                        <td class="game"></td>
+                    </tr>
+                    <tr>
+                        <td>分销商:</td>
+                        <td class="distributor"></td>
+                    </tr>
+                    <tr>
+                        <td>应用ID:</td>
+                        <td class="appID"></td>
+                    </tr>
+                    <tr>
+                        <td>应用Key:</td>
+                        <td class="appKey"></td>
+                    </tr>
+                    <tr>
+                        <td>应用登录Key:</td>
+                        <td class="appLoginKey"></td>
+                    </tr>
+                    <tr>
+                        <td>应用支付Key:</td>
+                        <td class="appPaymentKey"></td>
+                    </tr>
+                    <tr>
+                        <td>应用私钥Key:</td>
+                        <td class="appPrivateKey"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="tab-distribution-index">
     <div class="panel panel-default">
         <div class="panel-body">
             <?= Html::a(Yii::t('app', '新增渠道'), ['create'], ['class' => 'btn btn-success']) ?>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#paramModal" data-appid="随便什么值">Open modal for @mdo</button>
         </div>
     </div>
     <div class="panel panel-default">
@@ -70,12 +136,27 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     ],
                     [
-                        'attribute'=>'appID',
-                        'format'=>'html',
-                        'label'=>'分销参数',
-                        'value'=>function($model){
-                            return Html::a("查看参数",'javascript:;');
-                        }
+                        'label'=>'渠道参数',
+                        'class' => 'common\components\ActionColumn',
+                        'template' => '{:view}',
+                        'buttons' => [
+                            'view' => function ($url, $model, $key) {
+                                $options = [
+                                    'title'=>'什么',
+                                    'label'=>'什么1',
+                                    'data-toggle'=>'modal',
+                                    'data-target'=>'#paramModal',
+                                    'data-game'=>$model->game->name,
+                                    'data-distributor'=>$model->distributor->name,
+                                    'data-appid'=>$model->appID,
+                                    'data-appkey'=>$model->appKey,
+                                    'data-apploginkey'=>$model->appLoginKey,
+                                    'data-apppaymentkey'=>$model->appPaymentKey,
+                                    'data-apppublickey'=>$model->appPublicKey
+                                ];
+                                return Html::a('查看参数','javascript:;', $options);
+                            },
+                        ]
                     ],
                     [
                         'attribute'=>'ratio',
