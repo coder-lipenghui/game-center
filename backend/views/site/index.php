@@ -39,7 +39,7 @@ if ($msg)
             <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">
-                    <h3><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><?=($totalToday/100)."K"; ?></font></font></h3>
+                    <h3><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><?=($totalToday/1000)."K"; ?></font></font></h3>
 
                     <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">今日充值</font></font></p>
                 </div>
@@ -50,7 +50,7 @@ if ($msg)
             <!-- small box -->
             <div class="small-box bg-green">
                 <div class="inner">
-                    <h3><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><?=($totalMonth/100)."K"; ?> </font></font><sup style="font-size: 20px"><font style="vertical-align: inherit;"></font></sup></h3>
+                    <h3><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><?=($totalMonth/1000)."K"; ?> </font></font><sup style="font-size: 20px"><font style="vertical-align: inherit;"></font></sup></h3>
 
                     <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">本月充值</font></font></p>
                 </div>
@@ -100,7 +100,7 @@ if ($msg)
                     本月渠道收入
                 </div>
                 <div class="panel-body">
-                    <div id="income" style="width: 600px;height:400px;"></div>
+                    <div id="income" style="width: 400px;height:400px;"></div>
                     <script type="text/javascript">
                         var myChart = echarts.init(document.getElementById('income'));
 
@@ -138,7 +138,7 @@ if ($msg)
                     各渠道用户数量
                 </div>
                 <div class="panel-body">
-                    <div id="users" style="width: 600px;height:400px;"></div>
+                    <div id="users" style="width: 400px;height:400px;"></div>
                     <script type="text/javascript">
                         var myChart = echarts.init(document.getElementById('users'));
 
@@ -177,7 +177,7 @@ if ($msg)
                     渠道ARPU
                 </div>
                 <div class="panel-body">
-                    <div id="arpu" style="width: 600px;height:400px;"></div>
+                    <div id="arpu" style="width: 400px;height:400px;"></div>
                     <script type="text/javascript">
                         // 基于准备好的dom，初始化echarts实例
                         var myChart = echarts.init(document.getElementById('arpu'));
@@ -214,7 +214,7 @@ if ($msg)
                     渠道ARPPU
                 </div>
                 <div class="panel-body">
-                    <div id="arppu" style="width: 600px;height:400px;"></div>
+                    <div id="arppu" style="width: 400px;height:400px;"></div>
                     <script type="text/javascript">
                         // 基于准备好的dom，初始化echarts实例
                         var myChart = echarts.init(document.getElementById('arppu'));

@@ -21,11 +21,12 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
     <div class="panel-body">
         <button id="btnTest" class="btn btn-info" onclick="">恢复角色</button>
         <button class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="getPlayerName()">强制下线</button>
-        <button class="btn btn-info">申请元宝</button>
+        <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">申请元宝</button>
         <button class="btn btn-info">物品日志</button>
         <button class="btn btn-info">元宝日志</button>
         <button class="btn btn-info">交易日志</button>
         <button class="btn btn-info">死亡日志</button>
+        <!-- 踢玩家下线 -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -45,6 +46,41 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         echo $kickForm->field($kickModel,'playerName')->textInput(['placeholder'=>'角色名称','disabled'=>'disabled']);
                         ActiveForm::end();
                         ?>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" onclick="submitKick()">确认</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+        <!-- 申请元宝 -->
+        <div class="modal fade" id="applyForVcion" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title" id="myModalLabel">元宝申请</h3>
+                    </div>
+
+                    <div class="modal-body" id="kick_playerName">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>游戏:</label>单职业
+                            </div>
+                            <div class="col-md-12">
+                                <label>区服:</label>单职业
+                            </div>
+                            <div class="col-md-12">
+                                <label>账号:</label>单职业
+                            </div>
+                            <div class="col-md-12">
+                                <label>数量:</label>单职业
+                            </div>
+                            <div class="col-md-12">
+                                <label>模拟真实充值:</label><input type="checkbox"/>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -87,32 +123,36 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                             <tr>
                                 <td>名称:<label class="chrname"></label></td>
                                 <td>账号:<label class="account"></label></td>
+                            </tr>
+                            <tr>
                                 <td>渠道:<label class="account"></label></td>
-                            </tr>
-                            <tr>
                                 <td>创建:<label class="create_time"></label></td>
-                                <td>登入:<label class="last_login_time"></label></td>
-                                <td>登出:<label class="last_logout_time"></label></td>
-                            </tr>
-                            <tr>
-                                <td>等级:<label class="lv"></label></td>
-                                <td>金币:<label class="money"></label></td>
-                                <td>元宝:<label class="vcoin"></label></td>
                             </tr>
                             <tr>
                                 <td>职业:<label class="job"></label></td>
                                 <td>性别:<label class="gender"></label></td>
+                            </tr>
+                            <tr>
+                                <td>金币:<label class="money"></label></td>
+                                <td>元宝:<label class="vcoin"></label></td>
+                            </tr>
+                            <tr>
+                                <td>等级:<label class="lv"></label></td>
                                 <td>行会:<label class="guild"></td>
                             </tr>
                             <tr>
                                 <td>血量:<label class="cur_hp"></label></td>
                                 <td>蓝量:<label class="cur_mp"></label></td>
+
+                            </tr>
+                            <tr>
+                                <td>登入:<label class="last_login_time"></label></td>
+                                <td>登出:<label class="last_logout_time"></label></td>
+                            </tr>
+                            <tr>
                                 <td>战神:<label class="herolv"></label></td>
                             </tr>
                         </table>
-                    </div>
-                    <div>
-
                     </div>
                     <div class="row hidden">
                         <table class="roleWears" border="1" id="cloneWearsTarget">
@@ -153,9 +193,9 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         </table>
                     </div>
                     <div id="baseAttribute" class="roleTable">
-                        玩家属性
+
                     </div>
-                    <div id="itemsAttribute" class="roleTable">
+                    <div id="itemsAttribute" class="roleTable hidden">
                         <div class="row">
                             <div class="col-md-1">
                                 <ul class="nav nav-pills" id="tabPosition">
@@ -166,26 +206,19 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                             </div>
                             <div class="col-md-11">
                                <div class="row" id="roleWears">
-                                    身上物品
+<!--                                    身上物品-->
                                </div>
                                 <div class="row" id="roleBag">
-                                    背包物品
+<!--                                    背包物品-->
                                 </div>
                                 <div class="row" id="roleDepot">
-                                    仓库物品
+<!--                                    仓库物品-->
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div id="paramsAttribute" class="roleTable hidden">
                         暂时还没有
-                    </div>
-
-                    <div class="panel-info">
-                        <div class="panel-heading">充值信息</div>
-                        <div class="panel-body">
-                            订单数量，单比最大充值，平均每次充值等各种乱七八糟的信息
-                        </div>
                     </div>
                 </div>
             </div>

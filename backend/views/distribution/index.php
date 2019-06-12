@@ -8,16 +8,14 @@ use backend\models\TabDistributor;
 /* @var $searchModel backend\models\TabDistributionSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', '分销管理');
+$this->title = Yii::t('app', '分销渠道管理');
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
 <div class="tab-distribution-index">
     <div class="panel panel-default">
         <div class="panel-body">
-                <p>
-                    <?= Html::a(Yii::t('app', '新增分销'), ['create'], ['class' => 'btn btn-success']) ?>
-                </p>
+            <?= Html::a(Yii::t('app', '新增渠道'), ['create'], ['class' => 'btn btn-success']) ?>
         </div>
     </div>
     <div class="panel panel-default">
@@ -26,7 +24,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
                     'id',
                     [
                         'attribute'=>'gameId',
@@ -34,16 +31,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute'=>'platform',
+                        'format'=>'html',
                         'value'=>function($model)
                         {
                             $name="未知";
                             switch ($model->platform)
                             {
                                 case 1:
-                                    $name="安卓";
+                                    $name="<div>".Html::img("@web/android.png",['width'=>18,'height'=>18])." 安卓</div>";
                                     break;
                                 case 2:
-                                    $name="IOS";
+                                    $name="<div>".Html::img("@web/ios.png",['width'=>18,'height'=>18])." IOS</div>";
                                     break;
                                 case 3:
                                     $name="页游";
@@ -55,35 +53,69 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute'=>'distributorId',
                         'value'=>'distributor.name'
                     ],
-//                    'parentDT',
                     ['attribute'=>'parentDT','value'=>function($model){
-//                        exit("model:".$model->parentDT);
                         if ($model->parentDT)
                         {
                             $distributor=TabDistributor::find()->where(['id'=>$model->parentDT])->one();
-//                            exit($distributor->createCommand()->getRawSql());
                             return $distributor->name;
                         }
-                        return "-";
+                        return "";
                     }],
+                    [
+                        'attribute'=>'appID',
+                        'format'=>'html',
+                        'label'=>'分销参数',
+                        'value'=>function($model){
+                            return Html::a("查看参数",'javascript:;');
+                        }
+                    ],
+                    [
+                        'attribute'=>'ratio',
+                        'value'=>function($model){
+                            return "1:".$model->ratio;
+                        }
+                    ],
+                    [
+                        'attribute'=>'enabled',
+                        'format'=>'html',
+                        'value'=>function($model)
+                        {
+                            if ($model->enabled)
+                            {
+                                return "<span class='label label-success'>已启用</span>";
+                            }else{
+                                return "<span class='label label-danger'>未启用</span>";
+                            }
+                        }
+                    ],
+                    [
+                        'attribute'=>'isDebug',
+                        'format'=>'html',
+                        'value'=>function($model){
+                            if ($model->isDebug==1)
+                            {
+                                return "<span class='label label-warning'>测试中</span>";
+                            }else{
+                                return "<span class='label label-success'>已完成</span>";
+                            }
+                        }
+                    ],
+//                    'api',
+//                    'appKey',
+//                    'appLoginKey',
+//                    'appPaymentKey',
+//                    'appPublicKey',
+//                    ['attribute'=>'appPublicKey','value'=>function($model){
+//                        if (mb_strlen($model->appPublicKey)>10)
+//                        {
+//                            return mb_substr($model->appPublicKey,0,10)."...";
+//                        }else{
+//                            return $model->appPublicKey;
+//                        }
+//                    }],
+//                    'parentDT',
 //                    'centerLoginKey',
 //                    'centerPaymentKey',
-                    'appID',
-                    'appKey',
-                    'appLoginKey',
-                    'appPaymentKey',
-//                    'appPublicKey',
-                    ['attribute'=>'appPublicKey','value'=>function($model){
-                        if (mb_strlen($model->appPublicKey)>10)
-                        {
-                            return mb_substr($model->appPublicKey,0,10)."...";
-                        }else{
-                            return $model->appPublicKey;
-                        }
-                    }],
-                    'enabled',
-                    //'isDebug',
-//                    'api',
                     ['class' => 'yii\grid\ActionColumn'],
                 ],
             ]); ?>

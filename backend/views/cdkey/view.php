@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             "class"=>"selectpicker form-control col-xs-2",
                             "data-width"=>"fit",
                             "id"=>"dropDownListCDKEYVariety",
-                            "title"=>"激活码分类"
+                            "title"=>"激活码种类"
                         ]
                     ) ?>
                 </div>

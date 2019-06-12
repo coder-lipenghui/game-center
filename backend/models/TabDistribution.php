@@ -19,6 +19,7 @@ use Yii;
  * @property string $appLoginKey 分销商分配的登录KEY
  * @property string $appPaymentKey 分销商提供的充值KEY
  * @property string $appPublicKey RSA等key
+ * @property int $ratio 充值获取元宝比例 默认1:100
  * @property int $enabled 该分销渠道是否启用
  * @property int $isDebug 是否已经上线
  * @property string $api 登录、充值验证接口
@@ -45,7 +46,7 @@ class TabDistribution extends \yii\db\ActiveRecord
     {
         return [
             [['gameId', 'distributorId', 'enabled'], 'required'],
-            [['gameId', 'distributorId', 'parentDT', 'enabled', 'isDebug'], 'integer'],
+            [['gameId', 'distributorId', 'parentDT','ratio', 'enabled', 'isDebug'], 'integer'],
             [['platform'], 'string', 'max' => 50],
             [['centerLoginKey', 'centerPaymentKey'], 'string', 'max' => 32],
             [['appID', 'appKey', 'appLoginKey', 'appPaymentKey', 'appPublicKey'], 'string', 'max' => 255],
@@ -73,8 +74,9 @@ class TabDistribution extends \yii\db\ActiveRecord
             'appLoginKey' => Yii::t('app', '分销登录KEY'),
             'appPaymentKey' => Yii::t('app', '分销充值KEY'),
             'appPublicKey' => Yii::t('app', '分销充值KEY2'),
+            'ratio'=>Yii::t('app','充值比例'),
             'enabled' => Yii::t('app', '是否可用'),
-            'isDebug' => Yii::t('app', '正式启用'),
+            'isDebug' => Yii::t('app', '正在调试'),
             'api' => Yii::t('app', '回调地址'),
         ];
     }
