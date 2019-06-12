@@ -11,15 +11,18 @@ namespace backend\controllers\center;
 use backend\models\AutoCDKEYModel;
 use backend\models\center\ActivateCdkey;
 use backend\models\center\CreateOrder;
+use backend\models\center\CreateOrderDebug;
 use backend\models\center\EnterGame;
 use backend\models\center\Login;
 use backend\models\MyTabNotice;
+use backend\models\MyTabOrders;
 use backend\models\MyTabServers;
 use backend\models\TabCdkeyRecord;
 use backend\models\TabCdkeyVariety;
 use backend\models\TabDistribution;
 use backend\models\TabGames;
 use backend\models\TabOrders;
+use backend\models\TabOrdersDebug;
 use backend\models\TabPlayers;
 use backend\models\TabServers;
 use common\helps\CurlHttpClient;
@@ -172,7 +175,12 @@ class CenterController extends Controller
 
             if ($orderArray!=null)
             {
-                $order=TabOrders::find()->where(['orderId'=>$orderArray['orderId']])->one();
+                if ($distribution->isDebug==1)
+                {
+                    $order=TabOrdersDebug::find()->where(['orderId'=>$orderArray['orderId']])->one();
+                }else{
+                    $order=TabOrders::find()->where(['orderId'=>$orderArray['orderId']])->one();
+                }
                 if($order)
                 {
                     //充值金额校验
@@ -186,7 +194,7 @@ class CenterController extends Controller
                             if($order->save())
                             {
                                 //通知分销渠道充值成功
-                                if (!$this->deliver($order['orderId']))
+                                if (!$this->deliver($order['orderId'],$distribution))
                                 {
                                     return $this->paymentDeliverFailed;
                                 }
@@ -265,101 +273,9 @@ class CenterController extends Controller
      * @param $orderId 我方订单号
      * @return bool 发货成功|失败
      */
-    protected function deliver($orderId)
+    protected function deliver($orderId,$distribution)
     {
-        //TODO 按照渠道的充值比例进行发货，游戏记录的金额为分，默认1：100的比例。
-
-        $orderQuery=TabOrders::find()->where(['orderId'=>$orderId]);
-        $order=$orderQuery->one();
-        if ($order===null)
-        {
-            $msg="订单不存在";
-            \Yii::error($msg." orderId:".$orderId,"order");
-            return false;
-        }
-        if ($order->payStatus>0)
-        {
-            $server=TabServers::find()->where(['id'=>$order->gameServerId])->one();
-            if ($server===null)
-            {
-                $msg="区服不存在";
-                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
-                return false;
-            }
-            $distribution=TabDistribution::find()->where(['id'=>$order->distributionId])->one();
-            if ($distribution===null)
-            {
-                $msg="渠道不存在";
-                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
-                return false;
-            }
-            $requestBody=[
-                'channelId'=>$distribution->id,
-                'paytouser'=>$order->gameAccount,
-                'paynum'=>$order->orderId,
-                'paygold'=>$order->payAmount/100*100,//发放元宝数量= 分/100*比例
-                'paymoney'=>$order->payAmount/100,
-                'flags'=>1,// 1：充值发放 其他：非充值发放
-                'paytime'=>$order->payTime,
-                'serverid'=>$order->gameServerId,
-            ];
-            $game=TabGames::find()->where(['id'=>$server->gameId])->one();
-            if($game)
-            {
-                $paymentKey=$game->paymentKey;
-
-                $requestBody['flag'] = md5($requestBody['paynum'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
-
-                $url="http://".$server->url."/app/ckcharge.php?".http_build_query($requestBody);
-
-                $curl=new CurlHttpClient();
-                $resultJson=$curl->fetchUrl($url);
-                $result=json_decode($resultJson,true);
-                $msg="";
-                switch ($result['code'])
-                {
-                    case 1:  //发货成功
-                    case -5: //订单重复
-                        $order->delivered=1;//发货状态：0：未发货 1：已发货
-                        if(!$order->save())
-                        {
-                            $msg="更新订单发货状态失败";
-                            LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getErrors());
-                        }
-                        return true;
-                        break;
-                    case -1: //防沉迷数据库连接失败
-                        $msg="防沉迷数据库连接失败";
-                        break;
-                    case -2: //账号未找到
-                        $msg="[".$requestBody['paytouser']."]账号未找到";
-                        break;
-                    case -3: //IP限制，暂时废弃
-                        $msg="IP限制";
-                        break;
-                    case -4: //sign验证出错
-                        $msg="sign验证出错";
-                        break;
-                    case -6: //超时，暂时废弃
-                        $msg="超时";
-                        break;
-                    case -8: //发货参数不全
-                        $msg="发货参数不全";
-                        break;
-                    case -9: //发货数与金额比例不正确，服务器侧写死了【paymoney*100=paygold】
-                        $msg="发货数与金额比例不正确";
-                        break;
-                }
-                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$resultJson);
-            }else{
-                $msg="游戏不存在";
-                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$game->getFirstError());
-            }
-        }else{
-            $msg="订单未支付成功";
-            LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
-        }
-        return false;
+        return MyTabOrders::deliver($orderId,$distribution);
     }
     /**
      * 游戏客户端请求订单接口
@@ -378,26 +294,40 @@ class CenterController extends Controller
         {
             $distributionOrderId=null;
             $distributionOrder=$this->getOrderFromDistribution($requestData);
-
-            $order=$model->create();
-            if ($order!=null)
+            $distribution=TabDistribution::find()->where(['id'=>$model->distributionId])->one();
+            if ($distribution)
             {
-                $result['code']=1;
-                $result['msg']='success';
-                $result['data']=[
-                    'orderId'=>$order->orderId,
-                    'distributionOrderId'=>$distributionOrderId
-                ];
-                if ($distributionOrder!=null)
+                $order=null;
+                if ($distribution->isDebug==1)//测试状态下 将订单写入到debug表中
                 {
-                    $data=array_merge($result['data'],$distributionOrder);
-                    $result['data']=$data;
+                    $model=new CreateOrderDebug();
+                    $model->load(['CreateOrderDebug'=>$requestData]);
+                    $order=$model->create();
+                }else{
+                    $order=$model->create();
                 }
-                return $result;
+                if ($order!=null)
+                {
+                    $result['code']=1;
+                    $result['msg']='success';
+                    $result['data']=[
+                        'orderId'=>$order->orderId,
+                        'distributionOrderId'=>$distributionOrderId
+                    ];
+                    if ($distributionOrder!=null)
+                    {
+                        $data=array_merge($result['data'],$distributionOrder);
+                        $result['data']=$data;
+                    }
+                    return $result;
+                }else{
+                    LoggerHelper::OrderError($model->gameId,$model->distributionId,"订单创建失败",$model->getErrors());
+                    return ['code'=>-3,'msg'=>'订单创建失败','data'=>[]];
+                }
             }else{
-                LoggerHelper::OrderError($model->gameId,$model->distributionId,"订单创建失败",$model->getErrors());
-                return ['code'=>-2,'msg'=>'订单创建失败','data'=>[]];
+                return ['code'=>-2,'msg'=>'分销渠道不存在','data'=>[]];
             }
+
         }else{
             return ['code'=>-1,'msg'=>'参数错误','data'=>[]];
         }
