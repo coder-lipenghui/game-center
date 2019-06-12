@@ -20,14 +20,21 @@ class ItemDefHelper
      */
     public static function getNameById($gameid,$id)
     {
-        $itemdef=TabItemdefDzy::find()->where(['id'=>$id])->asArray()->one();
+        $cache=\Yii::$app->cache;
+        $key="itemdef_".$gameid."_".$id;
         $name=null;
-        try{
-
-            $name=$itemdef['name'];
-        }catch (\Exception $e)
+        if($cache->get($key))
         {
+            $name=$cache->get($key);
+        }else{
+            $itemdef=TabItemdefDzy::find()->where(['id'=>$id])->asArray()->one();
+            try{
+                $name=$itemdef['name'];
+                $cache->set($key,$name,36000);
+            }catch (\Exception $e)
+            {
 //            return "未获取到物品名称";
+            }
         }
         return $name;
     }

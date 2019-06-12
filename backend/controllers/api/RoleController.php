@@ -10,6 +10,7 @@ namespace backend\controllers\api;
 use backend\models\command\CmdKick;
 use common\helps\ItemDefHelper;
 use Yii;
+use yii\base\Exception;
 use yii\data\Pagination;
 use backend\models\api\RoleInfo;
 use backend\models\MyTabPermission;
@@ -32,26 +33,54 @@ class RoleController extends BaseController
         $total=$size['count'];
         $offset=4;
         $items=[];
-        for ($i=0;$i<$total;$i++) {
-            //将前面的int、short类型的值全部读取出来
-            $item = unpack($unpackFormat,substr($data,$offset, $formatLen));
-            $offset += $formatLen;
-            //固定三个字符串值：itemplayer，itemfrom，itemtag
-            for ($k=0; $k < 3; $k++) {
-                $tempLen=0;
-                for ($j=0; $j < $binaryLen; $j++) {
-                    $char=unpack('a', substr($data, $offset+$j,$offset+$j+1));
-                    if ($char[1]=="\0") {
-                        $tempLen=$j+1;
-                        break;
+        try{
+            for ($i=0;$i<$total;$i++) {
+                //将前面的int、short类型的值全部读取出来
+                $item = unpack($unpackFormat,substr($data,$offset, $formatLen));
+                $offset += $formatLen;
+                //固定三个字符串值：itemplayer，itemfrom，itemtag
+                $tempDesp=['产出玩家:','产出方式：','其他:'];
+                for ($k=0; $k < 3; $k++) {
+                    $tempLen=0;
+                    for ($j=0; $j < $binaryLen; $j++) {
+                        $char=unpack('a', substr($data, $offset+$j,$offset+$j+1));
+                        if ($char[1]=="\0") {
+                            $tempLen=$j+1;
+                            break;
+                        }
                     }
+                    $temStr=unpack('a*',substr($data, $offset,$tempLen));
+//                    echo($tempDesp[$k].$temStr[1]."<br/>");
+                    $item[]=$temStr[1];
+                    $offset+=$tempLen;
                 }
-                $temStr=unpack('a*',substr($data, $offset,$tempLen));
-                $item[]=$temStr[1];
                 $item['type']=ItemDefHelper::getItemInfoById(1,$item['type']);
-                $offset+=$tempLen;
+//                echo("物品信息:".json_encode($item['type'],JSON_UNESCAPED_UNICODE)."<br/>");
+                //洗练属性
+                $formatWashLen=20;
+                $formatWash="ltype/lvalue/lvalueMax/llock/llv/";
+                $wash=null;
+                for ($l=0;$l<4;$l++)
+                {
+                    $wash=unpack($formatWash, substr($data, $offset,$formatWashLen));
+                    $offset+=$formatWashLen;
+                }
+//                echo("洗练属性:".json_encode($wash)."<br/>");
+                //鉴定属性
+                $assess=null;
+                $formatAssess="ltype/lvalue/lvaluemax/llv/";
+                $formatAssessLen=16;
+                for($m=0;$m<4;$m++)
+                {
+                    $assess=unpack($formatAssess,substr($data,$offset,$formatAssessLen));
+                    $offset+=$formatAssessLen;
+                }
+//                echo("鉴定属性:".json_encode($assess)."<br/>");
+                $items[]=$item;
             }
-            $items[]=$item;
+        }catch (Exception $exception)
+        {
+//            exit("解析出现异常");
         }
         return $items;
     }
@@ -63,11 +92,10 @@ class RoleController extends BaseController
 
         $permissionModel=new MyTabPermission();
         $games=$permissionModel->allowAccessGame();
-        $distributors=[];
-        $servers=[];
+        //$distributors=[];
+        //$servers=[];
         if ($searchModel->validate())
         {
-
             $page=1;
             if ($request->get('page'))
             {
@@ -75,17 +103,20 @@ class RoleController extends BaseController
             }
             $queryBody=http_build_query($searchModel->getAttributes());
             if($this->initApiUrl( $searchModel->gameId,$searchModel->distributorId , $searchModel->serverId,$queryBody."&page=".$page)) {
+//                exit("初始化成功");
                 $result=$this->getJsonData();
                 $result = json_decode($result, true);
                 $players = $result['items'];
                 for ($i = 0; $i < count($players); $i++) {
                     $result['items'][$i]['item_bag'] = $this->itemParser($result['items'][$i]['item_bag']);
-                    $result['items'][$i]['item_depot1'] = $this->itemParser($result['items'][$i]['item_depot1']);
-                    $result['items'][$i]['item_depot2'] = $this->itemParser($result['items'][$i]['item_depot2']);
-                    //                $result['items'][$i]['item_depot3']=$this->itemParser($result['items'][$i]['item_depot3']);
+//                    $result['items'][$i]['item_depot1'] = $this->itemParser($result['items'][$i]['item_depot1']);
+//                    $result['items'][$i]['item_depot2'] = $this->itemParser($result['items'][$i]['item_depot2']);
+//                    //                $result['items'][$i]['item_depot3']=$this->itemParser($result['items'][$i]['item_depot3']);
                 }
                 $result = json_encode($result);
                 return $result;
+            }else{
+                exit("初始化失败?");
             }
         }else{
             if (!$request->isAjax)
