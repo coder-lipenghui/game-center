@@ -77,7 +77,7 @@ class TabDistribution extends \yii\db\ActiveRecord
             'ratio'=>Yii::t('app','充值比例'),
             'enabled' => Yii::t('app', '是否可用'),
             'isDebug' => Yii::t('app', '正在调试'),
-            'api' => Yii::t('app', '回调地址'),
+            'api' => Yii::t('app', 'SDK名'),
         ];
     }
 

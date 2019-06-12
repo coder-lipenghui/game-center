@@ -75,16 +75,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-2">
-                    <?= $form->field($model, 'enabled')->textInput() ?>
+                <div class="col-md-1">
+                    <?= $form->field($model, 'enabled')->dropDownList(
+                        [0=>"禁用",1=>"启用"]
+                    ) ?>
                 </div>
-                <div class="col-md-2">
-                    <?= $form->field($model, 'isDebug')->textInput() ?>
+                <div class="col-md-1">
+                    <?= $form->field($model, 'isDebug')->dropDownList(
+                        [0=>"已完成",1=>"测试中"]
+                    ) ?>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <?= $form->field($model, 'api')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'ratio')->textInput(['maxlength' => true,'value'=>100]) ?>
+
                 </div>
             </div>
         </div>
@@ -109,8 +114,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <div class="row">
+                <div class="col-md-4">
+                    <?= $form->field($model, 'appPublicKey')->textarea(['rows' => 6,'placeholder'=>'常规填写RSA类型的KEY']) ?>
+                </div>
+            </div>
+        </div>
+        <div class="panel-heading">
+            其他：
+        </div>
+        <div class="panel-body">
+            <div class="row">
                 <div class="col-md-2">
-                    <?= $form->field($model, 'appPublicKey')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'api')->textInput(['maxlength' => true,'placeholder'=>'区分同一家分销商可能存在多个SDK的情况，只做展示']) ?>
                 </div>
             </div>
         </div>

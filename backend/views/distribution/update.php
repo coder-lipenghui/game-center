@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
+use backend\models\TabGames;
+use backend\models\TabDistributor;
 /* @var $this yii\web\View */
 /* @var $model backend\models\TabDistribution */
 
@@ -12,79 +15,126 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '分销渠道管理')
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
-<div class="panel panel-default">
-    <div class="panel-body">
-        <?php $form = ActiveForm::begin(); ?>
-        <div class="row">
-            <div class="col-md-2">
-                <?= $form->field($model, 'gameId')->textInput() ?>
-            </div>
-            <div class="col-md-2">
-                <?= $form->field($model, 'platform')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-md-2">
-                <?= $form->field($model, 'distributorId')->textInput() ?>
-            </div>
-            <div class="col-md-2">
-                <?= $form->field($model, 'parentDT')->textInput() ?>
-            </div>
+<div class="tab-distribution-update">
+    <?php $form = ActiveForm::begin(); ?>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            研发配置信息：
         </div>
-        <div class="row">
-            <div class="col-md-3">
-                <?= $form->field($model, 'centerLoginKey')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-md-3">
-                <?= $form->field($model, 'centerPaymentKey')->textInput(['maxlength' => true]) ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">
-                <?= $form->field($model, 'appID')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-md-2">
-                <?= $form->field($model, 'appKey')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-md-2">
-                <?= $form->field($model, 'appLoginKey')->textInput(['maxlength' => true]) ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <?= $form->field($model, 'appPaymentKey')->textInput(['maxlength' => true]) ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <?= $form->field($model, 'appPublicKey')->textarea(['rows' => 6]) ?>
-            </div>
-        </div>
+        <div class="panel-body">
 
-        <div class="row">
-            <div class="col-md-1">
-                <?= $form->field($model, 'enabled')->dropDownList(
-                    [0=>"禁用",1=>"启用"]
-                ) ?>
+            <div class="row">
+                <div class="col-md-1">
+                    <?= $form->field($model, 'gameId')->dropDownList(
+                        ArrayHelper::map(TabGames::find()->asArray()->all(),'id','name'),
+                        [
+                            "class"=>"selectpicker form-control col-xs-2",
+                            "data-width"=>"fit",
+                            "title"=>"选择游戏"
+                        ]
+                    ) ?>
+                </div>
+                <div class="col-md-1">
+                    <?= $form->field($model, 'distributorId')->dropDownList(
+                        ArrayHelper::map(TabDistributor::find()->asArray()->all(),'id','name'),
+                        [
+                            "class"=>"selectpicker form-control col-xs-2",
+                            "data-width"=>"fit",
+                            "title"=>"选择分销商"
+                        ]
+                    ) ?>
+                </div>
+                <div class="col-md-1">
+                    <?= $form->field($model, 'parentDT')->dropDownList(
+                        ArrayHelper::map(TabDistributor::find()->asArray()->all(),'id','name'),
+                        [
+                            "class"=>"selectpicker form-control col-xs-2",
+                            "data-width"=>"fit",
+                            "title"=>"选择分销商"
+                        ]
+
+                    ) ?>
+                </div>
+                <div class="col-md-1">
+                    <?= $form->field($model, 'platform')->dropDownList(
+                        [
+                            1=>'安卓',2=>'IOS'
+                        ],
+                        [
+                            "class"=>"selectpicker form-control col-xs-2",
+                            "data-width"=>"fit",
+                            "title"=>"设备平台"
+                        ]
+                    ) ?>
+                </div>
             </div>
-            <div class="col-md-1">
-                <?= $form->field($model, 'isDebug')->dropDownList(
-                    [0=>"已完成",1=>"测试中"]
-                ) ?>
+            <div class="row">
+                <div class="col-md-3">
+                    <?= $form->field($model, 'centerLoginKey')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-3">
+                    <?= $form->field($model, 'centerPaymentKey')->textInput(['maxlength' => true]) ?>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">
-                <?= $form->field($model, 'api')->textInput(['maxlength' => true]) ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-1">
-                <div class="form-group">
-                    <?= Html::submitButton(Yii::t('app', '确认修改'), ['class' => 'btn btn-success']) ?>
+            <div class="row">
+                <div class="col-md-1">
+                    <?= $form->field($model, 'enabled')->dropDownList(
+                        [0=>"禁用",1=>"启用"]
+                    ) ?>
+                </div>
+                <div class="col-md-1">
+                    <?= $form->field($model, 'isDebug')->dropDownList(
+                        [0=>"已完成",1=>"测试中"]
+                    ) ?>
+                </div>
+                <div class="col-md-1">
+                    <?= $form->field($model, 'ratio')->textInput(['maxlength' => true,'value'=>100]) ?>
                 </div>
             </div>
         </div>
-
-
-        <?php ActiveForm::end(); ?>
+        <div class="panel-heading">
+            分销渠道参数：
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <?= $form->field($model, 'appID')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-3">
+                    <?= $form->field($model, 'appKey')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <?= $form->field($model, 'appLoginKey')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-3">
+                    <?= $form->field($model, 'appPaymentKey')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <?= $form->field($model, 'appPublicKey')->textarea(['rows' => 6,'placeholder'=>'常规填写RSA类型的KEY']) ?>
+                </div>
+            </div>
+        </div>
+        <div class="panel-heading">
+            其他：
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <?= $form->field($model, 'api')->textInput(['maxlength' => true,'placeholder'=>'区分同一家分销商可能存在多个SDK的情况，只做展示']) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <?= Html::submitButton(Yii::t('app', '确认修改'), ['class' => 'btn btn-success']) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <?php ActiveForm::end(); ?>
 </div>

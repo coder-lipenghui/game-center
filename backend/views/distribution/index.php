@@ -62,6 +62,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         return "";
                     }],
                     [
+                        'attribute'=>'api',
+                        'label'=>'SDK',
+                        'format'=>'html',
+                        'value'=>function($model){
+                            return '<span class="label label-primary">'.$model->api.'</span>';
+                        }
+                    ],
+                    [
                         'attribute'=>'appID',
                         'format'=>'html',
                         'label'=>'分销参数',
@@ -100,7 +108,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                         }
                     ],
-//                    'api',
 //                    'appKey',
 //                    'appLoginKey',
 //                    'appPaymentKey',
