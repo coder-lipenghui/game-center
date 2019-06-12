@@ -30,7 +30,8 @@ function doMailAjaxSubmit() {
         dataType: "json",
         data:formData,
         success:function (data) {
-            alert(data.msg);
+            $("#cmdResult").text(data[0].msg);
+            $("#myModal").modal('toggle');
         },
         error:function (msg) {
             alert("请求失败"+msg.code);

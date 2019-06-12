@@ -6,35 +6,30 @@
  * Time: 22:00
  */
 
-use yii\widgets\Pjax;
-use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use backend\models\TabItemdefDzy;
 $this->title = Yii::t('app', '邮件');
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/api/itemSearch.js',['depends'=>'yii\web\YiiAsset']);
 $this->registerJsFile('@web/js/common.js');
 $this->registerJsFile('@web/js/api/dropdown_menu.js',['depends'=>'yii\web\YiiAsset']);
 $this->registerJsFile('@web/js/api/mail.js',['depends'=>'yii\web\YiiAsset']);
-/*
- * TODO 因为没有搞通yii2的Pjax+ActiveForm不刷新ActiveForm部分 暂时用了这种特别操蛋的方式
- */
-$jsStart="$(function(){";
-$jsStart=$jsStart.'getItems("#selectItems",1,"../");';
-$jsGetGame='getGame("#games",true,"'.$searchModel->gameid.'","../");';
-$jsGetPt="";
-$jsGetServer="";
-if($searchModel->pid){
-    $jsGetPt='//getDistributor("#platform",true,"'.$searchModel->gameid.'","'.$searchModel->pid.'","../");';
-}
-if ($searchModel->sid)
-{
-    $jsGetServer='//getServers("#servers",false,"'.$searchModel->gameid.'","'.$searchModel->pid.'","'.$searchModel->sid.'","../");';
-}
-$jsEnd="})";
-$js=$jsStart.$jsEnd;
-$this->registerJs($js);
 ?>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">提示</h4>
+            </div>
+            <div class="modal-body" id="cmdResult">
+
+            </div>
+        </div>
+    </div>
+</div>
 <div class="panel panel-default">
     <?php
     $form=ActiveForm::begin([
@@ -50,7 +45,7 @@ $this->registerJs($js);
             <table class="table table-info">
                 <tr>
                     <td>
-                        <?=$form->field($searchModel,'gameid')->dropDownList(
+                        <?=$form->field($searchModel,'gameId')->dropDownList(
                             $games,
                             [
                                 "class"=>"selectpicker form-control col-xs-2",
@@ -62,14 +57,14 @@ $this->registerJs($js);
                         );?>
                     </td>
                     <td>
-                        <?=$form->field($searchModel,'pid')->dropDownList(
+                        <?=$form->field($searchModel,'distributorId')->dropDownList(
                             [],
                             [
                                 "class"=>"selectpicker form-control col-xs-2",
                                 "data-width"=>"fit",
                                 "id"=>"platform",
                                 "onchange"=>"changePt(this)",
-                                "title"=>"选择平台"
+                                "title"=>"选择分销商"
                             ]
                         );?>
                     </td>
@@ -86,7 +81,7 @@ $this->registerJs($js);
                         );?>
                     </td>
                     <td>
-                        <?=$form->field($searchModel,'sid')->dropDownList(
+                        <?=$form->field($searchModel,'serverId')->dropDownList(
                             [],
                             [
                                 "class"=>"selectpicker form-control col-xs-2",
@@ -148,7 +143,19 @@ $this->registerJs($js);
 
                 <div class="modal-body" id="kick_playerName">
 
-                    <label>物品名称:</label><select id="selectItems" class="selectpicker" data-live-search="true"></select>
+                    <label>物品名称:</label>
+                    <?php
+                        echo Html::dropDownList(
+                                "selectItems",
+                                null,
+                                \yii\helpers\ArrayHelper::map(TabItemdefDzy::find()->select(['id','name'])->all(),'id','name'),
+                                [
+                                    'id'=>'selectItems',
+                                    'class'=>'selectpicker',
+                                    'data-live-search'=>'true'
+                                ]
+                            );
+                    ?>
                     <label>数量:</label>
                     <button id="btnSub" onclick="doSub()"><span class="glyphicon glyphicon-minus-sign"></span></button>
                     <input id="itemNum" size="5" value="1"/>

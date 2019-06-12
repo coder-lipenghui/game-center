@@ -39,7 +39,7 @@ class CmdController extends Controller
     public function actionMail()
     {
         $code=0;
-        $msg="邮件发放失败";
+        $msg=null;
         $request=\Yii::$app->request;
         $mailModel=new CmdMail();
         $mailModel->load($request->queryParams);
@@ -48,18 +48,18 @@ class CmdController extends Controller
         $games=$permissionModel->allowAccessGame();
 
         if ($mailModel->validate()) {
-            $code = $mailModel->execu();
-            $msg=$mailModel->errorMessage;
-        }else{
+            $mailModel->execu();
+            $msg=$mailModel->result;
+        }
+        else{
             if ($request->isAjax)
             {
-                return json_encode(['code'=>$code,'msg'=>'参数错误']);
+                return json_encode($msg);
             }
         }
-
         if ($request->isAjax)
         {
-            return json_encode(['code'=>$code,'msg'=>$msg]);
+            return json_encode($msg);
         }
         return $this->render('mail',[
             'searchModel'=>$mailModel,

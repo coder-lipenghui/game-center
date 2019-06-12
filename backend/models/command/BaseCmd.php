@@ -57,7 +57,7 @@ class BaseCmd extends Model
         $this->result=[];
         $this->buildCommand();
         $this->buildServers();
-        echo("开始对".count($this->serverList)."个区服执行CMD命令");
+//        echo("开始对".count($this->serverList)."个区服执行CMD命令");
         for ($i=0;$i<count($this->serverList);$i++)
         {
             $server=$this->serverList[$i];
