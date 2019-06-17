@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\TabPermissionSearch */
+/* @var $model backend\models\TabSupporSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="tab-permission-search">
+<div class="tab-suppor-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -20,17 +20,25 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'uid') ?>
+    <?= $form->field($model, 'sponsor') ?>
 
     <?= $form->field($model, 'gameId') ?>
 
     <?= $form->field($model, 'distributorId') ?>
 
-    <?= $form->field($model, 'distributionId') ?>
+    <?= $form->field($model, 'serverId') ?>
 
-    <?= $form->field($model, 'support') ?>
+    <?php // echo $form->field($model, 'roleAccount') ?>
 
-    <?php // echo $form->field($model, 'description') ?>
+    <?php // echo $form->field($model, 'reason') ?>
+
+    <?php // echo $form->field($model, 'type') ?>
+
+    <?php // echo $form->field($model, 'number') ?>
+
+    <?php // echo $form->field($model, 'status') ?>
+
+    <?php // echo $form->field($model, 'verifier') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

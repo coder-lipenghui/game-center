@@ -14,6 +14,7 @@ use yii\db\Expression;
  * @property int $gameId 游戏id
  * @property int $distributorId 分销商ID
  * @property int $distributionId 分销渠道ID
+ * @property int $support 是否有审核扶持的权限
  * @property string $description 备注
  *
  * @property TabGames $game
@@ -41,6 +42,7 @@ class TabPermission extends \yii\db\ActiveRecord
             'gameId' => Yii::t('app', '游戏名称'),
             'distributorId' => Yii::t('app', '分销商'),
             'distributionId' => Yii::t('app', '设备平台'),
+            'support'=>Yii::t('app','扶持审核'),
             'description' => Yii::t('app', '备注'),
         ];
     }
@@ -52,7 +54,7 @@ class TabPermission extends \yii\db\ActiveRecord
     {
         return [
             [['uid', 'gameId', 'distributorId', 'distributionId'], 'required'],
-            [['uid', 'gameId', 'distributorId', 'distributionId'], 'integer'],
+            [['uid', 'gameId', 'distributorId', 'distributionId','support'], 'integer'],
             [['description'], 'string', 'max' => 255],
             [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
             [['uid'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['uid' => 'id']],

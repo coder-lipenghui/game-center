@@ -81,7 +81,6 @@ $('#paramModal').on('show.bs.modal', function (event) {
     <div class="panel panel-default">
         <div class="panel-body">
             <?= Html::a(Yii::t('app', '新增渠道'), ['create'], ['class' => 'btn btn-success']) ?>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#paramModal" data-appid="随便什么值">Open modal for @mdo</button>
         </div>
     </div>
     <div class="panel panel-default">

@@ -20,6 +20,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'distributionId')->textInput() ?>
 
+    <?= $form->field($model, 'support')->textInput() ?>
+
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">

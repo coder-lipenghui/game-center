@@ -12,6 +12,7 @@ class ActionColumn extends \yii\grid\ActionColumn
 
     public $template = '{:view} {:update} {:delete}';
     public $label="";
+    public $permission=null;
     /**
      * 重写了标签渲染方法。
      * @param mixed $model
@@ -33,7 +34,6 @@ class ActionColumn extends \yii\grid\ActionColumn
             }
 
             $url = $this->createUrl($name, $model, $key, $index);
-
             return call_user_func($this->buttons[$type], $url, $model, $key);
         }, $this->template);
 
@@ -41,5 +41,12 @@ class ActionColumn extends \yii\grid\ActionColumn
     protected function getHeaderCellLabel()
     {
        return Html::a($this->label,'javascript:;' , $this->headerOptions);
+    }
+
+    protected function checkPermission(){
+        if (is_callable($this->permission))
+        {
+            $this->permission($this->buttons);
+        }
     }
 }

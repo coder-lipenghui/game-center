@@ -34,7 +34,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['attribute'=>'gameId','value'=>'game.name'],
                     ['attribute'=>'distributorId','value'=>'distributor.name'],
                     ['attribute'=>'distributionId','value'=>'distribution.platform'],
-
+                    [
+                        'attribute'=>'support',
+//                        'format'=>'html'
+                        'value'=>function($model){
+                            $status="无";
+                            if ($model->support==1)
+                            {
+                                $status="有";
+                            }
+                            return $status;
+                        }
+                    ],
                     ['class' => 'yii\grid\ActionColumn'],
                 ],
             ]); ?>
