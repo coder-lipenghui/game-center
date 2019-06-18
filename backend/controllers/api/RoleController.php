@@ -24,6 +24,7 @@ class RoleController extends BaseController
     }
     public  function itemParser($data)
     {
+        //exit("1");
         //TODO 这个接口需要整理到版本分类中，每个游戏有自己不同的写入规则
         $data=base64_decode($data);
         $binaryLen=strlen($data);
@@ -80,12 +81,14 @@ class RoleController extends BaseController
             }
         }catch (Exception $exception)
         {
-//            exit("解析出现异常");
+            exit("解析出现异常");
         }
+//        exit(json_encode($items,JSON_UNESCAPED_UNICODE));
         return $items;
     }
     public function actionIndex()
     {
+        ini_set('max_execution_time',0); //设置程序的执行时间,0为无上限
         $searchModel=new RoleInfo();
         $request=Yii::$app->request;
         $searchModel->load($request->queryParams);
@@ -106,14 +109,16 @@ class RoleController extends BaseController
 //                exit("初始化成功");
                 $result=$this->getJsonData();
                 $result = json_decode($result, true);
-                $players = $result['items'];
-                for ($i = 0; $i < count($players); $i++) {
-                    $result['items'][$i]['item_bag'] = $this->itemParser($result['items'][$i]['item_bag']);
+                $items = $result['items'];
+                for ($i = 0; $i < count($items); $i++) {
+//                    $bagItems=$this->itemParser($items[$i]['item_bag']);
+//                    var_dump($bagItems);
+//                    $result['items'][$i]['item_bag'] = $bagItems;
 //                    $result['items'][$i]['item_depot1'] = $this->itemParser($result['items'][$i]['item_depot1']);
 //                    $result['items'][$i]['item_depot2'] = $this->itemParser($result['items'][$i]['item_depot2']);
-//                    //                $result['items'][$i]['item_depot3']=$this->itemParser($result['items'][$i]['item_depot3']);
                 }
                 $result = json_encode($result);
+//                exit(json_encode($result));
                 return $result;
             }else{
                 exit("初始化失败?");
