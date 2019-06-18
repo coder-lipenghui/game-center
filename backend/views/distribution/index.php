@@ -95,28 +95,24 @@ $('#paramModal').on('show.bs.modal', function (event) {
                         'value'=>'game.name'
                     ],
                     [
-                        'attribute'=>'platform',
+                        'attribute'=>'distributorId',
                         'format'=>'html',
-                        'value'=>function($model)
-                        {
-                            $name="未知";
+                        'value'=>function($model){
+                            $platform="未知";
                             switch ($model->platform)
                             {
                                 case 1:
-                                    $name="<div>".Html::img("@web/android.png",['width'=>18,'height'=>18])." 安卓</div>";
+                                    $platform=Html::img("@web/android.png",['width'=>18,'height'=>18]);
                                     break;
                                 case 2:
-                                    $name="<div>".Html::img("@web/ios.png",['width'=>18,'height'=>18])." IOS</div>";
+                                    $platform=Html::img("@web/ios.png",['width'=>18,'height'=>18]);
                                     break;
                                 case 3:
-                                    $name="页游";
+                                    $platform="页游";
                             }
-                            return $name;
+                            return $platform."-".$model->distributor->name;
                         }
-                    ],
-                    [
-                        'attribute'=>'distributorId',
-                        'value'=>'distributor.name'
+                        //'distributor.name'
                     ],
                     ['attribute'=>'parentDT','value'=>function($model){
                         if ($model->parentDT)
@@ -141,8 +137,6 @@ $('#paramModal').on('show.bs.modal', function (event) {
                         'buttons' => [
                             'view' => function ($url, $model, $key) {
                                 $options = [
-                                    'title'=>'什么',
-                                    'label'=>'什么1',
                                     'data-toggle'=>'modal',
                                     'data-target'=>'#paramModal',
                                     'data-game'=>$model->game->name,
@@ -163,6 +157,7 @@ $('#paramModal').on('show.bs.modal', function (event) {
                             return "1:".$model->ratio;
                         }
                     ],
+                    'support',
                     [
                         'attribute'=>'enabled',
                         'format'=>'html',
@@ -188,21 +183,6 @@ $('#paramModal').on('show.bs.modal', function (event) {
                             }
                         }
                     ],
-//                    'appKey',
-//                    'appLoginKey',
-//                    'appPaymentKey',
-//                    'appPublicKey',
-//                    ['attribute'=>'appPublicKey','value'=>function($model){
-//                        if (mb_strlen($model->appPublicKey)>10)
-//                        {
-//                            return mb_substr($model->appPublicKey,0,10)."...";
-//                        }else{
-//                            return $model->appPublicKey;
-//                        }
-//                    }],
-//                    'parentDT',
-//                    'centerLoginKey',
-//                    'centerPaymentKey',
                     ['class' => 'yii\grid\ActionColumn'],
                 ],
             ]); ?>
