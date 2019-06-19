@@ -10,6 +10,7 @@ namespace backend\models\command;
 
 
 use backend\models\TabAreas;
+use backend\models\TabGames;
 use backend\models\TabServers;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
@@ -21,7 +22,7 @@ class CmdMail extends BaseCmd
     public $gameId;
     public $distributorId;
     public $serverId;       //当是全区或单人的时候
-    public $type;           //单平台,全区,单人
+    public $type=1;           //单平台,全区,单人
 
     public $playerName;     //玩家名称[名称前面需要加user:]或seedId，如果是全服邮件 则用"all"
     public $title;          //邮件标题
@@ -56,19 +57,24 @@ class CmdMail extends BaseCmd
     }
     public function buildServers()
     {
-        $serverQuery=TabServers::find()
-            ->select(['id','name','port'=>'masterPort','ip'=>'url'])
-            ->where(['id'=>$this->serverId]);
-        if ($this->type>1)
+        $game=TabGames::find()->where(['id'=>$this->gameId])->one();
+        if ($game)
         {
-            $serverQuery->where('0=1');
+            $key="longcitywebonline12345678901234567890";
+            $serverQuery=TabServers::find()
+                ->select(['id','name','port'=>'masterPort','ip'=>'url'])
+                ->where(['id'=>$this->serverId]);
+            if ($this->type>1)
+            {
+                $serverQuery->where('0=1');
+            }
+            $this->serverList=$serverQuery->asArray()->all();
+            $serverData=ArrayHelper::map($serverQuery->all(),'id','name');
+            for ($i=0;$i<count($this->serverList);$i++)
+            {
+                $this->serverList[$i]['name']=$serverData[$this->serverList[$i]['id']];
+                $this->serverList[$i]['secretKey']=$key;
+            }
         }
-        $this->serverList=$serverQuery->asArray()->all();
-        $serverData=ArrayHelper::map($serverQuery->all(),'id','name');
-        for ($i=0;$i<count($this->serverList);$i++)
-        {
-            $this->serverList[$i]['name']=$serverData[$this->serverList[$i]['id']];
-        }
-//        exit(json_encode($this->serverList));
     }
 }

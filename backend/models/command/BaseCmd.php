@@ -57,16 +57,22 @@ class BaseCmd extends Model
         $this->result=[];
         $this->buildCommand();
         $this->buildServers();
-//        echo("开始对".count($this->serverList)."个区服执行CMD命令");
         for ($i=0;$i<count($this->serverList);$i++)
         {
             $server=$this->serverList[$i];
+            if (false)
+            {
+                $server['ip']="169.254.78.164";
+                $server['port']="8306";
+                $server['secretKey']="";
+            }
+
             try{
                 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
                 //3秒发送超时
-                socket_set_option($socket,SOL_SOCKET,SO_RCVTIMEO,array("sec"=>3, "usec"=>0 ) );
+                //socket_set_option($socket,SOL_SOCKET,SO_RCVTIMEO,array("sec"=>3, "usec"=>0 ) );
                 //5秒接收超时
-                socket_set_option($socket,SOL_SOCKET,SO_SNDTIMEO,array("sec"=>5, "usec"=>0 ) );
+                //socket_set_option($socket,SOL_SOCKET,SO_SNDTIMEO,array("sec"=>5, "usec"=>0 ) );
                 if (!$socket) {
                     $this->result[]=['name'=>$server['name'],'code'=>'-1','msg'=>'socket创建失败'];
                     continue;
@@ -75,17 +81,19 @@ class BaseCmd extends Model
                     $this->result[]=['name'=>$server['name'],'code'=>'-2','msg'=>'链接失败'];
                     continue;
                 }
+//                $this->command="level 141 200".$server['secretKey'];
+//                $this->command="kick 141";
                 $in = md5($this->command.$server['secretKey']).$this->command."\n";
                 if (!socket_write($socket, $in, strlen($in))) {
                     $this->result[]=['name'=>$server['name'],'code'=>'-3','msg'=>'命令发送失败'];
                     continue;
                 }
-                $msg=trim(socket_read($socket, 1024));
-                $this->result[]=['name'=>$server['name'],'code'=>'1','msg'=>'执行成功'];
+                $result=trim(socket_read($socket, 1024));
+                $this->result[]=['name'=>$server['name'],'code'=>'1','msg'=>$result,'server'=>$server['ip'],'port'=>$server['port'],'cmd'=>$this->command];
                 socket_close($socket);
             }catch (\Exception $e)
             {
-                $this->result[]=['name'=>$server['name'],'code'=>'-3','msg'=>'出现异常'];
+                $this->result[]=['name'=>$server['name'],'code'=>'-4','msg'=>$e->getMessage(),'server'=>$server['ip'],'port'=>$server['port'],'cmd'=>$this->command];
                 continue;
             }
         }
