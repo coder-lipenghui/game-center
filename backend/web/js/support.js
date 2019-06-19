@@ -1,10 +1,10 @@
-function changeGame(sender) {
-    getDistributor("#distributors",true,$("#games").val(),null,"../");
+function changeGame(sender,target) {
+    getDistributor(target,true,$(sender).val(),null,"../");
 };
-function changeDistributor(sender) {
-    var gid=$("#games").val();
-    var did=$("#distributors").val();
-    getServers("#servers",true, gid, did,null,"../");
+function changeDistributor(sender,target1,target2) {
+    var gid=$(target1).val();
+    var did=$(sender).val();
+    getServers(target2,true, gid, did,null,"../");
 }
 function changeServer(sender) {
     // alert($("#servers").val());

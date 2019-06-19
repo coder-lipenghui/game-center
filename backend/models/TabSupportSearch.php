@@ -45,11 +45,19 @@ class TabSupportSearch extends TabSupport
     {
         $query = TabSupport::find();
 
-//        $permission=TabPermission::find()->select(['gameId','distributorId'])->where(['uid'=>Yii::$app->user->id,'support'=>1])->all();
+        $permission=TabPermission::find()->select(['gameId','distributorId'])->where(['uid'=>Yii::$app->user->id,'support'=>1])->all();
+        $games=[];
+        $distributors=[];
+        for ($i=0;$i<count($permission);$i++)
+        {
+            $games[]=$permission[$i]['gameId'];
+            $distributors[]=$permission[$i]['distributorId'];
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
         $this->load($params);
+//        exit($params);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -59,18 +67,18 @@ class TabSupportSearch extends TabSupport
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'sponsor' => \Yii::$app->user->id,
-            'gameId' => $this->gameId,
-            'distributorId' => $this->distributorId,
+//            'sponsor' => \Yii::$app->user->id,
             'serverId' => $this->serverId,
             'type' => $this->type,
             'number' => $this->number,
             'status' => $this->status,
             'verifier' => $this->verifier,
         ]);
+        $query->andWhere(['or',['gameId'=>$games,'distributorId'=>$distributors],['sponsor'=>Yii::$app->user->id]]);
 
         $query->andFilterWhere(['like', 'roleAccount', $this->roleAccount])
             ->andFilterWhere(['like', 'reason', $this->reason]);
+//        exit($query->createCommand()->getRawSql());
 
         return $dataProvider;
     }

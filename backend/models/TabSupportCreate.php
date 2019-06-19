@@ -76,7 +76,7 @@ class TabSupportCreate extends TabSupport
                         //普通的走邮件
                         $cmdMail=new CmdMail();
                         $cmdMail->playerName=$support->roleName;
-                        $cmdMail->title="元宝发放";
+                        $cmdMail->title="金钻发放";
                         $cmdMail->content="[$support->number]金钻已到账，祝您游戏愉快。";
                         $cmdMail->gameId=$support->gameId;
                         $cmdMail->distributorId=$support->distributorId;
@@ -125,7 +125,7 @@ class TabSupportCreate extends TabSupport
             'paynum'=>time(),
             'paygold'=>$support->number,
             'paymoney'=>$support->number/100,
-            'flags'=>2,// 1：充值发放 其他：非充值发放
+            'flags'=>1,// 1：充值发放 其他：非充值发放
             'paytime'=>time(),
             'serverid'=>$support->serverId,
         ];

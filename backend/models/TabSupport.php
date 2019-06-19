@@ -3,7 +3,6 @@
 namespace backend\models;
 
 use Yii;
-
 /**
  * This is the model class for table "tab_support".
  *
@@ -87,5 +86,13 @@ class TabSupport extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(TabPlayers::className(),['account'=>'roleAccount']);
+    }
+    public function getSponsorUser()
+    {
+        return $this->hasOne(User::className(),['id'=>'sponsor']);
+    }
+    public function getVerifierUser()
+    {
+        return $this->hasOne(\common\models\User::className(),['id'=>'verifier']);
     }
 }

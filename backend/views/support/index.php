@@ -53,7 +53,7 @@ $this->registerJs('
                                             "class"=>"selectpicker form-control col-xs-2",
                                             "data-width"=>"fit",
                                             "id"=>"games",
-                                            "onchange"=>"changeGame(this)",
+                                            "onchange"=>"changeGame(this,'#distributors')",
                                             "title"=>"选择游戏"
                                         ]
                                     )?></div ≤>
@@ -63,7 +63,7 @@ $this->registerJs('
                                             "class"=>"selectpicker form-control col-xs-2",
                                             "data-width"=>"fit",
                                             "id"=>"distributors",
-                                            "onchange"=>"changeDistributor(this)",
+                                            "onchange"=>"changeDistributor(this,'#games','#servers')",
                                             "title"=>"分销商"
                                         ]
                                     )?></div>
@@ -129,71 +129,9 @@ $this->registerJs('
     <div class="panel panel-default">
 
         <div class="panel-body">
-            <?php
-            $searchForm=ActiveForm::begin([
-                'id'=>'searchForm',
-                'class'=>'form-inline',
-                'fieldConfig' => ['template' => '{input}'],
-                'action' => ['index'],
-                'method' => 'get',
-                'options' => [
-                    'data-pjax' => 1
-                ],
-            ]);
-            ?>
-            <div class="row">
-                <div class="col-md-1"><?=$searchForm->field($createModel,'gameId')->dropDownList(
-                        $games,
-                        [
-                            "class"=>"selectpicker form-control col-xs-2",
-                            "data-width"=>"fit",
-                            "id"=>"games",
-                            "onchange"=>"changeGame(this)",
-                            "title"=>"选择游戏"
-                        ]
-                    )?></div>
-                <div class="col-md-1"><?=$searchForm->field($createModel,'distributorId')->dropDownList(
-                        [],
-                        [
-                            "class"=>"selectpicker form-control col-xs-2",
-                            "data-width"=>"fit",
-                            "id"=>"distributors",
-                            "onchange"=>"changeDistributor(this)",
-                            "title"=>"分销商"
-                        ]
-                    )?></div>
-                <div class="col-md-1"><?=$searchForm->field($createModel,'serverId')->dropDownList(
-                        [],
-                        [
-                            "class"=>"selectpicker form-control col-xs-2",
-                            "data-width"=>"fit",
-                            "id"=>"servers",
-                            "title"=>"选择区服"
-                        ]
-                    )?></div>
-                <div class="col-md-1">
-                    <?=$searchForm->field($createModel,'type')->dropDownList(
-                        [0=>"非充值",1=>"充值"],
-                        [
-                            "class"=>"selectpicker form-control col-xs-2",
-                            "data-width"=>"fit",
-                            "id"=>"supportType",
-                            "title"=>"类型",
-                            "onchange"=>"changeType()"
-                        ]
-                    )?>
-                </div>
-                <div class="col-md-1">
-                    <?php
-                    echo Html::submitButton("查询",["class"=>"btn btn-primary"]);
-                    ?>
-                </div>
-            </div>
-            <?php
-                ActiveForm::end();
-            ?>
+
             <?php Pjax::begin(); ?>
-            <?php  //echo $this->render('_search', ['model' => $searchModel]); ?>
+            <?php  echo $this->render('_search', ['model' => $searchModel,'games'=>$games,'distributors'=>$distributors,'servers'=>$servers]); ?>
 
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
@@ -202,7 +140,10 @@ $this->registerJs('
                     ['class' => 'yii\grid\SerialColumn'],
 
 //                    'id',
-//                    'sponsor',
+                    [
+                        'attribute'=>'sponsor',
+                        'value'=>'sponsorUser.username'
+                    ],
 //                    'gameId',
 //                    'distributorId',
                     [

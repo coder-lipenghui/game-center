@@ -7,6 +7,7 @@ use backend\models\TabSupportCreate;
 use Yii;
 use backend\models\TabSupport;
 use backend\models\TabSupportSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -40,8 +41,11 @@ class SupportController extends Controller
         $createModel=new TabSupportCreate();
         $searchModel = new TabSupportSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+//        exit(json_encode(Yii::$app->request->queryParams));
         $permissionModel=new MyTabPermission();
         $games=$permissionModel->allowAccessGame();
+        $distributors=ArrayHelper::map($permissionModel->allowAccessDistributor($searchModel->gameId),'id','name');
+        $servers=ArrayHelper::map($permissionModel->allowAccessServer($searchModel->gameId,$searchModel->distributorId),'id','name');
         $buttons=$searchModel->buttons();
         $template=$searchModel->template();
         return $this->render('index', [
@@ -49,6 +53,8 @@ class SupportController extends Controller
             'createModel'=>$createModel,
             'dataProvider' => $dataProvider,
             'games'=>$games,
+            'distributors'=>$distributors,
+            'servers'=>$servers,
             'buttons'=>$buttons,
             'template'=>$template,
         ]);
