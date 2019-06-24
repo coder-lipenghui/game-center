@@ -53,6 +53,7 @@ class ItemController extends BaseController
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);
                 $dataProvider->setModels($arrayData['items']);
+                unset($arrayData['_links']);
                 $dataProvider->setPagination([
                     'totalCount'=>$arrayData['_meta']['totalCount']
                 ]);

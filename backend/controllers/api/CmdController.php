@@ -54,12 +54,12 @@ class CmdController extends Controller
         else{
             if ($request->isAjax)
             {
-                return json_encode($msg);
+                return json_encode($msg,JSON_UNESCAPED_UNICODE);
             }
         }
         if ($request->isAjax)
         {
-            return json_encode($msg);
+            return json_encode($msg,JSON_UNESCAPED_UNICODE);
         }
         return $this->render('mail',[
             'searchModel'=>$mailModel,

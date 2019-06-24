@@ -15,6 +15,7 @@ use yii\data\Pagination;
 use backend\models\api\RoleInfo;
 use backend\models\MyTabPermission;
 use yii\helpers\ArrayHelper;
+use backend\models\TabSupportCreate;
 class RoleController extends BaseController
 {
     public $apiName="players/search";
@@ -92,7 +93,7 @@ class RoleController extends BaseController
         $searchModel=new RoleInfo();
         $request=Yii::$app->request;
         $searchModel->load($request->queryParams);
-
+        $supportModel=new TabSupportCreate();
         $permissionModel=new MyTabPermission();
         $games=$permissionModel->allowAccessGame();
         //$distributors=[];
@@ -109,6 +110,7 @@ class RoleController extends BaseController
 //                exit("初始化成功");
                 $result=$this->getJsonData();
                 $result = json_decode($result, true);
+                unset($result['_links']);
                 $items = $result['items'];
                 for ($i = 0; $i < count($items); $i++) {
 //                    $bagItems=$this->itemParser($items[$i]['item_bag']);
@@ -138,6 +140,7 @@ class RoleController extends BaseController
                     'games'=>$games,
                     'distributors'=>$distributors,
                     'servers'=>$servers,
+                    'supportModel'=>$supportModel,
                 ]);
             }
         }

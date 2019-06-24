@@ -49,6 +49,7 @@ class TradeController extends BaseController
             {
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);
+                unset($arrayData['_links']);
                 $dataProvider->setModels($arrayData['items']);
                 $dataProvider->setPagination([
                     'totalCount'=>$arrayData['_meta']['totalCount']
