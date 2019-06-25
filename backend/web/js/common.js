@@ -15,7 +15,7 @@ function getGame(documentid, async,selectedId,url) {
         data: {},
         dataType: "json",
         url: (url==null?"":url)+"../permission/get-games",
-        async: async,
+        async: true,
         success: function(data) {
             $.each(data, function(i) {
                 if (data[i].id==selectedId)
@@ -51,7 +51,7 @@ function getDistribution(documentid, gid,url) {
         },
         dataType: "json",
         url: (url==null?"":url)+"../permission/get-distribution",
-        async: async,
+        async: true,
         success: function(data) {
             $.each(data, function(i) {
                 // if (data[i].id==selectedId)
@@ -93,7 +93,7 @@ function getServers(documentid,async,gameId,distributorId,selectedid,url) {
         },
         dataType: "json",
         url: (url==null?"":url)+"../permission/get-server",
-        async: async,
+        async: true,
         success: function(data) {
             $.each(data, function(i) {
                 if(selectedid==data[i].id )
@@ -120,7 +120,7 @@ function getDistributor(documentid,async,gameId,selectedId,url) {
         },
         dataType: "json",
         url: (url==null?"":url)+"../permission/get-distributor",
-        async: async,
+        async: true,
         success: function(data) {
             $.each(data, function(i) {
                 if (selectedId==data[i].id)
@@ -147,7 +147,7 @@ function getItems(documentid,gid,url) {
         },
         dataType: "json",
         url: (url==null?"":url)+"../permission/get-items",
-        async: async,
+        async: true,
         success: function(data) {
             $.each(data, function(i) {
                 $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);

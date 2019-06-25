@@ -13,26 +13,26 @@ $this->title = Yii::t('rbac-admin', 'Rules');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="role-index">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <p>
+                <?= Html::a(Yii::t('rbac-admin', 'Create Rule'), ['create'], ['class' => 'btn btn-success']) ?>
+            </p>
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('rbac-admin', 'Create Rule'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?=
-    GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            [
-                'attribute' => 'name',
-                'label' => Yii::t('rbac-admin', 'Name'),
-            ],
-            ['class' => 'yii\grid\ActionColumn',],
-        ],
-    ]);
-    ?>
-
+            <?=
+            GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    [
+                        'attribute' => 'name',
+                        'label' => Yii::t('rbac-admin', 'Name'),
+                    ],
+                    ['class' => 'yii\grid\ActionColumn',],
+                ],
+            ]);
+            ?>
+        </div>
+    </div>
 </div>

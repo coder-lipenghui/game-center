@@ -2,9 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\MyTabPermission;
+use backend\models\TabDistribution;
+use backend\models\TabPermission;
+use backend\models\MyUserModel;
 use Yii;
-use app\models\User;
-use app\models\UserSearch;
+use backend\models\User;
+use backend\models\UserSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -64,14 +68,19 @@ class UserController extends Controller
      */
     public function actionCreate()
     {
-        $model = new User();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $msg="";
+        $model = new MyUserModel();
+        if ($model->createUser(Yii::$app->request->post())) {
             return $this->redirect(['view', 'id' => $model->id]);
+        }else{
+            if (count(Yii::$app->request->post())>0)
+            {
+                $msg=json_encode($model->getErrors(),JSON_UNESCAPED_UNICODE);
+            }
         }
-
         return $this->render('create', [
             'model' => $model,
+            'msg'=>$msg,
         ]);
     }
 
@@ -84,17 +93,21 @@ class UserController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $model = MyUserModel::findModel($id);
+       $distributions=TabDistribution::find()
+           ->select(['id'=>'tab_distribution.id','name','platform'])
+           ->join("LEFT JOIN",'tab_distributor','tab_distribution.distributorId=tab_distributor.id')
+           ->asArray()
+           ->where(['tab_distribution.id'=>$model->distributions])
+           ->all();
+        if ($model->updateUser(Yii::$app->request->post())) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
         return $this->render('update', [
             'model' => $model,
+            'distributions'=>$distributions
         ]);
     }
-
     /**
      * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

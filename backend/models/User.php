@@ -51,11 +51,11 @@ class User extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'username' => Yii::t('app', 'Username'),
+            'username' => Yii::t('app', '账号'),
             'auth_key' => Yii::t('app', 'Auth Key'),
-            'password_hash' => Yii::t('app', 'Password Hash'),
+            'password_hash' => Yii::t('app', '密码'),
             'password_reset_token' => Yii::t('app', 'Password Reset Token'),
-            'email' => Yii::t('app', 'Email'),
+            'email' => Yii::t('app', '邮箱'),
             'status' => Yii::t('app', 'Status'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),

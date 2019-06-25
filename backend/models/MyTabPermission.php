@@ -50,7 +50,7 @@ class MyTabPermission extends TabPermission
     public function allowAccessDistributor($gameId)
     {
         $query=TabPermission::find();
-        $query->select('name,tab_distributor.id')
+        $query->select('name,tab_distributor.id,gameId')
             ->join('LEFT JOIN','tab_distributor','tab_permission.distributorId=tab_distributor.id')
             ->where(['uid'=>Yii::$app->user->id,'gameId'=>$gameId])
             ->asArray();
@@ -63,7 +63,7 @@ class MyTabPermission extends TabPermission
         if ($gameId && $uid) {
             $query->select(['id'=>'tab_permission.distributionId', 'tab_distribution.distributorId', 'tab_distribution.platform'])
                 ->join('LEFT JOIN', 'tab_distribution', 'tab_permission.distributionId=tab_distribution.id')
-                ->where(['tab_permission.uid' => 1, 'tab_permission.gameId' => $gameId])
+                ->where(['tab_permission.uid' => $uid, 'tab_permission.gameId' => $gameId])
                 ->andFilterWhere(['distributorId'=>$did])
                 ->asArray();
             $data = $query->all();
@@ -75,6 +75,19 @@ class MyTabPermission extends TabPermission
                     $data[$i]['name'] = $tempData->name;
                 }
             }
+            return $data;
+        }
+        return [];
+    }
+    public function allDistribution($gameId,$did)
+    {
+        $query=TabDistribution::find();
+        if ($gameId) {
+            $query->select(['id'=>'tab_distribution.id','distributorId', 'name','platform'])
+                ->join('LEFT JOIN', 'tab_distributor', 'tab_distributor.id=tab_distribution.distributorId')
+                ->where(['gameId' => $gameId])
+                ->asArray();
+            $data=$query->all();
             return $data;
         }
         return [];

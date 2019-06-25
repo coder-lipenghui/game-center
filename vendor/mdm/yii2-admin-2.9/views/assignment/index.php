@@ -26,17 +26,17 @@ $columns[] = [
 ];
 ?>
 <div class="assignment-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?php Pjax::begin(); ?>
-    <?=
-    GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => $columns,
-    ]);
-    ?>
-    <?php Pjax::end(); ?>
-
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <?php Pjax::begin(); ?>
+            <?=
+            GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => $columns,
+            ]);
+            ?>
+            <?php Pjax::end(); ?>
+        </div>
+    </div>
 </div>
