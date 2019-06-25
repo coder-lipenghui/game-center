@@ -1,4 +1,9 @@
 
+$(document).ready(function(){
+    $('#applyForVcion').on('show.bs.modal', function (e) {
+
+    })
+})
 function changeGame(sender) {
     getDistributor("#platform",true,$("#games").val(),null,"../");
 };
@@ -10,7 +15,46 @@ function changePt(sender) {
 function changeServer(sender) {
     // alert($("#servers").val());
 }
-
+function changeSupportGame(sender,target) {
+    getDistributor(target,true,$(sender).val(),null,"../");
+};
+function changeSupportDistributor(sender,target1,target2) {
+    var gid=$(target1).val();
+    var did=$(sender).val();
+    getServers(target2,true, gid, did,null,"../");
+}
+function createSupport() {
+    var form=$("#createSupportForm");
+    var formData = form.serialize();
+    $.ajax({
+        type: 'get',
+        data: formData,
+        dataType: "json",
+        url: "../support/create",
+        async: true,
+        success: function(data) {
+            if (data.code==1)
+            {
+                $("#myModal").modal("toggle");
+            }else{
+                alert(data.msg);
+            }
+        },
+        error: function(data) {
+            alert('获取数据失败');
+        }
+    });
+}
+function changeSupportType() {
+    var type=$("#supportType").val();
+    if (type == 0) {
+        $("#roleName").removeClass("hidden");
+        $("#roleAccount").addClass("hidden");
+    }else{
+        $("#roleAccount").removeClass("hidden");
+        $("#roleName").addClass("hidden");
+    }
+}
 function getPlayerName() {
     $("#cmdkick-playername").val($("#roleinfo-chrname").val());
 }
@@ -74,7 +118,7 @@ function doAjaxSubmit() {
             }
         },
         error:function (msg) {
-            alert("请求失败"+msg.code);
+            alert("请求失败"+msg);
         }
     });
 }
