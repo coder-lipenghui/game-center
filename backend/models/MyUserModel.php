@@ -70,7 +70,6 @@ class MyUserModel extends User
      */
     public function updateUser($params)
     {
-        $result=false;
         $this->load($params);
         if ($this->validate())
         {
@@ -82,7 +81,7 @@ class MyUserModel extends User
                     $model->password_hash=\Yii::$app->security->generatePasswordHash($this->password_hash);
                 }
                 $model->updated_at=time();
-                $result=$model->save();
+                $model->save();
 
                 //后台角色
                 $this->revokeRole();
@@ -92,7 +91,7 @@ class MyUserModel extends User
                 $this->revokePermission();
                 $this->assignPermission();
 
-                return $result;
+                return true;
             }
         }
         return false;

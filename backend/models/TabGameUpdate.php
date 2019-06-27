@@ -9,15 +9,17 @@ use Yii;
  *
  * @property int $id
  * @property int $gameId 游戏ID
- * @property string $platformId 渠道id，按照“，”分隔
- * @property string $url 资源CDN
+ * @property int $distributionId 分销渠道ID
+ * @property string $versionFile
+ * @property string $projectFile
  * @property string $version 版本信息
- * @property string $versionfile
- * @property string $assets 版本zip文件名称
- * @property int $size zip文件大小，kb
- * @property string $autotime 自动更新时间
- * @property string $enabled 是否开放下载
- * @property string $svn svn版本号
+ * @property int $executeTime 开启时间
+ * @property int $enable 是否开启
+ * @property string $svn SVN版本号
+ * @property string $comment 备注信息
+ *
+ * @property TabDistribution $distribution
+ * @property TabGames $game
  */
 class TabGameUpdate extends \yii\db\ActiveRecord
 {
@@ -35,13 +37,21 @@ class TabGameUpdate extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'platformId'], 'required'],
-            [['gameId', 'size'], 'integer'],
-            [['autotime'], 'safe'],
-            [['enabled'], 'string'],
-            [['platformId', 'url'], 'string', 'max' => 255],
-            [['version', 'versionfile', 'assets'], 'string', 'max' => 100],
-            [['svn'], 'string', 'max' => 20],
+            [['gameId', 'versionFile', 'projectFile','executeTime'], 'required'],
+            [['gameId', 'distributionId', 'enable'], 'integer'],
+            [['executeTime'],'filter','filter'=>function(){
+                return strtotime($this->executeTime);
+            }],
+            [['versionFile'],'filter','filter'=>function(){
+                return $this->versionFile.".manifest";
+            }],
+            [['projectFile'],'filter','filter'=>function(){
+                return $this->projectFile.".manifest";
+            }],
+            [['versionFile', 'projectFile', 'version'], 'string', 'max' => 100],
+            [['svn', 'comment'], 'string', 'max' => 255],
+            [['distributionId'], 'exist', 'skipOnError' => true, 'targetClass' => TabDistribution::className(), 'targetAttribute' => ['distributionId' => 'id']],
+            [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
         ];
     }
 
@@ -52,16 +62,31 @@ class TabGameUpdate extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'gameId' => Yii::t('app', 'Game ID'),
-            'platformId' => Yii::t('app', 'Platform ID'),
-            'url' => Yii::t('app', 'Url'),
-            'version' => Yii::t('app', 'Version'),
-            'versionfile' => Yii::t('app', 'Versionfile'),
-            'assets' => Yii::t('app', 'Assets'),
-            'size' => Yii::t('app', 'Size'),
-            'autotime' => Yii::t('app', 'Autotime'),
-            'enabled' => Yii::t('app', 'Enabled'),
-            'svn' => Yii::t('app', 'Svn'),
+            'gameId' => Yii::t('app', '游戏'),
+            'distributionId' => Yii::t('app', '渠道'),
+            'versionFile' => Yii::t('app', '版本文件'),
+            'projectFile' => Yii::t('app', '内容文件'),
+            'version' => Yii::t('app', '版本号'),
+            'executeTime' => Yii::t('app', '更新时间'),
+            'enable' => Yii::t('app', '是否启用'),
+            'svn' => Yii::t('app', 'Svn信息'),
+            'comment' => Yii::t('app', '备注'),
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDistribution()
+    {
+        return $this->hasOne(TabDistribution::className(), ['id' => 'distributionId']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGame()
+    {
+        return $this->hasOne(TabGames::className(), ['id' => 'gameId']);
     }
 }

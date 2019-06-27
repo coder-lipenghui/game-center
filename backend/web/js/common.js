@@ -111,7 +111,7 @@ function getServers(documentid,async,gameId,distributorId,selectedid,url) {
     });
 }
 function getDistributor(documentid,async,gameId,selectedId,url) {
-    var async = arguments[1] ? arguments[1] : false;
+    // var async = arguments[1] ? arguments[1] : false;
     $(documentid).empty();
     $.ajax({
         type: 'get',

@@ -14,6 +14,7 @@ use backend\models\center\CreateOrder;
 use backend\models\center\CreateOrderDebug;
 use backend\models\center\EnterGame;
 use backend\models\center\Login;
+use backend\models\MyGameUpdate;
 use backend\models\MyTabNotice;
 use backend\models\MyTabOrders;
 use backend\models\MyTabServers;
@@ -365,26 +366,6 @@ class CenterController extends Controller
     {
         return null;
     }
-
-
-    public function actionGetUpdateInfo()
-    {
-//        $data = array();
-//        $list_update=M('updates')->field('gameId,platformid,url,version,filename,SVN_version')->order('tab_updates.platformid')->select();
-//        $list_game=M('games')->field('id,name')->order('id')->select();
-//        $list_dist=M('dists')->field('gameId,name,distributor,platform')->order('distributor')->select();
-//        if ($list_update) {
-//            $data['info'] = $list_update;
-//        }
-//        if ($list_game) {
-//            $data['games']=$list_game;
-//        }
-//        if ($list_dist) {
-//            $data['dists']=$list_dist;
-//        }
-//        exit(json_encode($data));
-    }
-
     /**
      * 前往游戏服务器验证用户信息
      * @param uid 用户ID
@@ -483,6 +464,14 @@ class CenterController extends Controller
 
             return ['code'=>-13,'msg'=>'参数错误','data'=>$enterModle->getErrors()];
         }
+    }
+    public function actionGameUpdate()
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+
+        $model=new MyGameUpdate();
+        return $model->getUpdateInfo();
+
     }
     public function actionCdkey()
     {
