@@ -23,36 +23,39 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-view">
-
-    <h1><?= "<?= " ?>Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= "<?= " ?>Html::a(<?= $generator->generateString('Update') ?>, ['update', <?= $urlParams ?>], ['class' => 'btn btn-primary']) ?>
-        <?= "<?= " ?>Html::a(<?= $generator->generateString('Delete') ?>, ['delete', <?= $urlParams ?>], [
-            'class' => 'btn btn-danger',
-            'data' => [
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <p>
+                <?= "<?= " ?>Html::a(<?= $generator->generateString('Update') ?>, ['update', <?= $urlParams ?>], ['class' => 'btn btn-primary']) ?>
+                <?= "<?= " ?>Html::a(<?= $generator->generateString('Delete') ?>, ['delete', <?= $urlParams ?>], [
+                'class' => 'btn btn-danger',
+                'data' => [
                 'confirm' => <?= $generator->generateString('Are you sure you want to delete this item?') ?>,
                 'method' => 'post',
+                ],
+                ]) ?>
+            </p>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <?= "<?= " ?>DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+            <?php
+            if (($tableSchema = $generator->getTableSchema()) === false) {
+                foreach ($generator->getColumnNames() as $name) {
+                    echo "            '" . $name . "',\n";
+                }
+            } else {
+                foreach ($generator->getTableSchema()->columns as $column) {
+                    $format = $generator->generateColumnFormat($column);
+                    echo "            '" . $column->name . ($format === 'text' ? "" : ":" . $format) . "',\n";
+                }
+            }
+            ?>
             ],
-        ]) ?>
-    </p>
-
-    <?= "<?= " ?>DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-<?php
-if (($tableSchema = $generator->getTableSchema()) === false) {
-    foreach ($generator->getColumnNames() as $name) {
-        echo "            '" . $name . "',\n";
-    }
-} else {
-    foreach ($generator->getTableSchema()->columns as $column) {
-        $format = $generator->generateColumnFormat($column);
-        echo "            '" . $column->name . ($format === 'text' ? "" : ":" . $format) . "',\n";
-    }
-}
-?>
-        ],
-    ]) ?>
-
+            ]) ?>
+        </div>
+    </div>
 </div>
