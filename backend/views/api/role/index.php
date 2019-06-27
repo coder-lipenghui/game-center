@@ -13,6 +13,8 @@ $this->title = Yii::t('app', '角色信息查询');
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset']);
 ?>
+
+
 <div class="panel panel-default">
     <?php
         echo $this->render('../commonSearch', ['searchModel' => $searchModel,'games'=>$games,'distributors'=>$distributors,'servers'=>$servers]);
@@ -54,41 +56,104 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                 </div><!-- /.modal-content -->
             </div><!-- /.modal -->
         </div>
-        <!-- 申请元宝 -->
-        <div class="modal fade" id="applyForVcion" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
+        <!-- 申请扶持 -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="applyForVcion">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3 class="modal-title" id="myModalLabel">元宝申请</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">扶持申请</h4>
                     </div>
-
-                    <div class="modal-body" id="kick_playerName">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label>游戏:</label>单职业
-                            </div>
-                            <div class="col-md-12">
-                                <label>区服:</label>单职业
-                            </div>
-                            <div class="col-md-12">
-                                <label>账号:</label>单职业
-                            </div>
-                            <div class="col-md-12">
-                                <label>数量:</label>单职业
-                            </div>
-                            <div class="col-md-12">
-                                <label>模拟真实充值:</label><input type="checkbox"/>
-                            </div>
+                    <div class="modal-body">
+                        <?php
+                        $form=ActiveForm::begin([
+                            'id'=>'createSupportForm',
+                            'fieldConfig' => ['template' => '{input}'],
+                            'class'=>'form-inline'
+                        ]);
+                        ?>
+                        <div class="alert alert-info alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <p class="text-info">非充值类型:金钻/元宝通过邮件形式发放，不算充值积分</p>
+                            <p class="text-info">充值类型：模拟充值发放,记录充值积分等，玩家可以领取常规充值奖励等</p>
+                            <p class="text-info">绑定元宝/金钻需要填写角色名，模拟充值类型的需要填写账号.</p>
                         </div>
+                        <table class="table table-condensed" style="table-layout: fixed;">
+                            <tr>
+                                <td width="100">基础:</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-md-3"><?=$form->field($supportModel,'gameId')->dropDownList(
+                                                $games,
+                                                [
+                                                    "class"=>"selectpicker form-control col-xs-2",
+                                                    "data-width"=>"fit",
+                                                    "id"=>"supportGames",
+                                                    "onchange"=>"changeSupportGame(this,'#supportDistributors')",
+                                                    "title"=>"选择游戏"
+                                                ]
+                                            )?></div ≤>
+                                        <div class="col-md-3"><?=$form->field($supportModel,'distributorId')->dropDownList(
+                                                [],
+                                                [
+                                                    "class"=>"selectpicker form-control col-xs-2",
+                                                    "data-width"=>"fit",
+                                                    "id"=>"supportDistributors",
+                                                    "onchange"=>"changeSupportDistributor(this,'#supportGames','#supportServers')",
+                                                    "title"=>"分销商"
+                                                ]
+                                            )?></div>
+                                        <div class="col-md-3"><?=$form->field($supportModel,'serverId')->dropDownList(
+                                                [],
+                                                [
+                                                    "class"=>"selectpicker form-control col-xs-2",
+                                                    "data-width"=>"fit",
+                                                    "id"=>"supportServers",
+                                                    "title"=>"选择区服"
+                                                ]
+                                            )?></div>
+                                        <div class="col-md-3"><?=$form->field($supportModel,'type')->dropDownList(
+                                                [0=>"非充值",1=>"充值"],
+                                                [
+                                                    "class"=>"selectpicker form-control col-xs-2",
+                                                    "data-width"=>"fit",
+                                                    "id"=>"supportType",
+                                                    "title"=>"类型",
+                                                    "onchange"=>"changeSupportType()"
+                                                ]
+                                            )?></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="roleAccount">
+                                <td>角色账号:</td>
+                                <td><?= $form->field($supportModel,'roleAccount')->textInput(['value'=>'01e73c5313d22f98d5e84702c37360d4'])?></td>
+                            </tr>
+                            <tr id="roleName">
+                                <td>角色名称:</td>
+                                <td><?= $form->field($supportModel,'roleName')->textInput(['value'=>'辉哥啊'])?></td>
+                            </tr>
+                            <tr>
+                                <td>申请理由:</td>
+                                <td><?= $form->field($supportModel,'reason')->textInput(['value'=>'测试'])?></td>
+                            </tr>
+                            <tr>
+                                <td>申请数量:</td>
+                                <td><?= $form->field($supportModel,'number')->textInput()?></td>
+                            </tr>
+                        </table>
                     </div>
+                    <?php
+                    ActiveForm::end();
+                    ?>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                        <button type="button" class="btn btn-primary" onclick="submitKick()">确认</button>
+                        <button type="button" class="btn btn-success" onclick="createSupport()">申请</button>
                     </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal -->
+                </div>
+            </div>
         </div>
+        <!-- 申请扶持结束 -->
     </div>
     <div class="panel-heading" onclick=""><label>基础信息</label></div>
     <div class="panel-body">
