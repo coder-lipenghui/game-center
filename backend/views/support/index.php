@@ -152,7 +152,18 @@ $this->registerJs('
                             return $model->server->name."($model->serverId)";
                         }
                     ],
-                    'roleAccount',
+                    [
+                        'attribute'=>'roleAccount',
+                        'label'=>'账号/角色',
+                        'value'=>function($model){
+                            if ($model->type==1)
+                            {
+                                return $model->roleAccount;
+                            }else{
+                                return $model->roleName;
+                            }
+                        }
+                    ],
                     'reason',
                     [
                         'attribute'=>'type',
