@@ -152,6 +152,17 @@ class PermissionController extends Controller
         }
 
     }
+    public function actionGetAllDistribution()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $model=new MyTabPermission();
+        $request=Yii::$app->request;
+        if ($request->get("gameId"))
+        {
+            return $model->allDistribution($request->get("gameId"),null);
+        }
+        return [];
+    }
     public function actionGetServer()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
