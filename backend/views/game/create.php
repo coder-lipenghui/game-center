@@ -7,7 +7,7 @@ use kartik\datetime\DateTimePicker;
 /* @var $model backend\models\TabGames */
 
 $this->title = Yii::t('app', '新增游戏');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tab Games'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '游戏管理'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-games-create">

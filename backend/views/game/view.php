@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model backend\models\TabGames */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tab Games'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '游戏管理'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
