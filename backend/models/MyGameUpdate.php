@@ -15,9 +15,9 @@ class MyGameUpdate extends TabGameUpdate
     function rules()
     {
         return [
-            [['sku','platform','versionCode','versionName'],'required'],
+            [['sku','platform','version','versionCode','versionName'],'required'],
             [['sku','platform','versionCode','versionName'],'string'],
-            [['gameId', 'distributionId', 'enable'], 'integer'],
+            [['gameId', 'distributionId', 'enable','version'], 'integer'],
         ];
     }
     public function getUpdateInfo()
@@ -33,13 +33,18 @@ class MyGameUpdate extends TabGameUpdate
                 if ($cdn)
                 {
                     $query=self::find()
-                        ->select(['id','versionFile','projectFile','distributionId'])
+                        ->select(['id','versionFile','version','projectFile','distributionId'])
+                        ->where(['enable'=>1])
+                        ->andWhere(['>','version',$this->version])
+                        ->orderBy('version DESC')
+                        ->limit(1)
                         ->asArray();
+//                    exit($query->createCommand()->getRawSql());
                     if ($this->distributionId)
                     {
-                        $query->where(['gameId'=>$game->id,'distributionId'=>$this->distributionId]);
+                        $query->andWhere(['gameId'=>$game->id,'distributionId'=>$this->distributionId]);
                     }else{
-                        $query->where(['gameId'=>$game-id]);
+                        $query->andWhere(['gameId'=>$game->id]);
                     }
                     $data=$query->one();
 
@@ -53,9 +58,9 @@ class MyGameUpdate extends TabGameUpdate
                             $url=$url."/default/";
                         }
                         $data['url']=$url;
-                        return ['code'=>1,'msg'=>'success','data'=>$data];
+                        return ['code'=>1,'msg'=>'检测到新版本','data'=>$data];
                     }else{
-                        return ['code'=>1,'msg'=>'未检测到版本信息','data'=>$this->getErrors()];
+                        return ['code'=>0,'msg'=>'未检测到版本信息','data'=>$this->getErrors()];
                     }
                 }else{
                     return ['code'=>-3,'msg'=>'未指定版本地址','data'=>$this->getErrors()];

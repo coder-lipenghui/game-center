@@ -21,17 +21,35 @@ class MyTabGameUpdate extends TabGameUpdate
             $this->setAttributes($model->getAttributes());
             if($model->load(Yii::$app->request->post()) && $model->save())
             {
-                //更新信息修改后、前往CDN进行目录刷新 5分钟生效时间
-                $refreshTarget="example.com/test.txt";
-                if (false)
+                if (false) //目前购买的不是阿里的CDN类型服务器
                 {
-                    $secretId="testid";
-                    $secretKey="testsecret";
-                    $result=CdnHelper::refresh(CdnHelper::$CDN_ALIYUN,$refreshTarget,$secretId,$secretKey);
-                    echo("<br/><hr/>返回结果:<br/>");
-                    exit($result);
+                    $cdn=TabCdn::find()
+                        ->select(['url','gameId','secretId','secretKey'])
+                        ->where(['gameId'=>$this->gameId])
+                        ->one();
+                    if ($cdn)
+                    {
+                        //更新信息修改后、前往CDN进行目录刷新 5分钟生效时间
+                        $refreshTarget="http://res.mysc.7you.xyz/$this->gameId/default/";
+                        if ($this->distributionId)
+                        {
+                            $refreshTarget="http://res.mysc.7you.xyz/$this->gameId/$this->distributionId/";
+                        }
+                        $secretId=$cdn->secretId;
+                        $secretKey=$cdn->secretKey;
+                        $json=CdnHelper::refresh(CdnHelper::$CDN_ALIYUN,$refreshTarget,$secretId,$secretKey);
+                        //message code
+                        $result=json_decode($json,true);
+                        if ($result['code'] && $result['msg'])
+                        {
+                            return false;
+                        }else{
+                            return true;
+                        }
+                    }else{
+                        return false;
+                    }
                 }
-
                 return true;
             }else{
                 return false;

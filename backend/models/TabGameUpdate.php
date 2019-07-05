@@ -12,7 +12,7 @@ use Yii;
  * @property int $distributionId 分销渠道ID
  * @property string $versionFile
  * @property string $projectFile
- * @property string $version 版本信息
+ * @property int $version 版本信息
  * @property int $executeTime 开启时间
  * @property int $enable 是否开启
  * @property string $svn SVN版本号
@@ -37,8 +37,8 @@ class TabGameUpdate extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'versionFile', 'projectFile','executeTime'], 'required'],
-            [['gameId', 'distributionId', 'enable'], 'integer'],
+            [['gameId', 'versionFile', 'projectFile','executeTime','version'], 'required'],
+            [['gameId', 'distributionId', 'enable','version'], 'integer'],
             [['executeTime'],'filter','filter'=>function(){
                 return strtotime($this->executeTime);
             }],
@@ -48,7 +48,7 @@ class TabGameUpdate extends \yii\db\ActiveRecord
             [['projectFile'],'filter','filter'=>function(){
                 return $this->projectFile.".manifest";
             }],
-            [['versionFile', 'projectFile', 'version'], 'string', 'max' => 100],
+            [['versionFile', 'projectFile'], 'string', 'max' => 100],
             [['svn', 'comment'], 'string', 'max' => 255],
             [['distributionId'], 'exist', 'skipOnError' => true, 'targetClass' => TabDistribution::className(), 'targetAttribute' => ['distributionId' => 'id']],
             [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],

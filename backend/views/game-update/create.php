@@ -87,13 +87,6 @@ $this->registerJsFile("@web/js/gameUpdate.js",['depends'=>'yii\web\YiiAsset']);
                     </td>
                     <td>未到时间不会开启更新</td>
                 </tr>
-<!--                <tr>-->
-<!--                    <td>是否启用：</td>-->
-<!--                    <td>-->
-<!--                        --><?//= $form->field($model, 'enable')->textInput()->label(false) ?>
-<!--                    </td>-->
-<!--                    <td></td>-->
-<!--                </tr>-->
                 <tr>
                     <td>SVN记录：</td>
                     <td>
