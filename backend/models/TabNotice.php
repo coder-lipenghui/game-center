@@ -35,9 +35,15 @@ class TabNotice extends \yii\db\ActiveRecord
     {
         return [
             [['gameId', 'distributions', 'title', 'body', 'starttime', 'endtime'], 'required'],
-            [['gameId', 'starttime', 'endtime', 'rank'], 'integer'],
+            [['gameId', 'rank'], 'integer'],
             [['body'], 'string'],
             [['distributions'], 'string', 'max' => 100],
+            [['starttime'],'filter','filter'=>function(){
+                return strtotime($this->starttime);
+            }],
+            [['endtime'],'filter','filter'=>function(){
+                return strtotime($this->endtime);
+            }],
             [['title'], 'string', 'max' => 255],
             [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
         ];
@@ -50,13 +56,13 @@ class TabNotice extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'gameId' => Yii::t('app', 'Game ID'),
-            'distributions' => Yii::t('app', 'Distributions'),
-            'title' => Yii::t('app', 'Title'),
-            'body' => Yii::t('app', 'Body'),
-            'starttime' => Yii::t('app', 'Starttime'),
-            'endtime' => Yii::t('app', 'Endtime'),
-            'rank' => Yii::t('app', 'Rank'),
+            'gameId' => Yii::t('app', '游戏'),
+            'distributions' => Yii::t('app', '分销渠道'),
+            'title' => Yii::t('app', '标题'),
+            'body' => Yii::t('app', '内容'),
+            'starttime' => Yii::t('app', '开始时间'),
+            'endtime' => Yii::t('app', '结束时间'),
+            'rank' => Yii::t('app', '排序'),
         ];
     }
 

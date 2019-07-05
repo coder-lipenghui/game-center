@@ -64,7 +64,7 @@ class MyTabPermission extends TabPermission
             $query->select(['id'=>'tab_permission.distributionId', 'tab_distribution.distributorId', 'tab_distribution.platform'])
                 ->join('LEFT JOIN', 'tab_distribution', 'tab_permission.distributionId=tab_distribution.id')
                 ->where(['tab_permission.uid' => $uid, 'tab_permission.gameId' => $gameId])
-                ->andFilterWhere(['distributorId'=>$did])
+                ->andFilterWhere(['tab_distribution.distributorId'=>$did])
                 ->asArray();
             $data = $query->all();
             for ($i = 0; $i < count($data); $i++) {

@@ -5,7 +5,8 @@ namespace backend\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\TabNotice;
-
+use yii\db\Expression;
+use backend\models\MyTabPermission;
 /**
  * TabNoticeSearch represents the model behind the search form of `backend\models\TabNotice`.
  */
@@ -51,16 +52,23 @@ class TabNoticeSearch extends TabNotice
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
+//             uncomment the following line if you do not want to return any records when validation fails
+             $query->where('0=1');
+//            return $dataProvider;
         }
-
-        // grid filtering conditions
+        if ($this->distributions)
+        {
+            $query->andWhere(new Expression('FIND_IN_SET(:distributions, distributions)',['distributions'=>$this->distributions]));
+        }
+        $permission=new MyTabPermission();
+        $games=$permission->allowAccessGame();
+        if (empty($games[$this->gameId]))
+        {
+            $query->where('0=1');
+        }
         $query->andFilterWhere([
             'id' => $this->id,
             'gameId' => $this->gameId,
-            'distributions' => $this->distributions,
             'starttime' => $this->starttime,
             'endtime' => $this->endtime,
             'rank' => $this->rank,

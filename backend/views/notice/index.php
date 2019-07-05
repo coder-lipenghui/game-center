@@ -4,12 +4,18 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\TabNoticeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', '公告管理');
 $this->params['breadcrumbs'][] = $this->title;
+$this->registerJsFile("@web/js/common.js",['depends'=>'yii\web\YiiAsset']);
+$this->registerJsFile("@web/js/notice.js",['depends'=>'yii\web\YiiAsset']);
+$this->registerJs('
+    handleChangeGame();
+');
 ?>
 <div class="tab-notice-index">
     <div class="tab-orders-index">
@@ -28,7 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     $form=ActiveForm::begin([
                         "id"=>"myform",
                         "method"=>"get",
-                        'fieldConfig' => ['template' => '{input}']
                     ]);
                 ?>
                 <div class="row">
@@ -38,62 +43,65 @@ $this->params['breadcrumbs'][] = $this->title;
                             [
                                 "class"=>"selectpicker form-control col-xs-2",
                                 "data-width"=>"fit",
-                                "id"=>"games",
-                                "onchange"=>"changeGame(this)",
+                                "id"=>"noticeGames",
+                                "onchange"=>"handleChangeGame()",
                                 "title"=>"选择游戏"
                             ]
-                        )?>
+                        )->label(false)?>
                     </div>
                     <div class="col-md-1">
+                        <?= Html::dropDownList("分销商",
+                            $distributors,
+                            [],
+                            [
+                                'class'=>'selectpicker form-control col-xs-2',
+                                'title'=>'分销商',
+                                'id'=>'noticeDistributors',
+                                'onchange'=>'handleIndexChangeDistributor()'
+                            ])?>
+                    </div>
+                    <div class="col-md-2">
                         <?=$form->field($searchModel,'distributions')->dropDownList(
                             [],
                             [
                                 "class"=>"selectpicker form-control col-xs-2",
                                 "data-width"=>"fit",
-                                "id"=>"games",
-                                "onchange"=>"changeGame(this)",
-                                "title"=>"分销商"
+                                "id"=>"noticeDistributions",
+                                "title"=>"平台"
                             ]
-                        )?>
+                        )->label(false)?>
                     </div>
+                    <div class="col-md-1">
+                        <?= Html::submitButton(Yii::t('app', '查询'), ['class' => 'btn btn-primary']) ?>
+                    </div>
+                </div>
+                <div class="row">
+
                     <?php
                     ActiveForm::end()
                     ?>
                 </div>
-                <hr/>
                 <?php Pjax::begin(); ?>
+
                 <?= GridView::widget([
                     'dataProvider' => $dataProvider,
-                    'filterModel' => $searchModel,
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn'],
-
-                        'id',
                         [
                             'attribute'=>'gameId',
                             'value'=>'game.name'
                         ],
                         'distributions',
-//                        [
-//                            'attribute'=>'distributions',
-//                            'label'=>'分销商',
-//                            'value'=>function($model){
-//                                $distribution=\backend\models\TabDistribution::findOne($model->distributions);
-//                                $distributor=\backend\models\TabDistributor::findOne($distribution->distributorId);
-//                                return $distributor->name."(".$distribution->platform.")";
-//                            }
-//                        ],
                         'title',
                         [
                             'attribute'=>'body',
                             'value'=>function($model){
-                                if (mb_strlen($model->body>30))
+                                if (mb_strlen($model->body)>30)
                                 {
-                                    return(mb_substr($model->body,0,30).'...');
+                                    return(mb_substr($model->body,0,8).'...');
                                 }else{
                                     return $model->body;
                                 }
-
                             }
                         ],
                         ['class' => 'yii\grid\ActionColumn'],

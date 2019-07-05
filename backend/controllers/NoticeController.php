@@ -2,10 +2,12 @@
 
 namespace backend\controllers;
 
+use backend\models\MyTabNotice;
 use backend\models\MyTabPermission;
 use Yii;
 use backend\models\TabNotice;
 use backend\models\TabNoticeSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -36,13 +38,18 @@ class NoticeController extends Controller
      */
     public function actionIndex()
     {
-        $games=MyTabPermission::getGames();
         $searchModel = new TabNoticeSearch();
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
+        $distributors=ArrayHelper::map($permissionModel->allowAccessDistributor($searchModel->gameId),'id','name');
+        $distributions=ArrayHelper::map($permissionModel->allDistribution($searchModel->gameId,Yii::$app->request->get('distributors')),'id','name');
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', [
             'games'=>$games,
+            'distributors'=>$distributors,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'distributions'=>$distributions,
         ]);
     }
 
@@ -66,14 +73,21 @@ class NoticeController extends Controller
      */
     public function actionCreate()
     {
-        $model = new TabNotice();
-
+        $model = new MyTabNotice();
+        //$searchModel = new TabNoticeSearch();
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
+        $distributors=ArrayHelper::map($permissionModel->allowAccessDistributor($model->gameId),'id','name');
+        $distributions=ArrayHelper::map($permissionModel->allowAccessDistribution($model->gameId,2,Yii::$app->user->id),'id','name');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'games'=>$games,
+            'distributors'=>$distributors,
+            'distributions'=>$distributions,
         ]);
     }
 
