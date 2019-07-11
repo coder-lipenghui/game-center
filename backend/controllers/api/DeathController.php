@@ -16,7 +16,7 @@ use yii\helpers\ArrayHelper;
 class DeathController extends BaseController
 {
     public $apiName="death";
-
+    public $apiDb=3;
     public function actionIndex()
     {
         $searchModel=new Death();
@@ -44,8 +44,9 @@ class DeathController extends BaseController
             {
                 $page=$request->get('page');
             }
-            $queryBody=http_build_query($searchModel->getAttributes());
-            if($this->initApiUrl( $searchModel->gameId,$searchModel->distributorId , $searchModel->serverId,$queryBody."&page=".$page))
+            $queryBody=$searchModel->getAttributes();
+            $queryBody['page']=$page;
+            if($this->initApiUrl( $searchModel->gameId,$searchModel->distributorId , $searchModel->serverId,$queryBody))
             {
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);

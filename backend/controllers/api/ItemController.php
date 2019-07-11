@@ -16,7 +16,7 @@ use yii\helpers\ArrayHelper;
 class ItemController extends BaseController
 {
     public $apiName="itemadd";
-
+    public $apiDb=3;
     public function actionIndex()
     {
         $searchModel=new ItemRecord();
@@ -43,12 +43,13 @@ class ItemController extends BaseController
             {
                 $page=$request->get('page');
             }
-            $queryBody=http_build_query($searchModel->getAttributes());
+            $queryBody=$searchModel->getAttributes();
+            $queryBody['page']=$page;
             if ($searchModel->type==2)
             {
                 $this->apiName="itemrem";
             }
-            if($this->initApiUrl($searchModel->gameId,$searchModel->distributorId,$searchModel->serverId,$queryBody."&page=".$page))
+            if($this->initApiUrl($searchModel->gameId,$searchModel->distributorId,$searchModel->serverId,$queryBody))
             {
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);

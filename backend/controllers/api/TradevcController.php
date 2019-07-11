@@ -15,7 +15,7 @@ use yii\helpers\ArrayHelper;
 class TradevcController extends BaseController
 {
     public $apiName="tradevc";
-
+    public $apiDb=3;
     public function actionIndex()
     {
         $searchModel=new TradeVcInfo();
@@ -45,8 +45,8 @@ class TradevcController extends BaseController
             {
                 $page=$request->get('page');
             }
-            $queryBody=http_build_query($searchModel->getAttributes());
-            if($this->initApiUrl( $searchModel->gameId,$searchModel->distributorId , $searchModel->serverId,$queryBody."&page=".$page))
+            $queryBody['page']=$page;
+            if($this->initApiUrl( $searchModel->gameId,$searchModel->distributorId , $searchModel->serverId,$queryBody))
             {
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);

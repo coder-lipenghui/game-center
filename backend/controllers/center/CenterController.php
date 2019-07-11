@@ -138,7 +138,7 @@ class CenterController extends Controller
             }
             //TODO 构建公告信息 ###title|||content###title|||content
             $notice=MyTabNotice::searchGameNotice($game->id,$distribution->id);
-            if (count($notice)==0)//默认构建一条公告
+            if (empty($notice))//默认构建一条公告
             {
                 $notice="欢迎|||亲爱的玩家您好，欢迎来到<".$game->name.">。如果您在游戏内遇到问题，请先联系我们的客服 我们将尽快为您解决问题。";
             }

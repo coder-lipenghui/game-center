@@ -14,16 +14,24 @@
 
 namespace backend\controllers\api;
 
+use backend\models\TabGames;
 use backend\models\TabServers;
 use Yii;
 use yii\web\Controller;
 
 class BaseController extends Controller
 {
+    //API侧三个数据库对应的ID
+    public static $API_DB_OCTGAME=1;
+    public static $API_DB_OCENTER=2;
+    public static $API_DB_OCTLOG=3;
+
     //游戏API接口名称
     public $apiName="";
     public $apiUrl="";
     public $apiParams="";  //RESTful查询接口 统一采用get形式 所以这边用http_build_query
+    public $apiDb=0;
+
 
 //    public $searchModel;
 //    public $dataProvider=new ArrayDataProvider([]);
@@ -39,14 +47,32 @@ class BaseController extends Controller
      */
     protected function initApiUrl($gid,$pid,$sid,$params)
     {
-        $server=TabServers::find()->where(['id'=>$sid])->one();
-        if($server)
+        $game=TabGames::find()->where(['id'=>$gid])->one();
+        if ($game)
         {
-            $this->apiUrl="http://".$server->url."/api/".$this->apiName."?".$params;
-            $this->inited=true;
+            $server=TabServers::find()->where(['id'=>$sid])->one();
+            if($server)
+            {
+                $defaultParam=[
+                    'sku'=>$game->sku,
+                    'serverId'=>$server->index,
+                    'db'=>$this->apiDb];
+                $params=array_merge($params,$defaultParam);
+                if (false)
+                {
+                    $this->apiUrl="http://gameapi.com:8888/";
+                }else{
+                    $this->apiUrl="http://".$server->url."/api/";
+                }
+                $this->apiUrl=$this->apiUrl.$this->apiName."?".http_build_query($params);
+                $this->inited=true;
+            }else{
+                $this->inited=false;
+            }
         }else{
             $this->inited=false;
         }
+
         return $this->inited;
     }
     /**
