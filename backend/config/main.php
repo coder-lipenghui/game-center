@@ -20,6 +20,7 @@ return [
     'aliases'=>[
         '@mdm/admin'=>"@vendor/mdm/yii2-admin-2.9"
     ],
+
     'as access' => [
         'class' => 'mdm\admin\components\AccessControl',
         'allowActions' => [
@@ -27,7 +28,7 @@ return [
             'site/logout',
             'site/login',
             'center/*',
-            'permission/get-distribution',
+            'permission/*',
         ]
     ],
     'components' => [
