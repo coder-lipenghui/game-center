@@ -36,16 +36,17 @@ class MyGameUpdate extends TabGameUpdate
                         ->select(['id','versionFile','version','projectFile','distributionId'])
                         ->where(['enable'=>1])
                         ->andWhere(['>','version',$this->version])
+                        ->andWhere(['<=','executeTime',time()])
                         ->orderBy('version DESC')
                         ->limit(1)
                         ->asArray();
-//                    exit($query->createCommand()->getRawSql());
                     if ($this->distributionId)
                     {
                         $query->andWhere(['gameId'=>$game->id,'distributionId'=>$this->distributionId]);
                     }else{
                         $query->andWhere(['gameId'=>$game->id]);
                     }
+                    //exit($query->createCommand()->getRawSql());
                     $data=$query->one();
 
                     if ($data)
@@ -53,9 +54,9 @@ class MyGameUpdate extends TabGameUpdate
                         $url=$cdn->url."/".$game->id;
                         if (key_exists('distributionId',$data) && $data['distributionId'])
                         {
-                            $url=$url."/".$data['distributionId']."/";
+                            $url=$url."/".$data['distributionId']."/".$this->platform."/";
                         }else{
-                            $url=$url."/default/";
+                            $url=$url."/default/".$this->platform."/";
                         }
                         $data['url']=$url;
                         return ['code'=>1,'msg'=>'检测到新版本','data'=>$data];
