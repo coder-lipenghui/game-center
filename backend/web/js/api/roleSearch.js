@@ -90,7 +90,7 @@ function doAjaxSubmit() {
 
             $("#baseAttribute").empty();
 
-            if (data.items)
+            if (data && data.items)
             {
                 //先不考虑效率问题
                 for (var i=0;i<Object.keys(data.items).length;i++)

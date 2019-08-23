@@ -17,9 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-cdkey-view">
     <div class="panel panel-default">
-        <?php $form = ActiveForm::begin([
-            'fieldConfig' => ['template' => '{input}'],
-        ]); ?>
+        <?php $form = ActiveForm::begin(); ?>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-1">
@@ -31,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             "id"=>"dropDownListGame",
                             "title"=>"选择游戏"
                         ]
-                    ) ?>
+                    )->label(false) ?>
                 </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'distributorId')->dropDownList(
@@ -42,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             "id"=>"dropDownListDistributor",
                             "title"=>"分销商"
                         ]
-                    ) ?>
+                    )->label(false) ?>
                 </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'varietyId')->dropDownList(
@@ -53,13 +51,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             "id"=>"dropDownListCDKEYVariety",
                             "title"=>"激活码种类"
                         ]
-                    ) ?>
+                    )->label(false) ?>
                 </div>
                 <div class="col-md-1">
                     <?= Html::submitButton(Yii::t('app', '查询'), ['class' => 'btn btn-success']) ?>
                 </div>
             </div>
-            <hr/>
         </div>
         <?php ActiveForm::end(); ?>
         <div class="panel-body">

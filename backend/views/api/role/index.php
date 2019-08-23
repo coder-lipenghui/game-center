@@ -92,7 +92,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                                                     "onchange"=>"changeSupportGame(this,'#supportDistributors')",
                                                     "title"=>"选择游戏"
                                                 ]
-                                            )?></div ≤>
+                                            )?></div>
                                         <div class="col-md-3"><?=$form->field($supportModel,'distributorId')->dropDownList(
                                                 [],
                                                 [
