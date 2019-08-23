@@ -16,6 +16,7 @@ class VcoinController extends BaseController
 {
     public $api="vcoin";
     public $myAction="add";
+    public $apiDb=3;
     public function actionIndex()
     {
         $searchModel=new VcoinRecord();
@@ -47,9 +48,11 @@ class VcoinController extends BaseController
                 $this->api="bvcoin";
             }
             $this->apiName=$this->api.$this->myAction;
-            $queryBody=http_build_query($searchModel->getAttributes());
-            if($this->initApiUrl($searchModel->gameId,$searchModel->distributorId,$searchModel->serverId,$queryBody."&page=".$page))
+            $queryBody=$searchModel->getAttributes();
+            $queryBody['page']=$page;
+            if($this->initApiUrl($searchModel->gameId,$searchModel->distributorId,$searchModel->serverId,$queryBody))
             {
+                //exit($this->apiUrl);
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);
                 unset($arrayData['_links']);
