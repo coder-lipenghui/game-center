@@ -94,7 +94,8 @@ class CdkeyController extends Controller
         $model=new ExportCDKEYModel();
         $request=Yii::$app->request;
         $dataProvider=new ArrayDataProvider();
-        if ($model->load($request->queryParams))
+//        $msg=json_encode($request->bodyParams);
+        if ($model->load($request->bodyParams))
         {
             if($model->validate())
             {
@@ -106,6 +107,7 @@ class CdkeyController extends Controller
         }
         return $this->render('view', [
             'model'=>$model,
+//            'msg'=>$msg,
             'dataProvider'=>$dataProvider
         ]);
     }

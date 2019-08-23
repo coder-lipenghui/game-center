@@ -147,7 +147,7 @@ class CenterController extends Controller
             $data['serverInfo']=$servers;
             $data['anncInfo']=$notice;
         }else{
-            $this->send(CenterController::$ERROR_PARAMS,\Yii::t('app',"参数错误"));
+            $this->send(CenterController::$ERROR_PARAMS,\Yii::t('app',"参数错误"),$loginModel->getErrors());
         }
         $this->send(1,'success',$data);
     }
@@ -163,7 +163,7 @@ class CenterController extends Controller
      *   1: payment-call-back/<distributionId> 后面的distributionId
      *   2: 通过我方订单号查找distributionId
      */
-    public function actionPaymentCallBack()
+    public function actionPaymentCallback()
     {
         $distributionId=$this->getDistributionId();
 
@@ -323,7 +323,7 @@ class CenterController extends Controller
                     return $result;
                 }else{
                     LoggerHelper::OrderError($model->gameId,$model->distributionId,"订单创建失败",$model->getErrors());
-                    return ['code'=>-3,'msg'=>'订单创建失败','data'=>[]];
+                    return ['code'=>-3,'msg'=>'订单创建失败','data'=>$model->getErrors()];
                 }
             }else{
                 return ['code'=>-2,'msg'=>'分销渠道不存在','data'=>[]];
@@ -494,10 +494,13 @@ class CenterController extends Controller
                     {
                         //激活码检测
                         AutoCDKEYModel::TabSuffix($game->id,$distribution->distributorId);
-                        $cdkey=AutoCDKEYModel::find()->where(['cdkey'=>$model->cdkey])->one();
-                        $variety=TabCdkeyVariety::findOne(['id'=>$cdkey->varietyId]);
+                        $cdkeyModel=new AutoCDKEYModel();
+                        $query=$cdkeyModel::find();
+                        $query->where(['cdkey'=>$model->cdkey]);
+                        $cdkey=$cdkeyModel::find()->where(['cdkey'=>$model->cdkey])->one();
                         if ($cdkey)
                         {
+                            $variety=TabCdkeyVariety::findOne(['id'=>$cdkey->varietyId]);
                             if (!$cdkey->used)
                             {
                                 //TODO 激活码类型限制：账号、角色只能使用一次
@@ -524,10 +527,10 @@ class CenterController extends Controller
                                             'item'=>$variety->items,
                                             'sign'=>$sign
                                         ];
+//                                        exit($url.http_build_query($body));
                                         $json=$curl->fetchUrl($url.http_build_query($body));
                                         if ($curl->getHttpResponseCode()==200)
                                         {
-                                            exit($json);
                                             $result=json_decode($json,true);
                                             $code=$result['code'];
                                             if ($code==1)
