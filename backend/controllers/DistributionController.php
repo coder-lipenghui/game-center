@@ -67,6 +67,7 @@ class DistributionController extends Controller
         $model = new TabDistribution();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $model->createLogTables($model->gameId,$model->distributorId);
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

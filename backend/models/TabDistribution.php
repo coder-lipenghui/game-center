@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "tab_distribution".
@@ -83,6 +84,41 @@ class TabDistribution extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * 创建日志表：cdkey、角色表、账号表等
+     * @param $gameId
+     * @param $distributionId
+     */
+    public function createLogTables($gameId,$distributionId)
+    {
+        //cdkey表
+        try{
+            $query=Yii::$app->db->createCommand("
+                DROP TABLE IF EXISTS `tab_cdkey_".$gameId."_".$distributionId."`;
+                CREATE TABLE `tab_cdkey_".$gameId."_".$distributionId."` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `gameId` int(10) NOT NULL COMMENT '游戏ID',
+                  `distributorId` int(10) NOT NULL COMMENT '分销商ID',
+                  `distributionId` int(10) DEFAULT NULL COMMENT '分销渠道ID',
+                  `varietyId` int(11) NOT NULL COMMENT '激活码分类ID',
+                  `cdkey` varchar(100) NOT NULL COMMENT '激活码',
+                  `used` int(2) NOT NULL DEFAULT '0' COMMENT '是否使用：0未使用 1:使用过',
+                  `createTime` int(10) NOT NULL COMMENT '创建时间',
+                  PRIMARY KEY (`id`),
+                  KEY `key_variety` (`varietyId`),
+                  CONSTRAINT `tab_cdkey_".$gameId."_".$distributionId."_ibfk_1` FOREIGN KEY (`varietyId`) REFERENCES `tab_cdkey_variety` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+            ");
+            $query->execute();
+        }catch (Exception $exception)
+        {
+            exit($exception->getMessage());
+        }
+
+        //player表
+        //角色表
+        //
+    }
     /**
      * @return \yii\db\ActiveQuery
      */

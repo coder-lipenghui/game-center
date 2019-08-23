@@ -25,7 +25,6 @@ class ExportCDKEYModel extends AutoCDKEYModel
      */
     public function groupByVariety()
     {
-//        self::TabSuffix($gameId,$distributorId);
         $query=self::find()
             ->select(['total'=>'count(varietyId)','varietyId'])
             ->groupBy(['varietyId'])
