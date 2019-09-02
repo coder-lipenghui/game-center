@@ -8,6 +8,8 @@ use Yii;
  * This is the model class for table "tab_log_start".
  *
  * @property int $id
+ * @property int $gameId
+ * @property int $distributionId
  * @property string $ip
  * @property string $deviceId
  * @property string $deviceOs
@@ -39,8 +41,8 @@ class TabLogStart extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ip', 'deviceOs', 'deviceVender', 'logTime'], 'required'],
-            [['logTime'], 'integer'],
+            [['gameId', 'distributionId', 'ip', 'deviceOs', 'deviceVender', 'logTime'], 'required'],
+            [['gameId', 'distributionId', 'logTime'], 'integer'],
             [['ip', 'deviceId', 'deviceOs', 'deviceName', 'deviceVender'], 'string', 'max' => 255],
         ];
     }
@@ -52,6 +54,8 @@ class TabLogStart extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
+            'gameId' => Yii::t('app', 'Game ID'),
+            'distributionId' => Yii::t('app', 'Distribution ID'),
             'ip' => Yii::t('app', 'Ip'),
             'deviceId' => Yii::t('app', 'Device ID'),
             'deviceOs' => Yii::t('app', 'Device Os'),
