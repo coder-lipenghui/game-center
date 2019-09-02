@@ -32,6 +32,7 @@ class ModelLoginLog extends  TabLogLogin
         $result=['code'=>-1,'msg'=>'参数错误','data'=>[]];
         $this->logTime=time();
         $this->load(['ModelLoginLog'=>$params]);
+        $this->roleName=urldecode($this->roleName);
         if($this->validate())
         {
             $player=TabPlayers::find()->where(['distributionUserId'=>$this->distributionUserId])->one();

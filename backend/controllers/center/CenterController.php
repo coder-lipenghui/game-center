@@ -152,7 +152,7 @@ class CenterController extends Controller
             $notice=MyTabNotice::searchGameNotice($game->id,$distribution->id);
             if (empty($notice))//默认构建一条公告
             {
-                $notice="欢迎|||亲爱的玩家您好，欢迎来到<".$game->name.">。如果您在游戏内遇到问题，请先联系我们的客服 我们将尽快为您解决问题。";
+                $notice="欢迎|||亲爱的玩家您好，欢迎来到《".$game->name."》。如果您在游戏内遇到问题，请先联系我们的客服 我们将尽快为您解决问题。";
             }
             $servers=MyTabServers::searchGameServers($game->id,$distribution->id);
 
@@ -484,13 +484,10 @@ class CenterController extends Controller
      */
     public function actionGameUpdate()
     {
-        Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
-
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
         $model=new MyGameUpdate();
         return $model->getUpdateInfo();
-
     }
-
     /**
      * 数据上报接口
      * 必须要：sku、distributionId、type、uid、account字段
