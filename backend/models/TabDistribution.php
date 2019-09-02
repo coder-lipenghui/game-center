@@ -110,12 +110,94 @@ class TabDistribution extends \yii\db\ActiveRecord
                 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
             ");
             $query->execute();
+            //创角日志
+            $query=Yii::$app->getDb('db_log')->createCommand("
+                DROP TABLE IF EXISTS `tab_log_role_".$gameId."_".$distributionId."`;
+                CREATE TABLE `tab_log_role_".$gameId."_".$distributionId."`(
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `distributionUserId` varchar(255) NOT NULL COMMENT '渠道用户ID',
+                  `account` varchar(255) NOT NULL COMMENT '中控分配的账号',
+                  `gameId` int(11) NOT NULL COMMENT '游戏ID',
+                  `distributionId` int(11) NOT NULL COMMENT '渠道ID',
+                  `serverId` int(11) NOT NULL COMMENT '区服ID',
+                  `roleId` varchar(255) NOT NULL COMMENT '角色唯一ID',
+                  `roleName` varchar(255) NOT NULL COMMENT '角色名称',
+                  `createTime` int(10) NOT NULL COMMENT '角色创建时间',
+                  `logTime` int(10) NOT NULL COMMENT '记录时间',
+                  PRIMARY KEY (`id`) USING BTREE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                
+                SET FOREIGN_KEY_CHECKS = 1;
+            ");
+            $query->execute();
+            //升级日志
+            $query=Yii::$app->getDb('db_log')->createCommand("
+                DROP TABLE IF EXISTS `tab_log_level_".$gameId."_".$distributionId."`;
+                CREATE TABLE `tab_log_level_".$gameId."_".$distributionId."`(
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `account` varchar(255) NOT NULL COMMENT '中控用户ID',
+                  `distributionUserId` varchar(255) NOT NULL COMMENT '渠道用户ID',
+                  `gameId` int(11) NOT NULL COMMENT '游戏ID',
+                  `distributionId` int(11) NOT NULL COMMENT '渠道ID',
+                  `serverId` int(11) NOT NULL COMMENT '区服ID',
+                  `roleId` varchar(255) NOT NULL COMMENT '角色ID',
+                  `roleName` varchar(255) NOT NULL COMMENT '角色名称',
+                  `roleLevel` int(10) NOT NULL COMMENT '角色等级',
+                  `updateTime` int(10) NOT NULL COMMENT '升级时间',
+                  `logTime` int(10) NOT NULL COMMENT '记录时间',
+                  PRIMARY KEY (`id`) USING BTREE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                
+                SET FOREIGN_KEY_CHECKS = 1;
+            ");
+            $query->execute();
+            //登录日志
+            $query=Yii::$app->getDb('db_log')->createCommand("
+                DROP TABLE IF EXISTS `tab_log_login_".$gameId."_".$distributionId."`;
+                CREATE TABLE `tab_log_login_".$gameId."_".$distributionId."`(
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `account` varchar(255) NOT NULL COMMENT '中控用户ID',
+                  `distributionUserId` varchar(255) NOT NULL COMMENT '渠道用户ID',
+                  `gameId` int(11) NOT NULL COMMENT '游戏ID',
+                  `distributionId` int(11) NOT NULL COMMENT '渠道ID',
+                  `serverId` int(11) NOT NULL COMMENT '区服ID',
+                  `roleId` varchar(255) NOT NULL COMMENT '角色ID',
+                  `roleName` varchar(255) NOT NULL COMMENT '角色名称',
+                  `roleLevel` int(11) NOT NULL COMMENT '角色等级',
+                  `deviceVender` varchar(255) NOT NULL COMMENT '设备厂商',
+                  `deviceOs` varchar(255) NOT NULL COMMENT '设备系统',
+                  `deviceId` varchar(255) DEFAULT NULL COMMENT '设备ID',
+                  `logTime` int(10) NOT NULL COMMENT '记录时间',
+                  PRIMARY KEY (`id`) USING BTREE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                
+                SET FOREIGN_KEY_CHECKS = 1;
+            ");
+            $query->execute();
+            //启动游戏
+            $query=Yii::$app->getDb('db_log')->createCommand("
+                DROP TABLE IF EXISTS `tab_log_start_".$gameId."_".$distributionId."`;
+                CREATE TABLE `tab_log_start_".$gameId."_".$distributionId."`(
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `ip` varchar(255) NOT NULL,
+                  `deviceId` varchar(255) DEFAULT NULL,
+                  `deviceOs` varchar(255) NOT NULL,
+                  `deviceName` varchar(255) DEFAULT NULL,
+                  `deviceVender` varchar(255) NOT NULL,
+                  `logTime` int(10) NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+                
+                SET FOREIGN_KEY_CHECKS = 1;
+            ");
+            $query->execute();
         }catch (Exception $exception)
         {
             exit($exception->getMessage());
         }
 
-        //player表
+        //日志表
+
         //角色表
         //
     }
