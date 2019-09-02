@@ -18,6 +18,10 @@ use backend\models\MyGameUpdate;
 use backend\models\MyTabNotice;
 use backend\models\MyTabOrders;
 use backend\models\MyTabServers;
+use backend\models\report\ModelLevelLog;
+use backend\models\report\ModelLoginLog;
+use backend\models\report\ModelRoleLog;
+use backend\models\report\ModelStartLog;
 use backend\models\TabCdkeyRecord;
 use backend\models\TabCdkeyVariety;
 use backend\models\TabDistribution;
@@ -41,6 +45,14 @@ use yii\web\Controller;
  */
 class CenterController extends Controller
 {
+    //数据上报部分
+    public static $REPORT_TYPE_SELECT_SERVER    =1; //选服时
+    public static $REPORT_TYPE_ENTER_SERVER     =2; //服务器登录成功，尚未进入到游戏场景
+    public static $REPORT_TYPE_CREATE_ROLE      =3; //创建角色
+    public static $REPORT_TYPE_ROLE_UPDATE      =4; //角色发生变化，常规是等级变化
+    public static $REPORT_TYPE_ENTER_GAME       =5; //进入到游戏场景
+    public static $REPORT_TYPE_ENTER            =6; //启动游戏
+
     public static $CODE_SUCCESS                 =  1; //成功
     public static $ERROR_SYSTEM                 = -1; //系统错误
     public static $ERROR_PARAMS                 = -2; //参数错误
@@ -465,13 +477,81 @@ class CenterController extends Controller
             return ['code'=>-13,'msg'=>'参数错误','data'=>$enterModle->getErrors()];
         }
     }
+
+    /**
+     * 获取游戏更新接口
+     * @return array
+     */
     public function actionGameUpdate()
     {
-        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
 
         $model=new MyGameUpdate();
         return $model->getUpdateInfo();
 
+    }
+
+    /**
+     * 数据上报接口
+     * 必须要：sku、distributionId、type、uid、account字段
+     * @return array
+     */
+    public function actionRecord()
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        $jsonData=file_get_contents("php://input");
+        $requestData=json_decode($jsonData,true);
+        if ($requestData && $requestData['sku'] && $requestData['distributionId'] && $requestData['type'])
+        {
+            $game=TabGames::find()->where(['sku'=>$requestData['sku']])->one();
+            if ($game)
+            {
+                $gameId=$game->id;
+                $distributionId=$requestData['distributionId'];
+                $distribution=TabDistribution::find()->where(['id'=>$distributionId])->one();
+                if ($distribution)
+                {
+                    $requestData['gameId']=$gameId;
+                    switch ($requestData['type'])
+                    {
+                        case self::$REPORT_TYPE_ENTER:
+                            ModelStartLog::TabSuffix($gameId,$distributionId);
+                            $enterApp=new ModelStartLog();
+                            return $enterApp->doRecord($requestData);
+                            break;
+//                        case self::$REPORT_TYPE_SELECT_SERVER:
+//                            break;
+//                        case self::$REPORT_TYPE_ENTER_SERVER:
+//                            break;
+                        case self::$REPORT_TYPE_CREATE_ROLE:
+                            ModelRoleLog::TabSuffix($gameId,$distributionId);
+                            $createRole=new ModelRoleLog();
+                            return $createRole->doRecord($requestData);
+                            break;
+                        case self::$REPORT_TYPE_ENTER_GAME:
+                            ModelLoginLog::TabSuffix($gameId,$distributionId);
+                            $roleLogin=new ModelLoginLog();
+                            return $roleLogin->doRecord($requestData);
+                            break;
+                        case self::$REPORT_TYPE_ROLE_UPDATE:
+                            ModelLevelLog::TabSuffix($gameId,$distributionId);
+                            $levelChange=new ModelLevelLog();
+                            return $levelChange->doRecord($requestData);
+                            break;
+                        default:
+                            return ['code'=>-4,'msg'=>'未知上报类型','data'=>[]];
+                    }
+                }else{
+                    return ['code'=>-3,'msg'=>'渠道不存在','data'=>[]];
+                }
+
+            }else{
+                return ['code'=>-2,'msg'=>'游戏不存在','data'=>[]];
+            }
+
+        }else{
+            return ['code'=>-1,'msg'=>'上报参数错误','data'=>[]];
+        }
     }
     public function actionCdkey()
     {
