@@ -57,6 +57,14 @@ class MyTabPermission extends TabPermission
         $data=$query->all();
         return $data;
     }
+
+    /**
+     * 获取权限内的分销渠道信息
+     * @param $gameId
+     * @param $did
+     * @param $uid
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public function allowAccessDistribution($gameId,$did,$uid)
     {
         $query=TabPermission::find();
@@ -78,6 +86,20 @@ class MyTabPermission extends TabPermission
             return $data;
         }
         return [];
+    }
+
+    /**
+     * 根据用户ID获取对应的游戏、分销渠道信息
+     * @param $uid
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function getDistributionByUid($uid)
+    {
+        $query=TabPermission::find();
+        $query->select(['gameId','distributionId'])->where(['uid'=>$uid])->asArray();
+        $data=$query->all();
+//        exit(json_encode($data));
+        return $data;
     }
     public function allDistribution($gameId,$did)
     {

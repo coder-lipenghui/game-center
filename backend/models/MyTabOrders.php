@@ -14,23 +14,163 @@ use yii\helpers\ArrayHelper;
 
 class MyTabOrders extends TabOrders
 {
+    /**
+     * 今日付费玩家数量
+     * @return int
+     */
+    public static function todayPayingUser()
+    {
+        $uid=\Yii::$app->user->id;
+        $number=0;
+        $modelPermission=new MyTabPermission();
+        $permissions=$modelPermission->getDistributionByUid($uid);
+
+        if ($permissions)
+        {
+            for ($i=0;$i<count($permissions);$i++)
+            {
+                $gameId=$permissions[$i]['gameId'];
+                $distributionId=$permissions[$i]['distributionId'];
+
+                $query=TabOrders::find();
+                $query->where([
+                        'gameId'=>$gameId,
+                        'distributionId'=>$distributionId,
+                        "FROM_UNIXTIME(payTime,'%Y-%m-%d')"=>date('Y-m-d'),
+                        'payStatus'=>'1',
+                        ])
+                      ->groupBy('gameAccount');
+                $number=$number+(int)$query->count();
+            }
+        }
+        return $number;
+    }
+    /**
+     * 今日充值总金额
+     * @return float|int|mixed
+     */
     public static function todayAmount()
     {
-        $cond=['between','payTime',strtotime(date('Y-m-d')." 00:00:00"),strtotime(date('Y-m-d')."23:59:59")];
+        $uid=\Yii::$app->user->id;
+        $amount=0;
+        $modelPermission=new MyTabPermission();
+        $permissions=$modelPermission->getDistributionByUid($uid);
+
+        if ($permissions)//统计用户权限内的渠道充值金额
+        {
+            for ($i=0;$i<count($permissions);$i++) {
+                $gameId = $permissions[$i]['gameId'];
+                $distributionId = $permissions[$i]['distributionId'];
+                $query=TabOrders::find()
+                    ->where(['payStatus'=>'1','FROM_UNIXTIME(payTime,"%Y-%m-%d")'=>date('Y-m-d'),'gameId'=>$gameId,'distributionId'=>$distributionId])
+                    ->select(['payAmount'])->asArray();
+                $totalToday=$query->sum('payAmount');
+                $totalToday=$totalToday?$totalToday/100:0;
+                $amount=$amount+$totalToday;
+            }
+        }
+        return $amount;
+    }
+
+    /**
+     * 昨日充值金额
+     * @return float|int|mixed
+     */
+    public static function yesterdayAmount()
+    {
+        //TODO 需要根据用户权限进行各项统计
+        $cond=['between','payTime',strtotime(date('Y-m-d')." 00:00:00")-86400000,strtotime(date('Y-m-d')."23:59:59")-86400000];
 
         $query=TabOrders::find()
             ->where($cond)
             ->andWhere(['=','payStatus','1'])
             ->select(['payAmount'])->asArray();
 
-        $totalToday=$query->sum('payAmount');
+        $totalYesterday=$query->sum('payAmount');
 
-        $totalToday=$totalToday?$totalToday/100:0;
+        $totalYesterday=$totalYesterday?$totalYesterday/100:0;
 
-        return $totalToday;
+        return $totalYesterday;
     }
+
+    /**
+     * 过去30天内每天的充值金额
+     */
+    public static function getLast30Amount()
+    {
+        $start=date('Y-m-d',strtotime('-30 day'));
+        $end=date('Y-m-d');
+        return self::getAmountGroupByDay($start,$end);
+    }
+
+    /**
+     * 过去30天内每天的充值人数
+     * @throws \yii\db\Exception
+     */
+    public static function getLast30PayingUser()
+    {
+        $start=date('Y-m-d',strtotime('-30 day'));
+        $end=date('Y-m-d');
+        self::getPayingUserGroupByDay($start,$end);
+    }
+    /**
+     * 获取起止日期内每日充值金额
+     * @param $start
+     * @param $end
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    private static function getAmountGroupByDay($start,$end)
+    {
+        //测试SQL:
+        //SELECT t1.time,if(t2.amount is NULL,0,t2.amount) FROM (SELECT DAY_SHORT_DESC as time FROM calendar WHERE DAY_SHORT_DESC>='2019-08-01' AND DAY_SHORT_DESC<='2019-09-01') as t1 LEFT JOIN (SELECT SUM(payAmount/100) as amount,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributionId in (1,5,7) and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='2019-08-01' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='2019-09-01' GROUP BY FROM_UNIXTIME(payTime,'%Y-%m-%d')) as t2 ON t1.time=t2.time ORDER BY t1.time;
+        $uid=\Yii::$app->user->id;
+        $modelPermission=new MyTabPermission();
+        $permissions=$modelPermission->getDistributionByUid($uid);
+        $distributionsArr=ArrayHelper::getColumn($permissions,'distributionId');
+        $distributions=join(",",$distributionsArr);
+        $sql="SELECT t1.time,if(t2.amount is NULL,0,t2.amount) as amount FROM 
+            (SELECT DAY_SHORT_DESC as time FROM calendar WHERE DAY_SHORT_DESC>='$start' AND DAY_SHORT_DESC<='$end') as t1 
+            LEFT JOIN 
+            (SELECT SUM(payAmount/100) as amount,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributionId in ($distributions) and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='$start' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='$end' GROUP BY FROM_UNIXTIME(payTime,'%Y-%m-%d')) as t2 
+            ON t1.time=t2.time 
+            ORDER BY t1.time";
+        $data=$query=\Yii::$app->db->createCommand($sql)->queryAll();
+        return $data;
+    }
+
+    /**
+     * 获取起止日期内每日充值人数
+     * @param $start
+     * @param $end
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    private static function getPayingUserGroupByDay($start,$end)
+    {
+        //测试SQL：
+        //SELECT t1.time,if(t2.number is NULL,0,t2.number) FROM (SELECT DAY_SHORT_DESC as time FROM calendar WHERE DAY_SHORT_DESC>='2019-08-01' AND DAY_SHORT_DESC<='2019-09-01') as t1 LEFT JOIN (SELECT COUNT(*) as number,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributionId in (1,5,7) and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='2019-08-01' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='2019-09-01' GROUP BY gameAccount) as t2 ON t1.time=t2.time ORDER BY t1.time;
+        $uid=\Yii::$app->user->id;
+        $modelPermission=new MyTabPermission();
+        $permissions=$modelPermission->getDistributionByUid($uid);
+        $distributionsArr=ArrayHelper::getColumn($permissions,'distributionId');
+        $distributions=join(",",$distributionsArr);
+        $sql="SELECT t1.time,if(t2.number is NULL,0,t2.number) as number FROM 
+            (SELECT DAY_SHORT_DESC as time FROM calendar WHERE DAY_SHORT_DESC>='$start' AND DAY_SHORT_DESC<='$end') as t1 
+            LEFT JOIN 
+            (SELECT count(*) as number,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributionId in ($distributions) and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='$start' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='$end' GROUP BY gameAccount) as t2 
+            ON t1.time=t2.time 
+            ORDER BY t1.time";
+        $data=$query=\Yii::$app->db->createCommand($sql)->queryAll();
+        return $data;
+    }
+    /**
+     * 本月充值金额
+     * @return float|int|mixed
+     */
     public static function currentMonthAmount()
     {
+        //TODO 需要根据用户权限进行各项统计
         $beginDate=date('Y-m-01',strtotime(date("Y-m-d")));
         $endDate=date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
 
@@ -46,8 +186,31 @@ class MyTabOrders extends TabOrders
 
         return $totalToday;
     }
+
+    /**
+     * 获取某个渠道的今日充值金额
+     * @param $gameId
+     * @param $distributionId
+     * @return array|\yii\db\ActiveRecord|null
+     */
+    public static function todayAmountByDistribution($gameId,$distributionId)
+    {
+        //TODO 需要根据用户权限进行各项统计
+        $date=date('Y-m-d');
+        $query=MyTabOrders::find();
+        $query->select(['amount'=>'sum(payAmount/100)'])
+              ->where(['gameId'=>$gameId,'distributionId'=>$distributionId,'payStatus'=>'1',"FROM_UNIXTIME(payTime,'%Y-%m-%d')"=>$date])
+              ->asArray();
+        return $query->one();
+    }
+
+    /**
+     * 本月各分销商充值金额
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public static function amountGroupByDistributor()
     {
+        //TODO 需要根据用户权限进行各项统计
         $beginDate=date('Y-m-01',strtotime(date("Y-m-d")));
         $endDate=date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
         $cond=['between','payTime',strtotime($beginDate),strtotime($endDate)];
@@ -74,6 +237,13 @@ class MyTabOrders extends TabOrders
         }
         return $data;
     }
+
+    /**
+     * 发货接口
+     * @param $orderId
+     * @param $distribution
+     * @return bool
+     */
     public static function deliver($orderId,$distribution)
     {
         $order=null;

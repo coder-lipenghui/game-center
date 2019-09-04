@@ -63,4 +63,40 @@ class ModelLoginLog extends  TabLogLogin
         }
         return $result;
     }
+
+    /**
+     * 获取某一天的登录账号数量
+     *
+     * @param $date 默认为当天
+     */
+    public function loginNumberByDay($date=null)
+    {
+        if (!$date)
+        {
+            $date=date('Y-m-d');
+        }
+        //SELECT account,roleName,COUNT(account),FROM_UNIXTIME(logTime) as time FROM tab_log_login_1_7 WHERE FROM_UNIXTIME(logTime,'%Y-%m-%d')='2019-09-04' GROUP BY account
+        $query=self::find()
+            ->select(['account','roleName','count(account)','FROM_UNIXTIME(logTime)'])
+            ->where(["FROM_UNIXTIME(logTime,'%Y-%m-%d')"=>$date])
+            ->groupBy('account');
+        $data=$query->count();
+    }
+    /**
+     * 获取某一天的登录设备数量
+     * @param $date
+     */
+    public function deviceNumberByDay($date)
+    {
+        if (!$date)
+        {
+            $date=date('Y-m-d');
+        }
+        //SELECT account,roleName,COUNT(account),FROM_UNIXTIME(logTime) as time FROM tab_log_login_1_7 WHERE FROM_UNIXTIME(logTime,'%Y-%m-%d')='2019-09-04' GROUP BY account
+        $query=self::find()
+            ->select(['account','roleName','count(account)','FROM_UNIXTIME(logTime)'])
+            ->where(["FROM_UNIXTIME(logTime,'%Y-%m-%d')"=>$date])
+            ->groupBy('deviceId');
+        $data=$query->count();
+    }
 }
