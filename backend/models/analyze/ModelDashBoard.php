@@ -15,14 +15,12 @@ class ModelDashBoard extends Model
      *
      * @return int
      */
-    public function arpuByDay()
+    public function getTodayArpu()
     {
         //公式：今日充值金额/今日登录用户数
-        $uid=\Yii::$app->user->id;
-        $permission=new MyTabPermission();
         $loginNumber=0;
         $amount=0;
-        $distributions=$permission->getDistributionByUid($uid);
+        $distributions=$this->getDistributions();
         if ($distributions)
         {
             for ($i=0;$i<count($distributions);$i++)
@@ -31,7 +29,7 @@ class ModelDashBoard extends Model
                 $distributionId=$distributions[$i]['distributionId'];
                 ModelLoginLog::TabSuffix($gameId,$distributionId);
                 $login=new ModelLoginLog();
-                $loginNumber=$loginNumber+$login->loginNumberByDay();
+                $loginNumber=$loginNumber+$login->getTodayLoginUserNumber();
                 $orderAmount=MyTabOrders::todayAmountByDistribution($gameId,$distributionId);
                 if ($orderAmount && $orderAmount['amount'])
                 {
@@ -51,11 +49,11 @@ class ModelDashBoard extends Model
      * 获取今日的ARPPU
      * @return int
      */
-    public function arppuByDay()
+    public function getTodayArppu()
     {
         //公式:今日充值金额/今日充值用户数
-        $amount=MyTabOrders::todayAmount();
-        $payingUser=MyTabOrders::todayPayingUser();
+        $amount=MyTabOrders::getTodayAmount();
+        $payingUser=MyTabOrders::getTodayPayingUser();
         if ($payingUser==0)
         {
             return 0;
@@ -63,23 +61,83 @@ class ModelDashBoard extends Model
             return (int)($amount/$payingUser);
         }
     }
-    /**
-     * 月arpu
-     */
-    public  function arpuByMonth($month=null)
+    public function getLast30dayLoginUserNumber()
     {
-        if (!$month)
+        $number=0;
+        $distributions=$this->getDistributions();
+        if ($distributions)
         {
-            $month=date('Y-m');
+            for ($i=0;$i<count($distributions);$i++)
+            {
+                $gameId=$distributions[$i]['gameId'];
+                $distributionId=$distributions[$i]['distributionId'];
+                ModelLoginLog::TabSuffix($gameId,$distributionId);
+                $model=new ModelLoginLog();
+                $number+=$model->getLast30LoginUserNumber();
+            }
         }
-        //
+        return $number;
     }
-
-    /**
-     * 月arppu
-     */
-    public  function arppuByMon()
+    public function getLast7dayLoginUserNumber()
     {
-
+        $number=0;
+        $distributions=$this->getDistributions();
+        if ($distributions)
+        {
+            for ($i=0;$i<count($distributions);$i++)
+            {
+                $gameId=$distributions[$i]['gameId'];
+                $distributionId=$distributions[$i]['distributionId'];
+                ModelLoginLog::TabSuffix($gameId,$distributionId);
+                $model=new ModelLoginLog();
+                $number+=$model->getLast7LoginUserNumber();
+            }
+        }
+        return $number;
+    }
+    public function getLast30dayLoginDeviceNumber()
+    {
+        $number=0;
+        $distributions=$this->getDistributions();
+        if ($distributions)
+        {
+            for ($i=0;$i<count($distributions);$i++)
+            {
+                $gameId=$distributions[$i]['gameId'];
+                $distributionId=$distributions[$i]['distributionId'];
+                ModelLoginLog::TabSuffix($gameId,$distributionId);
+                $model=new ModelLoginLog();
+                $number+=$model->getLast30LoginDeviceNumber();
+            }
+        }
+        return $number;
+    }
+    public function getLast7dayLoginDeviceNumber()
+    {
+        $number=0;
+        $distributions=$this->getDistributions();
+        if ($distributions)
+        {
+            for ($i=0;$i<count($distributions);$i++)
+            {
+                $gameId=$distributions[$i]['gameId'];
+                $distributionId=$distributions[$i]['distributionId'];
+                ModelLoginLog::TabSuffix($gameId,$distributionId);
+                $model=new ModelLoginLog();
+                $number+=$model->getLast7LoginDeviceNumber();
+            }
+        }
+        return $number;
+    }
+    private function getDistributions()
+    {
+        $uid = \Yii::$app->user->id;
+        $permission = new MyTabPermission();
+        $distributions = $permission->getDistributionByUid($uid);
+        if ($distributions)
+        {
+            return $distributions;
+        }
+        return null;
     }
 }

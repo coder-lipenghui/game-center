@@ -10,14 +10,51 @@ namespace backend\models;
 
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 class MyTabPlayers extends TabPlayers
 {
+    //TODO 需要按照权限内的渠道来进行统计
+    /**
+     * 获取总账号数
+     * @return int|string
+     */
+    public static  function getUserTotal()
+    {
+        $distributions=self::getDistributions();
+        if ($distributions)
+        {
+            $query=MyTabPlayers::find();
+
+            $query->select('account')
+                ->where(['distributionId'=>$distributions])
+                ->groupBy('account');
+            $data=$query->count();
+            return $data;
+        }
+        return 0;
+
+    }
+    public static function getDeviceTotal()
+    {
+        $distributions=self::getDistributions();
+        if ($distributions)
+        {
+            $query=MyTabPlayers::find();
+            $query->select('regdeviceId')
+                ->where(['distributionId'=>$distributions])
+                ->groupBy('regdeviceId');
+            //exit($query->createCommand()->getRawSql());
+            $data=$query->count();
+            return $data;
+        }
+        return 0;
+    }
     /**
      * 各渠道用户数量
      * @return array|\yii\db\ActiveRecord[]
      */
-    public static function numberGroupByDistributor()
+    public static function getNumberGroupByDistributor()
     {
         $query=self::find()
             ->select(['distributorId','value'=>'count(account)'])
@@ -42,7 +79,7 @@ class MyTabPlayers extends TabPlayers
      * 今日注册账户数
      * @return int|string
      */
-    public static function todayRegister()
+    public static function getTodayRegister()
     {
         $query=self::find()
             ->where(['like','regTime',date('Y-m-d')]);
@@ -55,7 +92,7 @@ class MyTabPlayers extends TabPlayers
      * 昨日注册账户数
      * @return int|string
      */
-    public static function yesterdayRegister()
+    public static function getYesterdayRegister()
     {
         $query=self::find()
             ->where(['like','regTime',date('Y-m-d',strtotime(date('Y-m-d'))-86400000)]);
@@ -68,10 +105,8 @@ class MyTabPlayers extends TabPlayers
      * 今日注册设备数
      * @return int|string
      */
-    public static function todayRegisterDevice()
+    public static function getTodayRegisterDevice()
     {
-        //$query=Yii::$app->db->createCommand("SELECT * FROM(SELECT * FROM tab_players GROUP BY regdeviceId) as t1 WHERE t1.regtime LIKE '%2019-09-03%';")->execute();
-
         $query=self::find()
             ->where(['like','regtime',date('Y-m-d')])
             ->groupBy('regdeviceid');
@@ -84,7 +119,7 @@ class MyTabPlayers extends TabPlayers
      * 昨日注册设备数
      * @return int|string
      */
-    public static function yesterdayRegisterDevice()
+    public static function getYesterdayRegisterDevice()
     {
         $query=self::find()
             ->where(['like','regtime',date('Y-m-d',strtotime(date('Y-m-d'))-86400000)])
@@ -145,5 +180,23 @@ class MyTabPlayers extends TabPlayers
     public static function getRegNumByMon()
     {
 
+    }
+
+    /**
+     * 获取权限内的渠道列表
+     * 返回：1,2,3 | null
+     * @return string|null
+     */
+    private static function getDistributions()
+    {
+        $distributions=null;
+        $uid=\Yii::$app->user->id;
+        $number=0;
+        $modelPermission=new MyTabPermission();
+        $permissions=$modelPermission->getDistributionByUid($uid);
+        if ($permissions) {
+            $distributions = ArrayHelper::getColumn($permissions, 'distributionId');
+        }
+        return $distributions;
     }
 }

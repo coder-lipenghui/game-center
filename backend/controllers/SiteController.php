@@ -64,21 +64,21 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $msg="";
-        $totalToday=MyTabOrders::todayAmount();
-        $totalMonth=MyTabOrders::currentMonthAmount();
-        $todayOpen=MyTabServers::todayOpen();
-        $todayRegister=MyTabPlayers::todayRegister();
-        $amountGroupByDistributor=MyTabOrders::amountGroupByDistributor();
-        $userGroupByDistributor=MyTabPlayers::numberGroupByDistributor();
+//        $msg="";
+//        $totalToday=MyTabOrders::todayAmount();
+//        $totalMonth=MyTabOrders::currentMonthAmount();
+//        $todayOpen=MyTabServers::todayOpen();
+//        $todayRegister=MyTabPlayers::todayRegister();
+//        $amountGroupByDistributor=MyTabOrders::amountGroupByDistributor();
+//        $userGroupByDistributor=MyTabPlayers::numberGroupByDistributor();
         return $this->render('index',[
-            'totalToday'=>$totalToday,
-            'totalMonth'=>$totalMonth,
-            'todayOpen'=>$todayOpen,
-            'todayRegister'=>$todayRegister,
-            'amountGroupByDistributor'=>$amountGroupByDistributor,
-            'userGroupByDistributor'=>$userGroupByDistributor,
-            'msg'=>$msg,
+//            'totalToday'=>$totalToday,
+//            'totalMonth'=>$totalMonth,
+//            'todayOpen'=>$todayOpen,
+//            'todayRegister'=>$todayRegister,
+//            'amountGroupByDistributor'=>$amountGroupByDistributor,
+//            'userGroupByDistributor'=>$userGroupByDistributor,
+//            'msg'=>$msg,
         ]);
     }
 

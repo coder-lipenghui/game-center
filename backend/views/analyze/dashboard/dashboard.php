@@ -62,10 +62,11 @@ $(function () {
   $('[data-toggle=\"tooltip\"]').tooltip()
 })
 ");
+//exit(json_encode($last30PayingUser));
 ?>
 <div class="panel panel-default">
     <div class="panel-body">
-        <b>基础数据(按照游戏划分)</b>
+        <b>实时数据</b>
         <hr>
         <div class="row">
             <div class="col-md-2">
@@ -122,6 +123,56 @@ $(function () {
 </div>
 <div class="panel panel-default">
     <div class="panel-body">
+        <label>数据概要</label>
+        <hr/>
+        <div class="row">
+            <div class="col-sm-2">
+                <small>累计用户</small>
+                <h3><?=$userTotal?></h3>
+            </div>
+            <div class="col-sm-2">
+                <small>累计设备</small>
+                <h3><?=$deviceTotal?></h3>
+            </div>
+            <div class="col-sm-2">
+                <small>过去7天活跃用户</small>
+                <h3><?=$last7dayLoginUserNumber?></h3>
+            </div>
+            <div class="col-sm-2">
+                <small>过去30天活跃用户</small>
+                <h3><?=$last30dayLoginUserNumber?></h3>
+            </div>
+            <div class="col-sm-2">
+                <small>-</small>
+                <h3>-</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <small>累计付费用户</small>
+                <h3><?=$payingUserTotal?></h3>
+            </div>
+            <div class="col-sm-2">
+                <small>累计付费金额</small>
+                <h3><?=$amountTotal?></h3>
+            </div>
+            <div class="col-sm-2">
+                <small>付费率</small>
+                <h3>1</h3>
+            </div>
+            <div class="col-sm-2">
+                <small>arpu</small>
+                <h3><?=sprintf("%.2f",($amountTotal/$userTotal))?></h3>
+            </div>
+            <div class="col-sm-2">
+                <small>arppu</small>
+                <h3><?=sprintf("%.2f",($amountTotal/$payingUserTotal))?></h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-body">
         <b>最近30日数据趋势图</b>
         <hr/>
         <div class="btn-group" role="group" aria-label="...">
@@ -167,7 +218,7 @@ $(function () {
                         type: 'value'
                     },
                     tooltip: {
-                       formatter:"数量:{c}<br/>日期:{b}<br/>"
+                       formatter:"数量:{c}<br/><label class='small'>日期:{b}</label><br/>"
                     },
                     series: [{
                         data: <?=json_encode($values)?>,
@@ -177,6 +228,39 @@ $(function () {
                 myChart.setOption(option);
             </script>
 
+            <div id="last30RegDevice" style="width: 1200px;height:400px;"></div>
+            <script type="text/javascript">
+                <?php
+                $keys=[];
+                $values=[];
+                for ($i=0;$i<count($last30RegDevice);$i++)
+                {
+                    $keys[]=$last30RegDevice[$i]['time'];
+                    $values[]=$last30RegDevice[$i]['number'];
+                }
+                ?>
+                var myChart = echarts.init(document.getElementById('last30RegDevice'));
+                var option = {
+                    title: {
+                        text: '新增设备',
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: <?=json_encode($keys)?>
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    tooltip: {
+                        formatter:"数量:{c}<br/><label class='small'>日期:{b}</label><br/>"
+                    },
+                    series: [{
+                        data: <?=json_encode($values)?>,
+                        type: 'line'
+                    }]
+                };
+                myChart.setOption(option);
+            </script>
             <div id="last30Income" style="width: 1200px;height:400px;"></div>
             <script type="text/javascript">
                 <?php
@@ -201,7 +285,41 @@ $(function () {
                         type: 'value'
                     },
                     tooltip: {
-                        formatter:"金额:{c}<br/>日期:{b}<br/>"
+                        formatter:"金额:{c}<br/><label class='small'>日期:{b}</label><br/>"
+                    },
+                    series: [{
+                        data: <?=json_encode($values)?>,
+                        type: 'line'
+                    }]
+                };
+                myChart.setOption(option);
+            </script>
+
+            <div id="last30PayingUser" style="width: 1200px;height:400px;"></div>
+            <script type="text/javascript">
+                <?php
+                $keys=[];
+                $values=[];
+                for ($i=0;$i<count($last30PayingUser);$i++)
+                {
+                    $keys[]=$last30PayingUser[$i]['time'];
+                    $values[]=$last30PayingUser[$i]['number'];
+                }
+                ?>
+                var myChart = echarts.init(document.getElementById('last30PayingUser'));
+                var option = {
+                    title: {
+                        text: '付费用户数',
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: <?=json_encode($keys)?>
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    tooltip: {
+                        formatter:"数量:{c}<br/><label class='small'>日期:{b}</label><br/>"
                     },
                     series: [{
                         data: <?=json_encode($values)?>,
@@ -213,3 +331,6 @@ $(function () {
         </div>
     </div>
 </div>
+<script>
+
+</script>

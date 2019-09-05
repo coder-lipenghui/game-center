@@ -99,9 +99,6 @@ class CenterController extends Controller
         $loginModel->load(['Login'=>$requestData]);
         if ($loginModel->validate())
         {
-            //TODO 做一个sign验证
-            //sign=md5(参数按首字母排序后+loginkey)
-            //TODO cache检测token，如果有token 则直接跳过验证 直接拉取信息
             $game=TabGames::findOne(['sku'=>$loginModel->sku]);
             if ($game===null)
             {

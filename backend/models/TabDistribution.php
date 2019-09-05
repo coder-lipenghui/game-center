@@ -166,7 +166,7 @@ class TabDistribution extends \yii\db\ActiveRecord
                   `roleLevel` int(11) NOT NULL COMMENT '角色等级',
                   `deviceVender` varchar(255) NOT NULL COMMENT '设备厂商',
                   `deviceOs` varchar(255) NOT NULL COMMENT '设备系统',
-                  `deviceId` varchar(255) DEFAULT NULL COMMENT '设备ID',
+                  `deviceId` varchar(255) NOT NULL COMMENT '设备ID',
                   `logTime` int(10) NOT NULL COMMENT '记录时间',
                   PRIMARY KEY (`id`) USING BTREE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -180,7 +180,7 @@ class TabDistribution extends \yii\db\ActiveRecord
                 CREATE TABLE `tab_log_start_".$gameId."_".$distributionId."`(
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `ip` varchar(255) NOT NULL,
-                  `deviceId` varchar(255) DEFAULT NULL,
+                  `deviceId` varchar(255) NOT NULL,
                   `deviceOs` varchar(255) NOT NULL,
                   `deviceName` varchar(255) DEFAULT NULL,
                   `deviceVender` varchar(255) NOT NULL,

@@ -14,25 +14,36 @@ class DashboardController extends Controller
     {
 
         $dashboard=new ModelDashBoard();
-        $todayArpu=$dashboard->arpuByDay();
-        $todayArppu=$dashboard->arppuByDay();
+        $todayArpu=$dashboard->getTodayArpu();
+        $todayArppu=$dashboard->getTodayArppu();
+        $last7dayLoginUserNumber=$dashboard->getLast7dayLoginUserNumber();
+        $last30dayLoginUserNumber=$dashboard->getLast30dayLoginUserNumber();
+//        $last7dayLoginDeviceNumber=$dashboard->getLast7dayLoginUserNumber();
+//        $last30dayLoginDeviceNumber=$dashboard->getLast30dayLoginUserNumber();
 
-        $totalToday=MyTabOrders::todayAmount();//今日总金额
-        $totalYesterday=MyTabOrders::yesterdayAmount();//昨日充值金额
-        $totalTodayRegDevice=MyTabPlayers::todayRegisterDevice();//今日注册设备数
-        $totalYesterdayRegDevice=MyTabPlayers::yesterdayRegisterDevice();//昨日注册设备数
-        $todayRegister=MyTabPlayers::todayRegister();//今日注册用户数
-        $yesterdayRegister=MyTabPlayers::yesterdayRegister();//昨日注册用户数
+        $totalToday=MyTabOrders::getTodayAmount();                          //今日总金额
+        $totalYesterday=MyTabOrders::getYesterdayAmount();                  //昨日充值金额
+        $totalTodayRegDevice=MyTabPlayers::getTodayRegisterDevice();        //今日注册设备数
+        $totalYesterdayRegDevice=MyTabPlayers::getYesterdayRegisterDevice();//昨日注册设备数
+        $todayRegister=MyTabPlayers::getTodayRegister();                    //今日注册用户数
+        $yesterdayRegister=MyTabPlayers::getYesterdayRegister();            //昨日注册用户数
+
+        $last30RegUser=MyTabPlayers::getLast30RegUser();                    //guoqu
+        $last30RegDevice=MyTabPlayers::getLast30RegDevice();
+        $last30Amount=MyTabOrders::getLast30Amount();
+        $last30PayingUser=MyTabOrders::getLast30PayingUser();
+
+        $userTotal=MyTabPlayers::getUserTotal();
+        $deviceTotal=MyTabPlayers::getDeviceTotal();
+        $payingUserTotal=MyTabOrders::getTotalPayingUser();
+        $amountTotal=MyTabOrders::getTotalAmount();
+
+
 
 //        $totalMonth=MyTabOrders::currentMonthAmount();//本月充值金额
 //        $todayOpen=MyTabServers::todayOpen();//今日开服数量
 //        $amountGroupByDistributor=MyTabOrders::amountGroupByDistributor();//各渠道充值金额
 //        $userGroupByDistributor=MyTabPlayers::numberGroupByDistributor();//各渠道用户数量
-
-        $last30RegUser=MyTabPlayers::getLast30RegUser();
-        $last30RegDevice=MyTabPlayers::getLast30RegDevice();
-        $last30Amount=MyTabOrders::getLast30Amount();
-        $last30PayingUser=MyTabOrders::getLast30PayingUser();
 
         return $this->render('dashboard',[
 
@@ -53,6 +64,15 @@ class DashboardController extends Controller
             'last30Amount'=>$last30Amount,
             'last30PayingUser'=>$last30PayingUser,
 
+            'userTotal'=>$userTotal,
+            'deviceTotal'=>$deviceTotal,
+            'payingUserTotal'=>$payingUserTotal,
+            'amountTotal'=>$amountTotal,
+
+            'last7dayLoginUserNumber'=>$last7dayLoginUserNumber,
+            'last30dayLoginUserNumber'=>$last30dayLoginUserNumber,
+//            'last7dayLoginDeviceNumber'=>$last7dayLoginDeviceNumber,
+//            'last30dayLoginDeviceNumber'=>$last30dayLoginDeviceNumber,
 //            'totalMonth'=>$totalMonth,
 //            'todayOpen'=>$todayOpen,
 //            'amountGroupByDistributor'=>$amountGroupByDistributor,
