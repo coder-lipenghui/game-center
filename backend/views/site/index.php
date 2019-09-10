@@ -6,25 +6,7 @@ use yii\widgets\menu;
 <?php
 
 /* @var $this yii\web\View */
-$this->title = '首页';
-//public $secretKey="longcitywebonline12345678901234567890";
-//public $ip="111.231.60.73";
-//public $port="8310";
-//$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-//if (!$socket) {
-//    exit(socket_last_error($socket));
-//}
-////        if (!socket_connect($socket, $this->ip, $this->port)) {
-//if (!socket_connect($socket, "111.231.60.73", 8310)) {
-//    exit(socket_last_error($socket));
-//}
-//$in = md5('kick wht'.'longcitywebonline12345678901234567890').'kick wht'.'\n';
-//if (!socket_write($socket, $in, strlen($in))) {
-//    exit(socket_last_error($socket));
-//}
-//exit(trim(socket_read($socket, 1024)));
-//
-//socket_close($socket);
+$this->title = '';
 $this->registerJsFile("@web/js/echarts.min.js",['position'=>\yii\web\View::POS_HEAD]);
 ?>
 <div class="panel panel-default">
@@ -42,28 +24,28 @@ $this->registerJsFile("@web/js/echarts.min.js",['position'=>\yii\web\View::POS_H
         <p><hr/></p>
         <div class="row">
             <div class="col-md-3">
-                <b>商务合作</b>
-                <p>联系人：杨先生</p>
-                <p>电  话：16605110306</p>
-                <p>Q   Q：3464285</p>
+                <p><span class="glyphicon glyphicon-briefcase"><label> 商务合作 </label></span></p>
+                <p><span class="glyphicon glyphicon-user">:李先生</span></p>
+                <p><span class="glyphicon glyphicon-earphone">:16605110306</span></p>
+                <p><span class="glyphicon glyphicon-exclamation-sign">:3464285<span class="badge"><small>请注明来意</small></span></span></p>
             </div>
             <div class="col-md-3">
                 <p><b>市场合作</b></p>
-                <p>联系人：赵先生</p>
-                <p>电  话：16605110306</p>
-                <p>Q   Q：3464285</p>
+                <p><span class="glyphicon glyphicon-user">:李先生</span></p>
+                <p><span class="glyphicon glyphicon-earphone">:16605110306</span></p>
+                <p><span class="glyphicon glyphicon-exclamation-sign">:3464285<span class="badge"><small>请注明来意</small></span></span></p>
             </div>
             <div class="col-md-3">
                 <p><b>技术支持</b></p>
-                <p>联系人：李先生</p>
-                <p>电  话：16605110306</p>
-                <p>Q   Q：3464285</p>
+                <p><span class="glyphicon glyphicon-user">:李先生</span></p>
+                <p><span class="glyphicon glyphicon-earphone">:16605110306</span></p>
+                <p><span class="glyphicon glyphicon-exclamation-sign">:3464285<span class="badge"><small>请注明来意</small></span></span></p>
             </div>
             <div class="col-md-3">
                 <p><b>联系我们</b></p>
-                <p>联系人：李先生</p>
-                <p>电  话：16605110306</p>
-                <p>Q   Q：3464285</p>
+                <p><span class="glyphicon glyphicon-user">:李先生</span></p>
+                <p><span class="glyphicon glyphicon-earphone">:16605110306</span></p>
+                <p><span class="glyphicon glyphicon-exclamation-sign">:3464285<span class="badge"><small>请注明来意</small></span></span></p>
             </div>
         </div>
     </div>
