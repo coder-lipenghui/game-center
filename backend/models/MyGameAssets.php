@@ -3,27 +3,29 @@
 
 namespace backend\models;
 
+
 use Yii;
 
-class MyGameUpdate extends TabGameUpdate
+class MyGameAssets extends TabGameAssets
 {
-    public $sku="";
-    public $platform="";
-    public $versionCode="";
-    public $versionName="";
+    public $sku = "";
+    public $platform = "";
+    public $versionCode = "";
+    public $versionName = "";
 
     function rules()
     {
         return [
-            [['sku','platform','version','versionCode','versionName'],'required'],
-            [['sku','platform','versionCode','versionName'],'string'],
-            [['gameId', 'distributionId', 'enable','version'], 'integer'],
+            [['sku', 'platform', 'version', 'versionCode', 'versionName'], 'required'],
+            [['sku', 'platform', 'versionCode', 'versionName'], 'string'],
+            [['gameId', 'distributionId', 'enable', 'version'], 'integer'],
         ];
     }
-    public function getUpdateInfo()
+
+    public function getAssetsInfo()
     {
         $param=Yii::$app->request->queryParams;
-        $this->load(['MyGameUpdate'=>$param]);
+        $this->load(['MyGameAssets'=>$param]);
         if ($this->validate())
         {
             $game=TabGames::find()->where(['sku'=>$this->sku])->one();
@@ -46,7 +48,7 @@ class MyGameUpdate extends TabGameUpdate
                         {
                             return $data;
                         }else{
-                            return ['code'=>0,'msg'=>'未检测到版本信息','data'=>$this->getErrors()];
+                            return ['code'=>0,'msg'=>'未检到分包资源','data'=>$this->getErrors()];
                         }
                     }
                 }else{
@@ -72,7 +74,7 @@ class MyGameUpdate extends TabGameUpdate
                 $url=$url."/default/".$this->platform."/";
             }
             $data['url']=$url;
-            return ['code'=>1,'msg'=>'检测到新版本','data'=>$data];
+            return ['code'=>1,'msg'=>'检到分包资源','data'=>$data];
         }
         return null;
     }
@@ -81,16 +83,16 @@ class MyGameUpdate extends TabGameUpdate
         $query=self::find()
             ->select(['id','versionFile','version','projectFile','distributionId'])
             ->where(['enable'=>1])
-            ->andWhere(['>','version',$version])
-            ->andWhere(['<=','executeTime',time()])
+//            ->andWhere(['>','version',$version])
+//            ->andWhere(['<=','executeTime',time()])
             ->andWhere(['gameId'=>$gameId])
-            ->orderBy('version DESC')
+//            ->orderBy('version DESC')
             ->limit(1)
             ->asArray();
-            if($distributionId)
-            {
-             $query->andWhere(['distributionId'=>$distributionId]);
-            }
+        if($distributionId)
+        {
+            $query->andWhere(['distributionId'=>$distributionId]);
+        }
         return $query;
     }
 }

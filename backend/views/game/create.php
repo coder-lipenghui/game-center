@@ -86,10 +86,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <?= $form->field($model, 'copyright_press')->textInput(['maxlength' => true,'placeholder'=>'例:北京艺术与科学电子出版社']) ?>
+                        <?= $form->field($model, 'copyright_press')->textInput(['maxlength' => true,'placeholder'=>'例:北京xxx出版社']) ?>
                     </div>
                     <div class="col-md-2">
-                        <?= $form->field($model, 'copyright_author')->textInput(['maxlength' => true,'placeholder'=>'例:镇江奇游网络科技有限公司']) ?>
+                        <?= $form->field($model, 'copyright_author')->textInput(['maxlength' => true,'placeholder'=>'例:北京xxx公司']) ?>
                     </div>
                 </div>
                 <div class="form-group">

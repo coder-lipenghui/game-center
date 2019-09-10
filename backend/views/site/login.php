@@ -21,7 +21,7 @@ $fieldOptions2 = [
 
 <div class="login-box">
     <div class="login-logo">
-        <a href="#"><b>奇游网络</b>后台</a>
+        <a href="#"><b>游戏</b>后台</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">

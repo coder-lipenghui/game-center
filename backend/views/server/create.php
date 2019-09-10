@@ -27,7 +27,6 @@ $this->registerJs('
 ');
 
 //TODO 处理select2的字符串问题
-//TODO 这个做完了之后就去做登录接口
 ?>
 <div class="tab-servers-create">
     <?php $form = ActiveForm::begin([

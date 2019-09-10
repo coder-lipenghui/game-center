@@ -61,6 +61,23 @@ class ModelDashBoard extends Model
             return (int)($amount/$payingUser);
         }
     }
+    public function getTodayLoginUserNumber()
+    {
+        $number=0;
+        $distributions=$this->getDistributions();
+        if ($distributions)
+        {
+            for ($i=0;$i<count($distributions);$i++)
+            {
+                $gameId=$distributions[$i]['gameId'];
+                $distributionId=$distributions[$i]['distributionId'];
+                ModelLoginLog::TabSuffix($gameId,$distributionId);
+                $model=new ModelLoginLog();
+                $number+=$model->getTodayLoginUserNumber();
+            }
+        }
+        return $number;
+    }
     public function getLast30dayLoginUserNumber()
     {
         $number=0;

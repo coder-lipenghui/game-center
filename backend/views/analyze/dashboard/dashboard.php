@@ -90,8 +90,8 @@ $(function () {
                 <div>
                     <p class="text-center"><span class="dtop-items-title userlogin"/></p>
                     <p class="text-center">活跃用户<p/>
-                    <p class="text-center"><span class="label label-white">今日</span><span>-</span></p>
-                    <p class="text-center"><span class="label label-white">昨日</span><span>-</span></p>
+                    <p class="text-center"><span class="label label-white">今日</span><span> <?=$todayLoginUserNumber?></span></p>
+                    <p class="text-center"><span class="label label-white">昨日</span><span> -</span></p>
                 </div>
             </div>
             <div class="col-md-2">
@@ -162,11 +162,11 @@ $(function () {
             </div>
             <div class="col-sm-2">
                 <small>arpu</small>
-                <h3><?=sprintf("%.2f",($amountTotal/$userTotal))?></h3>
+                <h3><?=sprintf("%.2f",($amountTotal/($userTotal==0?1:$userTotal)))?></h3>
             </div>
             <div class="col-sm-2">
                 <small>arppu</small>
-                <h3><?=sprintf("%.2f",($amountTotal/$payingUserTotal))?></h3>
+                <h3><?=sprintf("%.2f",($amountTotal/($payingUserTotal==0?1:$payingUserTotal)))?></h3>
             </div>
         </div>
     </div>

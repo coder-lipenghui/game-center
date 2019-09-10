@@ -39,7 +39,7 @@ use dmstr\widgets\Alert;
     <div class="pull-right hidden-xs">
         <b>Version</b> 2.0
     </div>
-    <strong>Copyright &copy; 2018-2020 <a href="http://7you.xyz">镇江奇游网络科技有限公司</a>.</strong> All rights
+    <strong>Copyright &copy; 2018-2020 <a href="http://baidu.com">李鹏辉</a>.</strong> All rights
     reserved.
 </footer>
 

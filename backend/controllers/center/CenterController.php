@@ -14,6 +14,7 @@ use backend\models\center\CreateOrder;
 use backend\models\center\CreateOrderDebug;
 use backend\models\center\EnterGame;
 use backend\models\center\Login;
+use backend\models\MyGameAssets;
 use backend\models\MyGameUpdate;
 use backend\models\MyTabNotice;
 use backend\models\MyTabOrders;
@@ -41,6 +42,8 @@ use yii\web\Controller;
  *      2.notify->游戏侧API验证
  * 充值：
  *      渠道订单验证->更新支付状态->记录到已支付表->发货
+ * 其他：
+ *      SDK接入相关工作请参考README.MD
  * @package backend\controllers\center
  */
 class CenterController extends Controller
@@ -486,6 +489,16 @@ class CenterController extends Controller
         return $model->getUpdateInfo();
     }
     /**
+     * 获取游戏分包资源接口
+     * @return array
+     */
+    public function actionGameAssets()
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        $model=new MyGameAssets();
+        return $model->getAssetsInfo();
+    }
+    /**
      * 数据上报接口
      * 必须要：sku、distributionId、type、uid、account字段
      * @return array
@@ -670,7 +683,7 @@ class CenterController extends Controller
     private function savePlayer($user,$request,$distribution)
     {
         $did=$distribution->id;
-//        TODO 新的dist表中需要增加一个互通ID 用于处理安卓跟IOS的账号数据互通
+        //TODO 新的dist表中需要增加一个互通ID 用于处理安卓跟IOS的账号数据互通
 //        if($distributor->intercommunicate)
 //        {
 //            $did=$distributor->intercommunicate;

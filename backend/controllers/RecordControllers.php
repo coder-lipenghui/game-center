@@ -23,7 +23,7 @@ class RecordControllers extends Controller
 
     public function actionChange()
     {
-        //TODO record role's info
+
     }
     public function actionCreaterole()
     {

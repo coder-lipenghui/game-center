@@ -289,6 +289,7 @@ class MyTabOrders extends TabOrders
     }
     /**
      * 发货接口
+     * 如果你不知道这个是做什么的，请不要乱动。
      * @param $orderId
      * @param $distribution
      * @return bool

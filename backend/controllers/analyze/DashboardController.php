@@ -14,8 +14,10 @@ class DashboardController extends Controller
     {
 
         $dashboard=new ModelDashBoard();
+        $todayLoginUserNumber=$dashboard->getTodayLoginUserNumber();
         $todayArpu=$dashboard->getTodayArpu();
         $todayArppu=$dashboard->getTodayArppu();
+
         $last7dayLoginUserNumber=$dashboard->getLast7dayLoginUserNumber();
         $last30dayLoginUserNumber=$dashboard->getLast30dayLoginUserNumber();
 //        $last7dayLoginDeviceNumber=$dashboard->getLast7dayLoginUserNumber();
@@ -71,6 +73,7 @@ class DashboardController extends Controller
 
             'last7dayLoginUserNumber'=>$last7dayLoginUserNumber,
             'last30dayLoginUserNumber'=>$last30dayLoginUserNumber,
+            'todayLoginUserNumber'=>$todayLoginUserNumber,
 //            'last7dayLoginDeviceNumber'=>$last7dayLoginDeviceNumber,
 //            'last30dayLoginDeviceNumber'=>$last30dayLoginDeviceNumber,
 //            'totalMonth'=>$totalMonth,

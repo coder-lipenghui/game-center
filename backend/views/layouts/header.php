@@ -27,7 +27,7 @@ use yii\helpers\Html;
 
                             <p>
                                 <?=Yii::$app->user->getIdentity()->username ?>
-                                <small>Copyright © 2018-2020 镇江奇游网络科技有限公司. All rights reserved.</small>
+                                <small>Copyright © 2018-2020 李鹏辉. All rights reserved.</small>
                             </p>
                         </li>
                         <!-- Menu Footer-->

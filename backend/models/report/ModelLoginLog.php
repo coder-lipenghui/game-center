@@ -138,6 +138,7 @@ class ModelLoginLog extends  TabLogLogin
             ->where([">=","FROM_UNIXTIME(logTime,'%Y-%m-%d')",$start])
             ->andWhere(["<=","FROM_UNIXTIME(logTime,'%Y-%m-%d')",$end])
             ->groupBy('account');
+        //exit($query->createCommand()->getRawSql());
         $data=$query->count();
         return $data;
     }

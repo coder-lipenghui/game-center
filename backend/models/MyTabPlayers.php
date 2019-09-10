@@ -81,11 +81,16 @@ class MyTabPlayers extends TabPlayers
      */
     public static function getTodayRegister()
     {
-        $query=self::find()
-            ->where(['like','regTime',date('Y-m-d')]);
-        $data=$query->count();
+        $distributions=self::getDistributions();
+        if ($distributions) {
+            $query = self::find()
+                ->where(['like', 'regTime', date('Y-m-d')])
+                ->andWhere(['distributionId'=>$distributions]);
+            $data = $query->count();
 
-        return $data;
+            return $data;
+        }
+        return 0;
     }
 
     /**
@@ -94,11 +99,17 @@ class MyTabPlayers extends TabPlayers
      */
     public static function getYesterdayRegister()
     {
-        $query=self::find()
-            ->where(['like','regTime',date('Y-m-d',strtotime(date('Y-m-d'))-86400000)]);
-        $data=$query->count();
+        $distributions=self::getDistributions();
+        if ($distributions)
+        {
+            $query=self::find()
+                ->where(['like','regTime',date('Y-m-d',strtotime(date('Y-m-d'))-86400000)])
+                ->andWhere(['distributionId'=>$distributions]);
+            $data=$query->count();
 
-        return $data;
+            return $data;
+        }
+        return 0;
     }
 
     /**
@@ -107,12 +118,18 @@ class MyTabPlayers extends TabPlayers
      */
     public static function getTodayRegisterDevice()
     {
-        $query=self::find()
-            ->where(['like','regtime',date('Y-m-d')])
-            ->groupBy('regdeviceid');
+        $distributions=self::getDistributions();
+        if ($distributions)
+        {
+            $query=self::find()
+                ->where(['like','regtime',date('Y-m-d')])
+                ->andWhere(['distributionId'=>$distributions])
+                ->groupBy('regdeviceid');
 
-        $data=$query->count();
-        return $data;
+            $data=$query->count();
+            return $data;
+        }
+        return 0;
     }
 
     /**
@@ -149,15 +166,19 @@ class MyTabPlayers extends TabPlayers
      */
     private static function getRegUserNumByDate($start,$end)
     {
-        $sql="SELECT t2.DAY_SHORT_DESC as time,if(t1.number is NULL,0,t1.number) as number FROM 
-            (SELECT DAY_SHORT_DESC FROM calendar WHERE DAY_SHORT_DESC>='$start' AND DAY_SHORT_DESC<='$end') as t2 
-            LEFT JOIN 
-            (SELECT COUNT(account) as number, DATE_FORMAT(regtime,'%Y-%m-%d') as `time` FROM tab_players WHERE regtime>='$start 00:00:00' AND regtime <='$end 59:59:59' GROUP BY time) as t1 
-            on t2.DAY_SHORT_DESC=t1.time
-            ORDER BY t2.DAY_SHORT_DESC";
+        $distributions=self::getDistributionString();
+        if ($distributions) {
+            $sql = "SELECT t2.DAY_SHORT_DESC as time,if(t1.number is NULL,0,t1.number) as number FROM 
+                (SELECT DAY_SHORT_DESC FROM calendar WHERE DAY_SHORT_DESC>='$start' AND DAY_SHORT_DESC<='$end') as t2 
+                LEFT JOIN 
+                (SELECT COUNT(account) as number, DATE_FORMAT(regtime,'%Y-%m-%d') as `time` FROM tab_players WHERE regtime>='$start 00:00:00' AND regtime <='$end 59:59:59' AND distributionId in ($distributions) GROUP BY time) as t1 
+                on t2.DAY_SHORT_DESC=t1.time
+                ORDER BY t2.DAY_SHORT_DESC";
 
-        $data=Yii::$app->db->createCommand($sql)->queryAll();
-        return $data;
+            $data = Yii::$app->db->createCommand($sql)->queryAll();
+            return $data;
+        }
+        return [];
     }
     /**
      * 获取统计时间内的每日注册设备数
@@ -167,15 +188,19 @@ class MyTabPlayers extends TabPlayers
      */
     private static function getRegDeviceByDate($start,$end)
     {
-        $sql="SELECT t2.DAY_SHORT_DESC as time,if(t1.number is NULL,0,t1.number) as number FROM 
+        $distributions=self::getDistributionString();
+        if ($distributions)
+        {
+            $sql="SELECT t2.DAY_SHORT_DESC as time,if(t1.number is NULL,0,t1.number) as number FROM 
             (SELECT DAY_SHORT_DESC FROM calendar WHERE DAY_SHORT_DESC>='$start' AND DAY_SHORT_DESC<='$end') as t2 
             LEFT JOIN 
-            (SELECT COUNT(regdeviceId) as number, DATE_FORMAT(regtime,'%Y-%m-%d') as `time` FROM tab_players WHERE regtime>='$start 00:00:00' AND regtime <='$end 59:59:59' GROUP BY time) as t1 
+            (SELECT COUNT(regdeviceId) as number, DATE_FORMAT(regtime,'%Y-%m-%d') as `time` FROM tab_players WHERE regtime>='$start 00:00:00' AND regtime <='$end 59:59:59' AND distributionId in($distributions) GROUP BY time) as t1 
             on t2.DAY_SHORT_DESC=t1.time
             ORDER BY t2.DAY_SHORT_DESC";
 
-        $data=Yii::$app->db->createCommand($sql)->queryAll();
-        return $data;
+            $data=Yii::$app->db->createCommand($sql)->queryAll();
+        }
+        return [];
     }
     public static function getRegNumByMon()
     {
@@ -191,11 +216,23 @@ class MyTabPlayers extends TabPlayers
     {
         $distributions=null;
         $uid=\Yii::$app->user->id;
-        $number=0;
         $modelPermission=new MyTabPermission();
         $permissions=$modelPermission->getDistributionByUid($uid);
         if ($permissions) {
             $distributions = ArrayHelper::getColumn($permissions, 'distributionId');
+        }
+        return $distributions;
+    }
+    private static function getDistributionString()
+    {
+        $distributions=null;
+        $uid=\Yii::$app->user->id;
+        $modelPermission=new MyTabPermission();
+        $permissions=$modelPermission->getDistributionByUid($uid);
+        if ($permissions)
+        {
+            $distributionsArr=ArrayHelper::getColumn($permissions,'distributionId');
+            $distributions=join(",",$distributionsArr);
         }
         return $distributions;
     }

@@ -195,6 +195,10 @@ class MenuHelper
         $result = [];
         $order = [];
         foreach ($assigned as $id) {
+            if (empty($menus[$id]))
+            {
+                continue;
+            }
             $menu = $menus[$id];
             if ($menu['parent'] == $parent) {
                 $menu['children'] = static::normalizeMenu($assigned, $menus, $callback, $id);
