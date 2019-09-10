@@ -91,15 +91,15 @@ $this->registerJs('
                     </tr>
                     <tr id="roleAccount">
                         <td>角色账号:</td>
-                        <td><?= $form->field($createModel,'roleAccount')->textInput(['value'=>'01e73c5313d22f98d5e84702c37360d4'])?></td>
+                        <td><?= $form->field($createModel,'roleAccount')->textInput()?></td>
                     </tr>
                     <tr id="roleName">
                         <td>角色名称:</td>
-                        <td><?= $form->field($createModel,'roleName')->textInput(['value'=>'辉哥啊'])?></td>
+                        <td><?= $form->field($createModel,'roleName')->textInput()?></td>
                     </tr>
                     <tr>
                         <td>申请理由:</td>
-                        <td><?= $form->field($createModel,'reason')->textInput(['value'=>'测试'])?></td>
+                        <td><?= $form->field($createModel,'reason')->textInput()?></td>
                     </tr>
                     <tr>
                         <td>申请数量:</td>
