@@ -33,7 +33,7 @@ class MyTabPermission extends TabPermission
             ->join('LEFT JOIN','tab_games','tab_permission.gameId=tab_games.id')
             ->where(['uid'=>Yii::$app->user->id])->asArray();
         $data=$query->all();
-        return ArrayHelper::map($data,'id','name');
+        return $data;
     }
     public  function allowAccessGame()
     {
@@ -87,7 +87,13 @@ class MyTabPermission extends TabPermission
         }
         return [];
     }
-
+    public function getDistributionByUidAndGameId($uid,$gameId)
+    {
+        $query=TabPermission::find();
+        $query->select(['gameId','distributionId'])->where(['uid'=>$uid,'gameId'=>$gameId])->asArray();
+        $data=$query->all();
+        return $data;
+    }
     /**
      * 根据用户ID获取对应的游戏、分销渠道信息
      * @param $uid
@@ -98,7 +104,6 @@ class MyTabPermission extends TabPermission
         $query=TabPermission::find();
         $query->select(['gameId','distributionId'])->where(['uid'=>$uid])->asArray();
         $data=$query->all();
-//        exit(json_encode($data));
         return $data;
     }
     public function allDistribution($gameId,$did)

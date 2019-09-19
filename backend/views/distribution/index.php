@@ -139,7 +139,7 @@ $('#paramModal').on('show.bs.modal', function (event) {
                                 $options = [
                                     'data-toggle'=>'modal',
                                     'data-target'=>'#paramModal',
-                                    'data-game'=>$model->game->name,
+                                    'data-game'=>$model->game!=null?$model->game->name:"未知游戏",
                                     'data-distributor'=>$model->distributor->name,
                                     'data-appid'=>$model->appID,
                                     'data-appkey'=>$model->appKey,

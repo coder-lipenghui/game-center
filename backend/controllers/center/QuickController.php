@@ -87,7 +87,7 @@ class QuickController extends CenterController
             return false;
         }
     }
-    public function getOrderFromDistribution($request)
+    public function getOrderFromDistribution($request,$distribution,$order)
     {
         return [
             'distributionOrderId'=>'testorderid',

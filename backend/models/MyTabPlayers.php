@@ -4,6 +4,7 @@
  * User: lipenghui
  * Date: 2019-06-10
  * Time: 18:31
+ *
  */
 
 namespace backend\models;
@@ -19,9 +20,9 @@ class MyTabPlayers extends TabPlayers
      * 获取总账号数
      * @return int|string
      */
-    public static  function getUserTotal()
+    public static  function getUserTotal($gameId)
     {
-        $distributions=self::getDistributions();
+        $distributions=self::getDistributions($gameId);
         if ($distributions)
         {
             $query=MyTabPlayers::find();
@@ -35,9 +36,9 @@ class MyTabPlayers extends TabPlayers
         return 0;
 
     }
-    public static function getDeviceTotal()
+    public static function getDeviceTotal($gameId)
     {
-        $distributions=self::getDistributions();
+        $distributions=self::getDistributions($gameId);
         if ($distributions)
         {
             $query=MyTabPlayers::find();
@@ -79,9 +80,9 @@ class MyTabPlayers extends TabPlayers
      * 今日注册账户数
      * @return int|string
      */
-    public static function getTodayRegister()
+    public static function getTodayRegister($gameId)
     {
-        $distributions=self::getDistributions();
+        $distributions=self::getDistributions($gameId);
         if ($distributions) {
             $query = self::find()
                 ->where(['like', 'regTime', date('Y-m-d')])
@@ -97,9 +98,9 @@ class MyTabPlayers extends TabPlayers
      * 昨日注册账户数
      * @return int|string
      */
-    public static function getYesterdayRegister()
+    public static function getYesterdayRegister($gameId)
     {
-        $distributions=self::getDistributions();
+        $distributions=self::getDistributions($gameId);
         if ($distributions)
         {
             $query=self::find()
@@ -116,9 +117,9 @@ class MyTabPlayers extends TabPlayers
      * 今日注册设备数
      * @return int|string
      */
-    public static function getTodayRegisterDevice()
+    public static function getTodayRegisterDevice($gameId)
     {
-        $distributions=self::getDistributions();
+        $distributions=self::getDistributions($gameId);
         if ($distributions)
         {
             $query=self::find()
@@ -136,7 +137,7 @@ class MyTabPlayers extends TabPlayers
      * 昨日注册设备数
      * @return int|string
      */
-    public static function getYesterdayRegisterDevice()
+    public static function getYesterdayRegisterDevice($gameId)
     {
         $query=self::find()
             ->where(['like','regtime',date('Y-m-d',strtotime(date('Y-m-d'))-86400000)])
@@ -145,18 +146,18 @@ class MyTabPlayers extends TabPlayers
         return $data;
     }
 
-    public static function getLast30RegUser()
+    public static function getLast30RegUser($gameId)
     {
         $start=date('Y-m-d',strtotime('-30 day'));
         $end=date('Y-m-d');
-        return self::getRegUserNumByDate($start,$end);
+        return self::getRegUserNumByDate($gameId,$start,$end);
     }
-    public static function getLast30RegDevice()
+    public static function getLast30RegDevice($gameId)
     {
         $start=date('Y-m-d',strtotime('-30 day'));
         $end=date('Y-m-d');
 
-        return self::getRegDeviceByDate($start,$end);
+        return self::getRegDeviceByDate($gameId,$start,$end);
     }
     /**
      * 获取统计时间内的每日注册用户数
@@ -164,9 +165,9 @@ class MyTabPlayers extends TabPlayers
      * @return \yii\db\DataReader
      * @throws \yii\db\Exception
      */
-    private static function getRegUserNumByDate($start,$end)
+    private static function getRegUserNumByDate($gameId,$start,$end)
     {
-        $distributions=self::getDistributionString();
+        $distributions=self::getDistributionString($gameId);
         if ($distributions) {
             $sql = "SELECT t2.DAY_SHORT_DESC as time,if(t1.number is NULL,0,t1.number) as number FROM 
                 (SELECT DAY_SHORT_DESC FROM calendar WHERE DAY_SHORT_DESC>='$start' AND DAY_SHORT_DESC<='$end') as t2 
@@ -186,9 +187,9 @@ class MyTabPlayers extends TabPlayers
      * @return \yii\db\DataReader
      * @throws \yii\db\Exception
      */
-    private static function getRegDeviceByDate($start,$end)
+    private static function getRegDeviceByDate($gameId,$start,$end)
     {
-        $distributions=self::getDistributionString();
+        $distributions=self::getDistributionString($gameId);
         if ($distributions)
         {
             $sql="SELECT t2.DAY_SHORT_DESC as time,if(t1.number is NULL,0,t1.number) as number FROM 
@@ -198,7 +199,8 @@ class MyTabPlayers extends TabPlayers
             on t2.DAY_SHORT_DESC=t1.time
             ORDER BY t2.DAY_SHORT_DESC";
 
-            $data=Yii::$app->db->createCommand($sql)->queryAll();
+            return Yii::$app->db->createCommand($sql)->queryAll();
+
         }
         return [];
     }
@@ -212,23 +214,23 @@ class MyTabPlayers extends TabPlayers
      * 返回：1,2,3 | null
      * @return string|null
      */
-    private static function getDistributions()
+    private static function getDistributions($gameId)
     {
         $distributions=null;
         $uid=\Yii::$app->user->id;
         $modelPermission=new MyTabPermission();
-        $permissions=$modelPermission->getDistributionByUid($uid);
+        $permissions=$modelPermission->getDistributionByUidAndGameId($uid,$gameId);
         if ($permissions) {
             $distributions = ArrayHelper::getColumn($permissions, 'distributionId');
         }
         return $distributions;
     }
-    private static function getDistributionString()
+    private static function getDistributionString($gameId)
     {
         $distributions=null;
         $uid=\Yii::$app->user->id;
         $modelPermission=new MyTabPermission();
-        $permissions=$modelPermission->getDistributionByUid($uid);
+        $permissions=$modelPermission->getDistributionByUidAndGameId($uid,$gameId);
         if ($permissions)
         {
             $distributionsArr=ArrayHelper::getColumn($permissions,'distributionId');

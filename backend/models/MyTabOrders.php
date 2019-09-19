@@ -19,9 +19,9 @@ class MyTabOrders extends TabOrders
      * 总付费账号数
      * @return int|string
      */
-    public static function getTotalPayingUser()
+    public static function getTotalPayingUser($gameId)
     {
-        $distributions=self::getDistribution();
+        $distributions=self::getDistribution($gameId);
         if ($distributions)
         {
             $query=TabOrders::find();
@@ -39,9 +39,9 @@ class MyTabOrders extends TabOrders
      * 总付费金额
      * @return float|int|mixed
      */
-    public static function getTotalAmount()
+    public static function getTotalRevenue($gameId)
     {
-        $distributions=self::getDistribution();
+        $distributions=self::getDistribution($gameId);
         if ($distributions)
         {
             $query=TabOrders::find()
@@ -49,9 +49,9 @@ class MyTabOrders extends TabOrders
                     'payStatus'=>'1',
                     'distributionId'=>$distributions])
                 ->select(['payAmount'])->asArray();
-            $totalToday=$query->sum('payAmount');
-            $totalToday=$totalToday?$totalToday/100:0;
-            return $totalToday;
+            $revenue=$query->sum('payAmount');
+            $revenue=$revenue?$revenue/100:0;
+            return $revenue;
         }
         return 0;
     }
@@ -59,9 +59,9 @@ class MyTabOrders extends TabOrders
      * 今日付费玩家数量
      * @return int
      */
-    public static function getTodayPayingUser()
+    public static function getTodayPayingUser($gameId)
     {
-        $distributions=self::getDistribution();
+        $distributions=self::getDistribution($gameId);
         if ($distributions)
         {
             $query=TabOrders::find();
@@ -79,9 +79,9 @@ class MyTabOrders extends TabOrders
      * 今日充值总金额
      * @return float|int|mixed
      */
-    public static function getTodayAmount()
+    public static function getTodayRevenue($gameId)
     {
-        $distributions=self::getDistribution();
+        $distributions=self::getDistribution($gameId);
         if ($distributions)
         {
             $query=TabOrders::find()
@@ -98,7 +98,7 @@ class MyTabOrders extends TabOrders
      * 昨日充值金额
      * @return float|int|mixed
      */
-    public static function getYesterdayAmount()
+    public static function getYesterdayRevenue($gameId)
     {
         //TODO 需要根据用户权限进行各项统计
         $cond=['between','payTime',strtotime(date('Y-m-d')." 00:00:00")-86400000,strtotime(date('Y-m-d')."23:59:59")-86400000];
@@ -118,22 +118,22 @@ class MyTabOrders extends TabOrders
     /**
      * 过去30天内每天的充值金额
      */
-    public static function getLast30Amount()
+    public static function getLast30Revenue($gameId)
     {
         $start=date('Y-m-d',strtotime('-30 day'));
         $end=date('Y-m-d');
-        return self::getAmountGroupByDay($start,$end);
+        return self::getRevenueGroupByDay($gameId,$start,$end);
     }
 
     /**
      * 过去30天内每天的充值人数
      * @throws \yii\db\Exception
      */
-    public static function getLast30PayingUser()
+    public static function getLast30PayingUser($gameId)
     {
         $start=date('Y-m-d',strtotime('-30 day'));
         $end=date('Y-m-d');
-        return self::getPayingUserGroupByDay($start,$end);
+        return self::getPayingUserGroupByDay($gameId,$start,$end);
     }
     /**
      * 获取起止日期内每日充值金额
@@ -142,17 +142,17 @@ class MyTabOrders extends TabOrders
      * @return array
      * @throws \yii\db\Exception
      */
-    private static function getAmountGroupByDay($start,$end)
+    private static function getRevenueGroupByDay($gameId,$start,$end)
     {
         //测试SQL:
         //SELECT t1.time,if(t2.amount is NULL,0,t2.amount) FROM (SELECT DAY_SHORT_DESC as time FROM calendar WHERE DAY_SHORT_DESC>='2019-08-01' AND DAY_SHORT_DESC<='2019-09-01') as t1 LEFT JOIN (SELECT SUM(payAmount/100) as amount,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributionId in (1,5,7) and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='2019-08-01' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='2019-09-01' GROUP BY FROM_UNIXTIME(payTime,'%Y-%m-%d')) as t2 ON t1.time=t2.time ORDER BY t1.time;
-        $distributions=self::getDistributionString();
+        $distributions=self::getDistributionString($gameId);
         if ($distributions)
         {
             $sql = "SELECT t1.time,if(t2.amount is NULL,0,t2.amount) as amount FROM 
             (SELECT DAY_SHORT_DESC as time FROM calendar WHERE DAY_SHORT_DESC>='$start' AND DAY_SHORT_DESC<='$end') as t1 
             LEFT JOIN 
-            (SELECT SUM(payAmount/100) as amount,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributionId in ($distributions) and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='$start' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='$end' GROUP BY FROM_UNIXTIME(payTime,'%Y-%m-%d')) as t2 
+            (SELECT SUM(payAmount/100) as number,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributionId in ($distributions) and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='$start' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='$end' GROUP BY FROM_UNIXTIME(payTime,'%Y-%m-%d')) as t2 
             ON t1.time=t2.time 
             ORDER BY t1.time";
             $data = $query = \Yii::$app->db->createCommand($sql)->queryAll();
@@ -168,12 +168,12 @@ class MyTabOrders extends TabOrders
      * @return array
      * @throws \yii\db\Exception
      */
-    private static function getPayingUserGroupByDay($start,$end)
+    private static function getPayingUserGroupByDay($gameId,$start,$end)
     {
         //测试SQL：
         //SELECT t1.time,if(t2.number is NULL,0,t2.number) FROM (SELECT DAY_SHORT_DESC as time FROM calendar WHERE DAY_SHORT_DESC>='2019-08-01' AND DAY_SHORT_DESC<='2019-09-01') as t1 LEFT JOIN (SELECT COUNT(*) as number,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributionId in (1,5,7) and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='2019-08-01' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='2019-09-01' GROUP BY gameAccount) as t2 ON t1.time=t2.time ORDER BY t1.time;
 
-        $distributions=self::getDistributionString();
+        $distributions=self::getDistributionString($gameId);
         if ($distributions)
         {
             $sql="SELECT t1.time,if(t2.number is NULL,0,t2.number) as number FROM 
@@ -261,12 +261,12 @@ class MyTabOrders extends TabOrders
         return $data;
     }
 
-    private static function getDistributionString()
+    private static function getDistributionString($gameId)
     {
         $distributions=null;
         $uid=\Yii::$app->user->id;
         $modelPermission=new MyTabPermission();
-        $permissions=$modelPermission->getDistributionByUid($uid);
+        $permissions=$modelPermission->getDistributionByUidAndGameId($uid,$gameId);
         if ($permissions)
         {
             $distributionsArr=ArrayHelper::getColumn($permissions,'distributionId');
@@ -274,12 +274,12 @@ class MyTabOrders extends TabOrders
         }
         return $distributions;
     }
-    private static function getDistribution()
+    private static function getDistribution($gameId)
     {
         $distributons=null;
         $uid=\Yii::$app->user->id;
         $modelPermission=new MyTabPermission();
-        $permissions=$modelPermission->getDistributionByUid($uid);
+        $permissions=$modelPermission->getDistributionByUidAndGameId($uid,$gameId);
 
         if ($permissions)
         {

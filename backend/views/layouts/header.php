@@ -3,6 +3,27 @@ use yii\helpers\Html;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
+$this->registerCss("
+.custom-left-menu{
+    float: left;
+}
+.navbar-nav .user-menu .dropdown-custom-menu {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    padding: 1px 0 0 0;
+    border-top-width: 0;
+    width: 150px;
+}
+.menu>.dropdown-menu>li.user-header {
+    height: 175px;
+    padding: 10px;
+    text-align: center;
+}
+.skin-blue .main-header li.user-header {
+    background-color: #3c8dbc;
+}
+");
+
 ?>
 
 <header class="main-header">
@@ -12,6 +33,13 @@ use yii\helpers\Html;
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
             <span class="sr-only">Toggle navigation</span>
         </a>
+        <div class="custom-left-menu">
+            <ul class="nav navbar-nav">
+                <li class="dropdown user user-menu" id="analyze_games">
+
+                </li>
+            </ul>
+        </div>
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <li class="dropdown user user-menu">
@@ -42,11 +70,6 @@ use yii\helpers\Html;
                             </div>
                         </li>
                     </ul>
-                </li>
-
-                <!-- User Account: style can be found in dropdown.less -->
-                <li>
-<!--                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>-->
                 </li>
             </ul>
         </div>

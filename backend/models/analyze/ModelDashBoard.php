@@ -15,12 +15,12 @@ class ModelDashBoard extends Model
      *
      * @return int
      */
-    public function getTodayArpu()
+    public function getTodayArpu($gameId)
     {
         //公式：今日充值金额/今日登录用户数
         $loginNumber=0;
         $amount=0;
-        $distributions=$this->getDistributions();
+        $distributions=$this->getDistributions($gameId);
         if ($distributions)
         {
             for ($i=0;$i<count($distributions);$i++)
@@ -49,11 +49,11 @@ class ModelDashBoard extends Model
      * 获取今日的ARPPU
      * @return int
      */
-    public function getTodayArppu()
+    public function getTodayArppu($gameId)
     {
         //公式:今日充值金额/今日充值用户数
-        $amount=MyTabOrders::getTodayAmount();
-        $payingUser=MyTabOrders::getTodayPayingUser();
+        $amount=MyTabOrders::getTodayRevenue($gameId);
+        $payingUser=MyTabOrders::getTodayPayingUser($gameId);
         if ($payingUser==0)
         {
             return 0;
@@ -61,10 +61,10 @@ class ModelDashBoard extends Model
             return (int)($amount/$payingUser);
         }
     }
-    public function getTodayLoginUserNumber()
+    public function getTodayLoginUserNumber($gameId)
     {
         $number=0;
-        $distributions=$this->getDistributions();
+        $distributions=$this->getDistributions($gameId);
         if ($distributions)
         {
             for ($i=0;$i<count($distributions);$i++)
@@ -78,10 +78,10 @@ class ModelDashBoard extends Model
         }
         return $number;
     }
-    public function getLast30dayLoginUserNumber()
+    public function getLast30dayLoginUserNumber($gameId)
     {
         $number=0;
-        $distributions=$this->getDistributions();
+        $distributions=$this->getDistributions($gameId);
         if ($distributions)
         {
             for ($i=0;$i<count($distributions);$i++)
@@ -95,10 +95,10 @@ class ModelDashBoard extends Model
         }
         return $number;
     }
-    public function getLast7dayLoginUserNumber()
+    public function getLast7dayLoginUserNumber($gameId)
     {
         $number=0;
-        $distributions=$this->getDistributions();
+        $distributions=$this->getDistributions($gameId);
         if ($distributions)
         {
             for ($i=0;$i<count($distributions);$i++)
@@ -112,11 +112,12 @@ class ModelDashBoard extends Model
         }
         return $number;
     }
-    public function getLast30dayLoginDeviceNumber()
+    public function getLast30dayLoginDeviceNumber($gameId)
     {
         $number=0;
         $distributions=$this->getDistributions();
         if ($distributions)
+            for ($i=0;$i<count($distributions);$i++)
         {
             for ($i=0;$i<count($distributions);$i++)
             {
@@ -129,10 +130,10 @@ class ModelDashBoard extends Model
         }
         return $number;
     }
-    public function getLast7dayLoginDeviceNumber()
+    public function getLast7dayLoginDeviceNumber($gameId)
     {
         $number=0;
-        $distributions=$this->getDistributions();
+        $distributions=$this->getDistributions($gameId);
         if ($distributions)
         {
             for ($i=0;$i<count($distributions);$i++)
@@ -146,11 +147,15 @@ class ModelDashBoard extends Model
         }
         return $number;
     }
-    private function getDistributions()
+    public function Last7dayLoginDeviceGroupByDay($gameId)
+    {
+
+    }
+    private function getDistributions($gameId)
     {
         $uid = \Yii::$app->user->id;
         $permission = new MyTabPermission();
-        $distributions = $permission->getDistributionByUid($uid);
+        $distributions = $permission->getDistributionByUidAndGameId($uid,$gameId);
         if ($distributions)
         {
             return $distributions;
