@@ -23,6 +23,7 @@ use backend\models\report\ModelLevelLog;
 use backend\models\report\ModelLoginLog;
 use backend\models\report\ModelRoleLog;
 use backend\models\report\ModelStartLog;
+use backend\models\TabBlacklist;
 use backend\models\TabCdkeyRecord;
 use backend\models\TabCdkeyVariety;
 use backend\models\TabDistribution;
@@ -64,6 +65,7 @@ class CenterController extends Controller
     public static $ERROR_USER_VALIDATE_FAILED   = -5; //用户登录验证失败
     public static $ERROR_ORDER_VALIDATE_FAILED  = -6; //游戏订单验证直白
     public static $ERROR_USER_SAVE_FAILED       = -7; //用户信息保存失败
+    public static $ERROR_IN_BLACKLIST           = -8; //禁止登录
 
     public static $ERROR_PAYMENT_PARAMS         = -1; //支付参数错误
     public static $ERROR_PAYMENT_VALIDATE_FAILED= -2; //支付订单验证失败
@@ -98,7 +100,6 @@ class CenterController extends Controller
         $loginModel=new Login();
         $jsonData=file_get_contents("php://input");
         $requestData=json_decode($jsonData,true);
-        //exit($jsonData);
         $loginModel->load(['Login'=>$requestData]);
         if ($loginModel->validate())
         {
@@ -107,6 +108,9 @@ class CenterController extends Controller
             {
                 $this->send(CenterController::$ERROR_GAME_NOT_FOUND,\Yii::t('app',"未知游戏"));
             }
+            //登录权限检测
+            $this->checkLoginPremission($requestData,$game);
+
             $distribution=TabDistribution::find()->where(['id'=>$loginModel->distributionId,'gameId'=>$game->id])->one();
             if ($distribution===null)
             {
@@ -244,6 +248,23 @@ class CenterController extends Controller
             return self::$ERROR_DISTRIBUTOR_NOT_FOUND;
         }
     }
+
+    /**
+     * 检测用户登录权限
+     * @param $requestData 客户端请求信息
+     * @param $game 游戏信息
+     */
+    protected function checkLoginPremission($requestData,$game)
+    {
+        $blacklist=TabBlacklist::find()
+            ->orWhere(['ip'=>$this->getClientIP(),'gameId'=>$game->id])
+            ->orWhere(['distributionUserId'=>$requestData['uid'],'gameId'=>$game->id])
+            ->orWhere(['deviceId'=>$requestData['deviceId'],'gameId'=>$game->id])->one();
+        if ($blacklist)
+        {
+            $this->send(self::$ERROR_IN_BLACKLIST,\Yii::t('app',"您已经被禁止登录"));
+        }
+    }
     /**
      * 获取渠道ID
      */
@@ -306,7 +327,7 @@ class CenterController extends Controller
         if ($model->validate())
         {
             $distributionOrderId=null;
-            $distributionOrder=$this->getOrderFromDistribution($requestData);
+
             $distribution=TabDistribution::find()->where(['id'=>$model->distributionId])->one();
             if ($distribution)
             {
@@ -321,6 +342,8 @@ class CenterController extends Controller
                 }
                 if ($order!=null)
                 {
+                    $distributionOrder=$this->getOrderFromDistribution($requestData,$distribution,$order);
+
                     $result['code']=1;
                     $result['msg']='success';
                     $result['data']=[
@@ -374,7 +397,7 @@ class CenterController extends Controller
      * 从渠道侧获取订单号接口,需要在派生类中重写该方法
      * return array 包含渠道订单号码及其他参数的数组
      */
-    public function getOrderFromDistribution($request)
+    public function getOrderFromDistribution($request,$distribution,$order)
     {
         return null;
     }
@@ -614,7 +637,7 @@ class CenterController extends Controller
                                             'item'=>$variety->items,
                                             'sign'=>$sign
                                         ];
-//                                        exit($url.http_build_query($body));
+                                        exit($url.http_build_query($body));
                                         $json=$curl->fetchUrl($url.http_build_query($body));
                                         if ($curl->getHttpResponseCode()==200)
                                         {
