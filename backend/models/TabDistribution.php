@@ -105,13 +105,13 @@ class TabDistribution extends \yii\db\ActiveRecord
                   `used` int(2) NOT NULL DEFAULT '0' COMMENT '是否使用：0未使用 1:使用过',
                   `createTime` int(10) NOT NULL COMMENT '创建时间',
                   PRIMARY KEY (`id`),
-                  KEY `key_variety` (`varietyId`),
-                  CONSTRAINT `tab_cdkey_".$gameId."_".$distributionId."_ibfk_1` FOREIGN KEY (`varietyId`) REFERENCES `tab_cdkey_variety` (`id`)
+                  KEY `key_variety` (`varietyId`)
                 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
             ");
             $query->execute();
+            $query->pdoStatement->closeCursor();
             //创角日志
-            $query=Yii::$app->getDb('db_log')->createCommand("
+            $query=Yii::$app->get('db_log')->createCommand("
                 DROP TABLE IF EXISTS `tab_log_role_".$gameId."_".$distributionId."`;
                 CREATE TABLE `tab_log_role_".$gameId."_".$distributionId."`(
                   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -130,8 +130,9 @@ class TabDistribution extends \yii\db\ActiveRecord
                 SET FOREIGN_KEY_CHECKS = 1;
             ");
             $query->execute();
+            $query->pdoStatement->closeCursor();
             //升级日志
-            $query=Yii::$app->getDb('db_log')->createCommand("
+            $query2=Yii::$app->get('db_log')->createCommand("
                 DROP TABLE IF EXISTS `tab_log_level_".$gameId."_".$distributionId."`;
                 CREATE TABLE `tab_log_level_".$gameId."_".$distributionId."`(
                   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -152,7 +153,7 @@ class TabDistribution extends \yii\db\ActiveRecord
             ");
             $query->execute();
             //登录日志
-            $query=Yii::$app->getDb('db_log')->createCommand("
+            $query=Yii::$app->get('db_log')->createCommand("
                 DROP TABLE IF EXISTS `tab_log_login_".$gameId."_".$distributionId."`;
                 CREATE TABLE `tab_log_login_".$gameId."_".$distributionId."`(
                   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -174,8 +175,9 @@ class TabDistribution extends \yii\db\ActiveRecord
                 SET FOREIGN_KEY_CHECKS = 1;
             ");
             $query->execute();
+            $query->pdoStatement->closeCursor();
             //启动游戏
-            $query=Yii::$app->getDb('db_log')->createCommand("
+            $query=Yii::$app->get('db_log')->createCommand("
                 DROP TABLE IF EXISTS `tab_log_start_".$gameId."_".$distributionId."`;
                 CREATE TABLE `tab_log_start_".$gameId."_".$distributionId."`(
                   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -191,6 +193,7 @@ class TabDistribution extends \yii\db\ActiveRecord
                 SET FOREIGN_KEY_CHECKS = 1;
             ");
             $query->execute();
+            $query->pdoStatement->closeCursor();
         }catch (Exception $exception)
         {
             exit($exception->getMessage());
