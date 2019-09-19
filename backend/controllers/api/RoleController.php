@@ -8,6 +8,7 @@ namespace backend\controllers\api;
  */
 
 use backend\models\command\CmdKick;
+use backend\models\MyTabPlayers;
 use common\helps\ItemDefHelper;
 use Yii;
 use yii\base\Exception;
@@ -33,10 +34,13 @@ class RoleController extends BaseController
         $supportModel=new TabSupportCreate();
         $permissionModel=new MyTabPermission();
         $games=$permissionModel->allowAccessGame();
-        //$distributors=[];
-        //$servers=[];
         if ($searchModel->validate())
         {
+            $player=MyTabPlayers::find()->where(['distributionUserId'=>$searchModel->account])->one();
+            if ($player)
+            {
+                $searchModel->account=$player->account;
+            }
             $page=1;
             if ($request->get('page'))
             {
@@ -45,10 +49,10 @@ class RoleController extends BaseController
             $queryBody=$searchModel->getAttributes();
             $queryBody['page']=$page;
             if($this->initApiUrl( $searchModel->gameId,$searchModel->distributorId , $searchModel->serverId,$queryBody)) {
-//                exit("初始化成功");
                 $result=$this->getJsonData();
                 $result = json_decode($result, true);
                 unset($result['_links']);
+                // 暂时注释掉物品解析部分
 //                $items = $result['items'];
 //                for ($i = 0; $i < count($items); $i++) {
 //                    $bagItems=$this->itemParser($items[$i]['item_bag']);
@@ -58,7 +62,6 @@ class RoleController extends BaseController
 //                    $result['items'][$i]['item_depot2'] = $this->itemParser($result['items'][$i]['item_depot2']);
 //                }
                 $result = json_encode($result);
-//                exit(json_encode($result));
                 return $result;
             }else{
                 exit("初始化失败?");
