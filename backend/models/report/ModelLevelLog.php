@@ -10,19 +10,19 @@ use backend\models\TabServers;
 class ModelLevelLog extends TabLogLevel
 {
     protected static $gameId;
-    protected static $distributionId;
+    protected static $distributorId;
 
     public static function TabSuffix($gid,$did)
     {
         self::$gameId=$gid;
-        self::$distributionId=$did;
+        self::$distributorId=$did;
     }
     public static function tableName()
     {
         $originalName=parent::tableName();
-        if (self::$gameId && self::$distributionId)
+        if (self::$gameId && self::$distributorId)
         {
-            return $originalName.'_'.self::$gameId.'_'.self::$distributionId;
+            return $originalName.'_'.self::$gameId.'_'.self::$distributorId;
         }
         return $originalName;
     }

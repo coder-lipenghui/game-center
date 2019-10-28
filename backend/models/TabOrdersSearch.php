@@ -17,7 +17,7 @@ class TabOrdersSearch extends TabOrders
     public function rules()
     {
         return [
-            [['id', 'gameId', 'distributionId', 'gameServerId', 'payTime', 'createTime'], 'integer'],
+            [['id', 'gameId','distributorId', 'distributionId', 'gameServerId', 'payTime', 'createTime'], 'integer'],
             [['orderId', 'distributionOrderId', 'distributionUserId', 'gameRoleId', 'gameRoleName', 'gameServername', 'gameAccount', 'productName', 'payStatus', 'payMode', 'delivered'], 'safe'],
             [['payAmount'], 'number'],
         ];
@@ -61,6 +61,7 @@ class TabOrdersSearch extends TabOrders
         $query->andFilterWhere([
             'id' => $this->id,
             'gameId' => $this->gameId,
+            'distributorId'=>$this->distributorId,
             'distributionId' => $this->distributionId,
             'gameServerId' => $this->gameServerId,
             'payAmount' => $this->payAmount,

@@ -18,6 +18,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'account')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'distributorId')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'distributionUserId')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'distributionUserAccount')->textInput(['maxlength' => true]) ?>

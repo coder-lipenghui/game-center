@@ -111,7 +111,7 @@ function doAjaxSubmit() {
                         show=true;
                     }
                     buildAttribute(roleJson,show);
-                    buildItemBag(roleJson.seedId,roleJson.item_bag);
+                    //buildItemBag(roleJson.seedId,roleJson.item_bag);
                     //buildItemBag(roleJson.item_depot1);
                     //buildItemBag(roleJson.item_depot2);
                 }
@@ -232,4 +232,21 @@ function showRoleInfo(sender) {
     //显示对应角色的舒心信息
     $(".roleAttribute").addClass("hidden");
     $("#role_attr_"+seedId).removeClass("hidden");
+}
+function prohibitLogin(type,account) {
+     $.ajax({
+        url:"../../blacklist/",
+        type: "post",
+        dataType: "json",
+        data:{
+            type:type,
+            'account':account
+        },
+        success:function (data) {
+
+        },
+        error:function (msg) {
+            alert("请求失败"+msg);
+        }
+     });
 }

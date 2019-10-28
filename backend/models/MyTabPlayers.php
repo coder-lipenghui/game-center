@@ -77,6 +77,41 @@ class MyTabPlayers extends TabPlayers
     }
 
     /**
+     * 获取各渠道多少天内每天的注册账号数量
+     * @param $day
+     * @param $gameId
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public static function getRegNumGroupByDistributor($day,$gameId=null)
+    {
+        $start=date('Y-m-d',strtotime("-$day day"));
+        $end=date('Y-m-d');
+        return self::getRegGroupByDistributor($start,$end,$gameId);
+    }
+
+    /**
+     * 获取各分销商某时段内每天的注册账号数量
+     * @param $start 开始时间
+     * @param $end 结束时间
+     * @return array 按照分销商、日期分类的数组
+     * @throws \yii\db\Exception
+     */
+    private static function getRegGroupByDistributor($start,$end,$gameId=null)
+    {
+        $distributors=self::getDistributors($gameId);
+        $data=[];
+        if ($distributors)
+        {
+            foreach ($distributors as $distributor)
+            {
+                $sql="SELECT t2.DAY_SHORT_DESC as time,if(t1.number is NULL,0,t1.number) as number FROM (SELECT DAY_SHORT_DESC FROM calendar WHERE DAY_SHORT_DESC>='$start' AND DAY_SHORT_DESC<='$end') as t2 LEFT JOIN (SELECT distributorId,COUNT(*) as number, DATE_FORMAT(regtime,'%Y-%m-%d') as `time` FROM tab_players WHERE regtime>='$start 00:00:00' AND regtime <='$end 59:59:59' AND distributorId = $distributor GROUP BY distributorId,time) as t1 on t2.DAY_SHORT_DESC=t1.time ORDER BY t2.DAY_SHORT_DESC";
+                $data[$distributor.""] = Yii::$app->db->createCommand($sql)->queryAll();
+            }
+        }
+        return $data;
+    }
+    /**
      * 今日注册账户数
      * @return int|string
      */
@@ -235,6 +270,19 @@ class MyTabPlayers extends TabPlayers
         {
             $distributionsArr=ArrayHelper::getColumn($permissions,'distributionId');
             $distributions=join(",",$distributionsArr);
+        }
+        return $distributions;
+    }
+    private static function getDistributors($gameId=null)
+    {
+        $distributions=[];
+        $uid=\Yii::$app->user->id;
+        $modelPermission=new MyTabPermission();
+        $permissions=$modelPermission->getDistributorsByUid($uid,$gameId);
+        if ($permissions)
+        {
+            $distributions=ArrayHelper::getColumn($permissions,'distributorId');
+//            $distributions=join(",",$distributionsArr);
         }
         return $distributions;
     }

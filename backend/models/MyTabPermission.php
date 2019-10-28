@@ -87,6 +87,27 @@ class MyTabPermission extends TabPermission
         }
         return [];
     }
+
+    /**
+     * 获取权限内所有的渠道商ID
+     * @param $uid
+     * @param $gameId
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function getDistributorByUidAndGameId($uid,$gameId)
+    {
+        $query=TabPermission::find();
+        $query->select(['gameId','distributorId'])->where(['uid'=>$uid,'gameId'=>$gameId])->asArray();
+        $data=$query->all();
+        return $data;
+    }
+
+    /**
+     * 获取权限内所有的分销渠道ID
+     * @param $uid
+     * @param $gameId
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public function getDistributionByUidAndGameId($uid,$gameId)
     {
         $query=TabPermission::find();
@@ -139,5 +160,19 @@ class MyTabPermission extends TabPermission
             return $data;
         }
         return [];
+    }
+
+    /**
+     * 获取权限内的分销商信息
+     * @param $uid
+     * @param $gameId
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function getDistributorsByUid($uid,$gameId=null)
+    {
+        $query=TabPermission::find();
+        $query->select(['gameId','distributorId'])->where(['uid'=>$uid])->andFilterWhere(['gameId'=>$gameId])->groupBy('distributorId')->asArray();
+        $data=$query->all();
+        return $data;
     }
 }

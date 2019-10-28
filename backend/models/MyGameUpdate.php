@@ -64,6 +64,10 @@ class MyGameUpdate extends TabGameUpdate
         $data=$query->one();
         if ($data)
         {
+            if ($this->platform=="mac")
+            {
+                $this->platform="ios";
+            }
             $url=$cdnUrl."/".$gameId;
             if (key_exists('distributionId',$data) && $data['distributionId'])
             {

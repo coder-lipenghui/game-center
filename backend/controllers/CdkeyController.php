@@ -129,7 +129,7 @@ class CdkeyController extends Controller
 
                 $myModel=new AutoCDKEYModel();
 
-                $db=Yii::$app->getDb();
+                $db=Yii::$app->get('db_log');
 
                 $values=[];
                 for ($j=0;$j<$model->generateNum;$j++)

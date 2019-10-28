@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\TabPlayersSearch */
+/* @var $model backend\models\TabWhitelistSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="tab-players-search">
+<div class="tab-whitelist-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -20,23 +20,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'distributionId') ?>
-
-    <?= $form->field($model, 'distributorId') ?>
-
     <?= $form->field($model, 'gameId') ?>
 
-    <?= $form->field($model, 'account') ?>
+    <?= $form->field($model, 'distributionId') ?>
+
+    <?= $form->field($model, 'ip') ?>
 
     <?= $form->field($model, 'distributionUserId') ?>
-
-    <?php // echo $form->field($model, 'distributionUserAccount') ?>
-
-    <?php // echo $form->field($model, 'regdeviceId') ?>
-
-    <?php // echo $form->field($model, 'regtime') ?>
-
-    <?php // echo $form->field($model, 'regip') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

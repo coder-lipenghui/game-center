@@ -27,7 +27,10 @@ class TabCdkey extends \yii\db\ActiveRecord
     {
         return 'tab_cdkey';
     }
-
+    public static function getDb()
+    {
+        return Yii::$app->get('db_log');
+    }
     /**
      * {@inheritdoc}
      */

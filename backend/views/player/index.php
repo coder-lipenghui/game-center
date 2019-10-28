@@ -27,6 +27,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value'=>'game.name'
                 ],
                 'distributionId',
+                [
+                    'attribute'=>'distributorId',
+                    'value'=>'distributor.name'
+                ],
                 'account',
                 'distributionUserId',
                 //'distributionUserAccount',

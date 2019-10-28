@@ -9,6 +9,8 @@
 namespace backend\models;
 
 
+use Yii;
+
 class AutoCDKEYModel extends TabCdkey
 {
     protected static $gameId;
@@ -28,7 +30,10 @@ class AutoCDKEYModel extends TabCdkey
         }
         return $originalName;
     }
-
+    public static function getDb()
+    {
+        return Yii::$app->get('db_log');
+    }
     /**
      * 生成8位或10位激活码
      */

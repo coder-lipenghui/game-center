@@ -63,6 +63,18 @@ function  getDashboardInfo(gameId,gameName) {
                 $("#totalArpu").text('0');
                 $("#payingUserProportion").text('0');
             }
+            if (data['todayTodayLoginUser'] && data['todayTodayLoginUser']>0)
+            {
+                $("#todayArpu").text((data['todayRevenue']/data['todayTOdayLoginUser']).toFixed(2));
+            }else{
+                $("#todayArpu").text("0");
+            }
+            if (data['todayPayingUser'] && data['todayPayingUser']>0)
+            {
+                $("#todayArppu").text((data['todayRevenue']/data['todayPayingUser']).toFixed(2));
+            }else{
+                $("#todayArppu").text("0");
+            }
         },
         error:function (data) {
             alert("获取数据失败");
@@ -71,7 +83,6 @@ function  getDashboardInfo(gameId,gameName) {
 }
 function last30dayInfo(type) {
     var gameId=$("#currGameId").val();
-    alert(gameId);
     switch (type) {
         case "arpu":
             getLast30dayArpu(gameId);
@@ -161,5 +172,4 @@ function drawLineChart(gameId,url) {
             alert("获取数据失败");
         }
     });
-
 }

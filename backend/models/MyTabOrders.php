@@ -114,7 +114,21 @@ class MyTabOrders extends TabOrders
 
         return $totalYesterday;
     }
-
+    public static function getRevenueByDistributor($gameId)
+    {
+        $distributors=self::getDistributors();
+        $data=[];
+        if ($distributors)
+        {
+            $query=self::find();
+            $query->select(['gameId','distributorId','money'=>'payAmont/100'])
+                ->where(['distributorId'=>$distributors,'gameId'=>$gameId])
+                ->groupBy('distributorId')
+                ->asArray();
+            $data=$query->all();
+        }
+        return $data;
+    }
     /**
      * 过去30天内每天的充值金额
      */
@@ -127,6 +141,7 @@ class MyTabOrders extends TabOrders
 
     /**
      * 过去30天内每天的充值人数
+     * (全渠道每天总和)
      * @throws \yii\db\Exception
      */
     public static function getLast30PayingUser($gameId)
@@ -152,7 +167,7 @@ class MyTabOrders extends TabOrders
             $sql = "SELECT t1.time,if(t2.amount is NULL,0,t2.amount) as amount FROM 
             (SELECT DAY_SHORT_DESC as time FROM calendar WHERE DAY_SHORT_DESC>='$start' AND DAY_SHORT_DESC<='$end') as t1 
             LEFT JOIN 
-            (SELECT SUM(payAmount/100) as number,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributionId in ($distributions) and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='$start' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='$end' GROUP BY FROM_UNIXTIME(payTime,'%Y-%m-%d')) as t2 
+            (SELECT SUM(payAmount/100) as amount,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributionId in ($distributions) and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='$start' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='$end' GROUP BY FROM_UNIXTIME(payTime,'%Y-%m-%d')) as t2 
             ON t1.time=t2.time 
             ORDER BY t1.time";
             $data = $query = \Yii::$app->db->createCommand($sql)->queryAll();
@@ -162,7 +177,7 @@ class MyTabOrders extends TabOrders
     }
 
     /**
-     * 获取起止日期内每日充值人数
+     * 获取起止日期内每日充值人数(全渠道)
      * @param $start
      * @param $end
      * @return array
@@ -186,6 +201,40 @@ class MyTabOrders extends TabOrders
             return $data;
         }
         return [];
+    }
+    public static function getPingUserGroupByDistributor($day,$gameId)
+    {
+        $start=date('Y-m-d',strtotime("-$day day"));
+        $end=date('Y-m-d');
+        return self::getPayingUserGroupByDistributorAndDate($gameId,$start,$end);
+    }
+    /**
+     * 获取时段内各分销商每天付费人数
+     * @param $gameId
+     * @param $start
+     * @param $end
+     */
+    private static function getPayingUserGroupByDistributorAndDate($gameId,$start,$end)
+    {
+        $distributors=self::getDistributors($gameId);
+        $result=[];
+        if (!empty($distributors))
+        {
+            foreach($distributors as $distributor)
+            {
+                $sql="SELECT t1.time,if(t2.number is NULL,0,t2.number) as number FROM 
+                (SELECT DAY_SHORT_DESC as time FROM calendar WHERE DAY_SHORT_DESC>='$start' AND DAY_SHORT_DESC<='$end') as t1 
+                LEFT JOIN 
+                (SELECT gameId,distributorId,count(*) as number,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributorId =$distributor and gameId=$gameId and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='$start' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='$end' GROUP BY distributorId,FROM_UNIXTIME(payTime,'%Y-%m-%d')) as t2 
+                ON t1.time=t2.time 
+                ORDER BY t1.time";
+                //exit($sql);
+                $query=\Yii::$app->db->createCommand($sql);
+                $data=$query->queryAll();
+                $result[$distributor.""]=$data;
+            }
+        }
+        return $result;
     }
     /**
      * 本月充值金额
@@ -286,6 +335,18 @@ class MyTabOrders extends TabOrders
             $distributons=ArrayHelper::getColumn($permissions,'distributionId');
         }
         return $distributons;
+    }
+    private static function getDistributors($gameId=null)
+    {
+        $distributions=[];
+        $uid=\Yii::$app->user->id;
+        $modelPermission=new MyTabPermission();
+        $permissions=$modelPermission->getDistributorsByUid($uid,$gameId);
+        if ($permissions)
+        {
+            $distributions=ArrayHelper::getColumn($permissions,'distributorId');
+        }
+        return $distributions;
     }
     /**
      * 发货接口

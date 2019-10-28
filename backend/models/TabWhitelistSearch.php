@@ -4,12 +4,12 @@ namespace backend\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\TabPlayers;
+use backend\models\TabWhitelist;
 
 /**
- * TabPlayersSearch represents the model behind the search form of `backend\models\TabPlayers`.
+ * TabWhitelistSearch represents the model behind the search form of `backend\models\TabWhitelist`.
  */
-class TabPlayersSearch extends TabPlayers
+class TabWhitelistSearch extends TabWhitelist
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class TabPlayersSearch extends TabPlayers
     public function rules()
     {
         return [
-            [['id', 'distributionId','distributorId','gameId'], 'integer'],
-            [['account', 'distributionUserId', 'distributionUserAccount', 'regdeviceId', 'regtime', 'regip'], 'safe'],
+            [['id', 'gameId', 'distributionId'], 'integer'],
+            [['ip', 'distributionUserId'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class TabPlayersSearch extends TabPlayers
      */
     public function search($params)
     {
-        $query = TabPlayers::find();
+        $query = TabWhitelist::find();
 
         // add conditions that should always apply here
 
@@ -59,17 +59,12 @@ class TabPlayersSearch extends TabPlayers
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'distributionId' => $this->distributionId,
-            'distributorId'=>$this->distributorId,
             'gameId' => $this->gameId,
-            'regtime' => $this->regtime,
+            'distributionId' => $this->distributionId,
         ]);
 
-        $query->andFilterWhere(['like', 'account', $this->account])
-            ->andFilterWhere(['like', 'distributionUserId', $this->distributionUserId])
-            ->andFilterWhere(['like', 'distributionUserAccount', $this->distributionUserAccount])
-            ->andFilterWhere(['like', 'regdeviceId', $this->regdeviceId])
-            ->andFilterWhere(['like', 'regip', $this->regip]);
+        $query->andFilterWhere(['like', 'ip', $this->ip])
+            ->andFilterWhere(['like', 'distributionUserId', $this->distributionUserId]);
 
         return $dataProvider;
     }

@@ -34,9 +34,10 @@ class DashboardController extends Controller
             'todayRevenue'=>0,
 //            'todayArpu'=>0,
 //            'todayArppu'=>0,
-            'todayTodayLoginUser'=>0,
-            'todayTodayRegDevice'=>0,
-            'todayTodayRegUser'=>0,
+            'todayLoginUser'=>0,
+            'todayRegDevice'=>0,
+            'todayRegUser'=>0,
+            'todayPayingUser'=>0,
 
             'yesterdayRevenue'=>0,
             'yesterdayArpu'=>0,
@@ -58,11 +59,12 @@ class DashboardController extends Controller
                 'last30dayLoginUser'=>$this->actionLast30dayLoginUserCount($gameId),
 
                 'todayRevenue'=>$this->actionTodayRevenue($gameId),
-                'todayArpu'=>$this->actionTodayArpu($gameId),
-                'todayArppu'=>$this->actionTodayArppu($gameId),
+//                'todayArpu'=>$this->actionTodayArpu($gameId),
+//                'todayArppu'=>$this->actionTodayArppu($gameId),
                 'todayLoginUser'=>$this->actionTodayLoginUser($gameId),
                 'todayRegDevice'=>$this->actionTodayRegDevice($gameId),
                 'todayRegUser'=>$this->actionTodayRegUser($gameId),
+                'todayPayingUser'=>$this->actionTodayPayingUser($gameId),
 
                 'yesterdayRevenue'=>$this->actionYesterdayRevenue($gameId),
                 //'yesterdayArpu'=>$this->actionYesterdayArpu($gameId),
@@ -99,6 +101,11 @@ class DashboardController extends Controller
         $dashboard=new ModelDashBoard();
         return $dashboard->getTodayLoginUserNumber($gameId);
     }
+    public function actionTodayPayingUser($gameId)
+    {
+        return MyTabOrders::getTodayPayingUser($gameId);
+    }
+
     public function actionTodayLoginDevice($gameId)
     {
 
@@ -116,16 +123,16 @@ class DashboardController extends Controller
     {
         return MyTabPlayers::getTodayRegisterDevice($gameId);
     }
-    public function actionTodayArpu($gameId)
-    {
-        $dashboard=new ModelDashBoard();
-        return $dashboard->getTodayArpu($gameId);
-    }
-    public function actionTodayArppu($gameId)
-    {
-        $dashboard=new ModelDashBoard();
-        return $dashboard->getTodayArppu($gameId);
-    }
+//    public function actionTodayArpu($gameId)
+//    {
+//        $dashboard=new ModelDashBoard();
+//        return $dashboard->getTodayArpu($gameId);
+//    }
+//    public function actionTodayArppu($gameId)
+//    {
+//        $dashboard=new ModelDashBoard();
+//        return $dashboard->getTodayArppu($gameId);
+//    }
 
     public function actionYesterdayRevenue($gameId)
     {

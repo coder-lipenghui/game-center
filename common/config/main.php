@@ -10,14 +10,16 @@ return [
             'class' => 'yii\db\Connection',
             'dsn' => 'mysql:host=127.0.0.1;dbname=qiyou_center',
             'username' => 'root',
-            'password'=>'7youNew7DBs',
+//            'password'=>'7youNew7DBs',
+            'password'=>'xxdweb!@#456',
             'charset' => 'utf8',
         ],
         'db_log'=>[
             'class' => 'yii\db\Connection',
             'dsn' => 'mysql:host=127.0.0.1;dbname=qiyou_log',
             'username' => 'root',
-            'password'=>'7youNew7DBs',
+//            'password'=>'7youNew7DBs',
+            'password'=>'xxdweb!@#456',
             'charset' => 'utf8',
         ],
         'cache' => [

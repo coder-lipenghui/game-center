@@ -204,6 +204,7 @@ class CenterController extends Controller
                     if ($order->payAmount==$orderArray['payAmount'])
                     {
                         //更新支付状态
+                        $order->setAttribute('distributorId',$distribution->distributorId);
                         $order->setAttribute('distributionOrderId',$orderArray['distributionOrderId']);
                         $order->setAttribute('payStatus','1');
                         $order->setAttribute('payTime',$orderArray['payTime']);
@@ -260,7 +261,7 @@ class CenterController extends Controller
             ->orWhere(['ip'=>$this->getClientIP(),'gameId'=>$game->id])
             ->orWhere(['distributionUserId'=>$requestData['uid'],'gameId'=>$game->id])
             ->orWhere(['deviceId'=>$requestData['deviceId'],'gameId'=>$game->id])->one();
-        if ($blacklist)
+        if (!empty($blacklist))
         {
             $this->send(self::$ERROR_IN_BLACKLIST,\Yii::t('app',"您已经被禁止登录"));
         }
@@ -496,7 +497,6 @@ class CenterController extends Controller
                 return ['code'=>-12,'msg'=>'登录会话过期'];
             }
         }else{
-
             return ['code'=>-13,'msg'=>'参数错误','data'=>$enterModle->getErrors()];
         }
     }
@@ -541,11 +541,12 @@ class CenterController extends Controller
                 $distribution=TabDistribution::find()->where(['id'=>$distributionId])->one();
                 if ($distribution)
                 {
+                    $distributorId=$distribution->distributorId;
                     $requestData['gameId']=$gameId;
                     switch ($requestData['type'])
                     {
                         case self::$REPORT_TYPE_ENTER:
-                            ModelStartLog::TabSuffix($gameId,$distributionId);
+                            ModelStartLog::TabSuffix($gameId,$distributorId);
                             $enterApp=new ModelStartLog();
                             return $enterApp->doRecord($requestData);
                             break;
@@ -554,17 +555,17 @@ class CenterController extends Controller
 //                        case self::$REPORT_TYPE_ENTER_SERVER:
 //                            break;
                         case self::$REPORT_TYPE_CREATE_ROLE:
-                            ModelRoleLog::TabSuffix($gameId,$distributionId);
+                            ModelRoleLog::TabSuffix($gameId,$distributorId);
                             $createRole=new ModelRoleLog();
                             return $createRole->doRecord($requestData);
                             break;
                         case self::$REPORT_TYPE_ENTER_GAME:
-                            ModelLoginLog::TabSuffix($gameId,$distributionId);
+                            ModelLoginLog::TabSuffix($gameId,$distributorId);
                             $roleLogin=new ModelLoginLog();
                             return $roleLogin->doRecord($requestData);
                             break;
                         case self::$REPORT_TYPE_ROLE_UPDATE:
-                            ModelLevelLog::TabSuffix($gameId,$distributionId);
+                            ModelLevelLog::TabSuffix($gameId,$distributorId);
                             $levelChange=new ModelLevelLog();
                             return $levelChange->doRecord($requestData);
                             break;
@@ -637,7 +638,6 @@ class CenterController extends Controller
                                             'item'=>$variety->items,
                                             'sign'=>$sign
                                         ];
-                                        exit($url.http_build_query($body));
                                         $json=$curl->fetchUrl($url.http_build_query($body));
                                         if ($curl->getHttpResponseCode()==200)
                                         {
@@ -717,6 +717,7 @@ class CenterController extends Controller
         {
             //TODO 需要支持分表 增加登录验证速度
             $player=new TabPlayers();
+            $player->distributorId=$distribution->distributorId;
             $player->distributionId=$distribution->id;
             $player->gameId=$distribution->gameId;
             $player->distributionUserId=$user['distributionUserId'];
@@ -731,6 +732,7 @@ class CenterController extends Controller
                 return $player;
             }else{
                 return null;
+//                exit(json_encode($player->getErrors()));
             }
         }
         return $player;

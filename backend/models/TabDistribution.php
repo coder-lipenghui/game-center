@@ -89,13 +89,13 @@ class TabDistribution extends \yii\db\ActiveRecord
      * @param $gameId
      * @param $distributionId
      */
-    public function createLogTables($gameId,$distributionId)
+    public function createLogTables($gameId,$distributorId)
     {
         //cdkey表
         try{
-            $query=Yii::$app->db->createCommand("
-                DROP TABLE IF EXISTS `tab_cdkey_".$gameId."_".$distributionId."`;
-                CREATE TABLE `tab_cdkey_".$gameId."_".$distributionId."` (
+            $query=Yii::$app->get('db_log')->createCommand("
+                DROP TABLE IF EXISTS `tab_cdkey_".$gameId."_".$distributorId."`;
+                CREATE TABLE `tab_cdkey_".$gameId."_".$distributorId."` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `gameId` int(10) NOT NULL COMMENT '游戏ID',
                   `distributorId` int(10) NOT NULL COMMENT '分销商ID',
@@ -112,8 +112,8 @@ class TabDistribution extends \yii\db\ActiveRecord
             $query->pdoStatement->closeCursor();
             //创角日志
             $query=Yii::$app->get('db_log')->createCommand("
-                DROP TABLE IF EXISTS `tab_log_role_".$gameId."_".$distributionId."`;
-                CREATE TABLE `tab_log_role_".$gameId."_".$distributionId."`(
+                DROP TABLE IF EXISTS `tab_log_role_".$gameId."_".$distributorId."`;
+                CREATE TABLE `tab_log_role_".$gameId."_".$distributorId."`(
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `distributionUserId` varchar(255) NOT NULL COMMENT '渠道用户ID',
                   `account` varchar(255) NOT NULL COMMENT '中控分配的账号',
@@ -133,8 +133,8 @@ class TabDistribution extends \yii\db\ActiveRecord
             $query->pdoStatement->closeCursor();
             //升级日志
             $query2=Yii::$app->get('db_log')->createCommand("
-                DROP TABLE IF EXISTS `tab_log_level_".$gameId."_".$distributionId."`;
-                CREATE TABLE `tab_log_level_".$gameId."_".$distributionId."`(
+                DROP TABLE IF EXISTS `tab_log_level_".$gameId."_".$distributorId."`;
+                CREATE TABLE `tab_log_level_".$gameId."_".$distributorId."`(
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `account` varchar(255) NOT NULL COMMENT '中控用户ID',
                   `distributionUserId` varchar(255) NOT NULL COMMENT '渠道用户ID',
@@ -154,8 +154,8 @@ class TabDistribution extends \yii\db\ActiveRecord
             $query->execute();
             //登录日志
             $query=Yii::$app->get('db_log')->createCommand("
-                DROP TABLE IF EXISTS `tab_log_login_".$gameId."_".$distributionId."`;
-                CREATE TABLE `tab_log_login_".$gameId."_".$distributionId."`(
+                DROP TABLE IF EXISTS `tab_log_login_".$gameId."_".$distributorId."`;
+                CREATE TABLE `tab_log_login_".$gameId."_".$distributorId."`(
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `account` varchar(255) NOT NULL COMMENT '中控用户ID',
                   `distributionUserId` varchar(255) NOT NULL COMMENT '渠道用户ID',
@@ -178,8 +178,8 @@ class TabDistribution extends \yii\db\ActiveRecord
             $query->pdoStatement->closeCursor();
             //启动游戏
             $query=Yii::$app->get('db_log')->createCommand("
-                DROP TABLE IF EXISTS `tab_log_start_".$gameId."_".$distributionId."`;
-                CREATE TABLE `tab_log_start_".$gameId."_".$distributionId."`(
+                DROP TABLE IF EXISTS `tab_log_start_".$gameId."_".$distributorId."`;
+                CREATE TABLE `tab_log_start_".$gameId."_".$distributorId."`(
                   `id` int(11) NOT NULL AUTO_INCREMENT,
                   `ip` varchar(255) NOT NULL,
                   `deviceId` varchar(255) NOT NULL,

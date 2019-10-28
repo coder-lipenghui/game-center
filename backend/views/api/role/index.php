@@ -14,147 +14,134 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset']);
 ?>
 
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">确认将玩家踢下线吗？</h4>
+            </div>
 
+            <div class="modal-body" id="kick_playerName">
+                <?php
+                $kickForm=ActiveForm::begin([
+                    'id'=>'kickForm',
+                    'action'=>'cmd/kick',
+                    'method'=>'post',
+                    'options'=>['class'=>'form-inline']
+                ]);
+                echo $kickForm->field($kickModel,'playerName')->textInput(['placeholder'=>'角色名称','disabled'=>'disabled']);
+                ActiveForm::end();
+                ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="submitKick()">确认</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!-- 申请扶持 -->
+<div class="modal fade" tabindex="-1" role="dialog" id="applyForVcion">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">扶持申请</h4>
+            </div>
+            <div class="modal-body">
+                <?php
+                $form=ActiveForm::begin([
+                    'id'=>'createSupportForm',
+                    'fieldConfig' => ['template' => '{input}'],
+                    'class'=>'form-inline'
+                ]);
+                ?>
+                <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <p class="text-info">非充值类型:金钻/元宝通过邮件形式发放，不算充值积分</p>
+                    <p class="text-info">充值类型：模拟充值发放,记录充值积分等，玩家可以领取常规充值奖励等</p>
+                    <p class="text-info">绑定元宝/金钻需要填写角色名，模拟充值类型的需要填写账号.</p>
+                </div>
+                <table class="table table-condensed" style="table-layout: fixed;">
+                    <tr>
+                        <td width="100">基础:</td>
+                        <td>
+                            <div class="row">
+                                <div class="col-md-3"><?=$form->field($supportModel,'gameId')->dropDownList(
+                                        $games,
+                                        [
+                                            "class"=>"selectpicker form-control col-xs-2",
+                                            "data-width"=>"fit",
+                                            "id"=>"supportGames",
+                                            "onchange"=>"changeSupportGame(this,'#supportDistributors')",
+                                            "title"=>"选择游戏"
+                                        ]
+                                    )?></div>
+                                <div class="col-md-3"><?=$form->field($supportModel,'distributorId')->dropDownList(
+                                        [],
+                                        [
+                                            "class"=>"selectpicker form-control col-xs-2",
+                                            "data-width"=>"fit",
+                                            "id"=>"supportDistributors",
+                                            "onchange"=>"changeSupportDistributor(this,'#supportGames','#supportServers')",
+                                            "title"=>"分销商"
+                                        ]
+                                    )?></div>
+                                <div class="col-md-3"><?=$form->field($supportModel,'serverId')->dropDownList(
+                                        [],
+                                        [
+                                            "class"=>"selectpicker form-control col-xs-2",
+                                            "data-width"=>"fit",
+                                            "id"=>"supportServers",
+                                            "title"=>"选择区服"
+                                        ]
+                                    )?></div>
+                                <div class="col-md-3"><?=$form->field($supportModel,'type')->dropDownList(
+                                        [0=>"非充值",1=>"充值"],
+                                        [
+                                            "class"=>"selectpicker form-control col-xs-2",
+                                            "data-width"=>"fit",
+                                            "id"=>"supportType",
+                                            "title"=>"类型",
+                                            "onchange"=>"changeSupportType()"
+                                        ]
+                                    )?></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="roleAccount">
+                        <td>角色账号:</td>
+                        <td><?= $form->field($supportModel,'roleAccount')->textInput()?></td>
+                    </tr>
+                    <tr id="roleName">
+                        <td>角色名称:</td>
+                        <td><?= $form->field($supportModel,'roleName')->textInput()?></td>
+                    </tr>
+                    <tr>
+                        <td>申请理由:</td>
+                        <td><?= $form->field($supportModel,'reason')->textInput()?></td>
+                    </tr>
+                    <tr>
+                        <td>申请数量:</td>
+                        <td><?= $form->field($supportModel,'number')->textInput()?></td>
+                    </tr>
+                </table>
+            </div>
+            <?php
+            ActiveForm::end();
+            ?>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-success" onclick="createSupport()">申请</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="panel panel-default">
     <?php
         echo $this->render('../commonSearch', ['searchModel' => $searchModel,'games'=>$games,'distributors'=>$distributors,'servers'=>$servers]);
     ?>
-    <div class="panel-heading"><label>常规操作</label></div>
-    <div class="panel-body">
-        <button id="btnTest" class="btn btn-info" onclick="">恢复角色</button>
-        <button class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="getPlayerName()">强制下线</button>
-        <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">申请元宝</button>
-        <button class="btn btn-info">物品日志</button>
-        <button class="btn btn-info">元宝日志</button>
-        <button class="btn btn-info">交易日志</button>
-        <button class="btn btn-info">死亡日志</button>
-        <!-- 踢玩家下线 -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" id="myModalLabel">确认将玩家踢下线吗？</h4>
-                    </div>
-
-                    <div class="modal-body" id="kick_playerName">
-                        <?php
-                        $kickForm=ActiveForm::begin([
-                            'id'=>'kickForm',
-                            'action'=>'cmd/kick',
-                            'method'=>'post',
-                            'options'=>['class'=>'form-inline']
-                        ]);
-                        echo $kickForm->field($kickModel,'playerName')->textInput(['placeholder'=>'角色名称','disabled'=>'disabled']);
-                        ActiveForm::end();
-                        ?>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                        <button type="button" class="btn btn-primary" onclick="submitKick()">确认</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal -->
-        </div>
-        <!-- 申请扶持 -->
-        <div class="modal fade" tabindex="-1" role="dialog" id="applyForVcion">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">扶持申请</h4>
-                    </div>
-                    <div class="modal-body">
-                        <?php
-                        $form=ActiveForm::begin([
-                            'id'=>'createSupportForm',
-                            'fieldConfig' => ['template' => '{input}'],
-                            'class'=>'form-inline'
-                        ]);
-                        ?>
-                        <div class="alert alert-info alert-dismissible" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <p class="text-info">非充值类型:金钻/元宝通过邮件形式发放，不算充值积分</p>
-                            <p class="text-info">充值类型：模拟充值发放,记录充值积分等，玩家可以领取常规充值奖励等</p>
-                            <p class="text-info">绑定元宝/金钻需要填写角色名，模拟充值类型的需要填写账号.</p>
-                        </div>
-                        <table class="table table-condensed" style="table-layout: fixed;">
-                            <tr>
-                                <td width="100">基础:</td>
-                                <td>
-                                    <div class="row">
-                                        <div class="col-md-3"><?=$form->field($supportModel,'gameId')->dropDownList(
-                                                $games,
-                                                [
-                                                    "class"=>"selectpicker form-control col-xs-2",
-                                                    "data-width"=>"fit",
-                                                    "id"=>"supportGames",
-                                                    "onchange"=>"changeSupportGame(this,'#supportDistributors')",
-                                                    "title"=>"选择游戏"
-                                                ]
-                                            )?></div>
-                                        <div class="col-md-3"><?=$form->field($supportModel,'distributorId')->dropDownList(
-                                                [],
-                                                [
-                                                    "class"=>"selectpicker form-control col-xs-2",
-                                                    "data-width"=>"fit",
-                                                    "id"=>"supportDistributors",
-                                                    "onchange"=>"changeSupportDistributor(this,'#supportGames','#supportServers')",
-                                                    "title"=>"分销商"
-                                                ]
-                                            )?></div>
-                                        <div class="col-md-3"><?=$form->field($supportModel,'serverId')->dropDownList(
-                                                [],
-                                                [
-                                                    "class"=>"selectpicker form-control col-xs-2",
-                                                    "data-width"=>"fit",
-                                                    "id"=>"supportServers",
-                                                    "title"=>"选择区服"
-                                                ]
-                                            )?></div>
-                                        <div class="col-md-3"><?=$form->field($supportModel,'type')->dropDownList(
-                                                [0=>"非充值",1=>"充值"],
-                                                [
-                                                    "class"=>"selectpicker form-control col-xs-2",
-                                                    "data-width"=>"fit",
-                                                    "id"=>"supportType",
-                                                    "title"=>"类型",
-                                                    "onchange"=>"changeSupportType()"
-                                                ]
-                                            )?></div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr id="roleAccount">
-                                <td>角色账号:</td>
-                                <td><?= $form->field($supportModel,'roleAccount')->textInput(['value'=>'01e73c5313d22f98d5e84702c37360d4'])?></td>
-                            </tr>
-                            <tr id="roleName">
-                                <td>角色名称:</td>
-                                <td><?= $form->field($supportModel,'roleName')->textInput(['value'=>'辉哥啊'])?></td>
-                            </tr>
-                            <tr>
-                                <td>申请理由:</td>
-                                <td><?= $form->field($supportModel,'reason')->textInput(['value'=>'测试'])?></td>
-                            </tr>
-                            <tr>
-                                <td>申请数量:</td>
-                                <td><?= $form->field($supportModel,'number')->textInput()?></td>
-                            </tr>
-                        </table>
-                    </div>
-                    <?php
-                    ActiveForm::end();
-                    ?>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                        <button type="button" class="btn btn-success" onclick="createSupport()">申请</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 申请扶持结束 -->
-    </div>
     <div class="panel-heading" onclick=""><label>基础信息</label></div>
     <div class="panel-body">
         <div class="row">
@@ -184,40 +171,50 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         <li role="presentation" ><a href="javascript:;" onclick="handlerTabSelected(this,'paramsAttribute')">玩家变量</a></li>
                     </ul>
                     <div class="row hidden">
-                        <table class="table table-condensed roleAttribute" id="cloneAttrTarget">
-                            <tr>
-                                <td>名称:<label class="chrname"></label></td>
-                                <td>账号:<label class="account"></label></td>
-                            </tr>
-                            <tr>
-                                <td>渠道:<label class="account"></label></td>
-                                <td>创建:<label class="create_time"></label></td>
-                            </tr>
-                            <tr>
-                                <td>职业:<label class="job"></label></td>
-                                <td>性别:<label class="gender"></label></td>
-                            </tr>
-                            <tr>
-                                <td>金币:<label class="money"></label></td>
-                                <td>元宝:<label class="vcoin"></label></td>
-                            </tr>
-                            <tr>
-                                <td>等级:<label class="lv"></label></td>
-                                <td>行会:<label class="guild"></td>
-                            </tr>
-                            <tr>
-                                <td>血量:<label class="cur_hp"></label></td>
-                                <td>蓝量:<label class="cur_mp"></label></td>
+                        <div  id="cloneAttrTarget">
+                            <table class="table table-condensed roleAttribute">
+                                <tr>
+                                    <td>名称:<label class="chrname"></label></td>
+                                    <td>账号:<label class="account"></label></td>
+                                </tr>
+                                <tr>
+                                    <td>渠道:<label class="distributionUserId"></label></td>
+                                    <td>创建:<label class="create_time"></label></td>
+                                </tr>
+                                <tr>
+                                    <td>职业:<label class="job"></label></td>
+                                    <td>性别:<label class="gender"></label></td>
+                                </tr>
+                                <tr>
+                                    <td>金币:<label class="money"></label></td>
+                                    <td>元宝:<label class="vcoin"></label></td>
+                                </tr>
+                                <tr>
+                                    <td>等级:<label class="lv"></label></td>
+                                    <td>行会:<label class="guild"></td>
+                                </tr>
+                                <tr>
+                                    <td>血量:<label class="cur_hp"></label></td>
+                                    <td>蓝量:<label class="cur_mp"></label></td>
 
-                            </tr>
-                            <tr>
-                                <td>登入:<label class="last_login_time"></label></td>
-                                <td>登出:<label class="last_logout_time"></label></td>
-                            </tr>
-                            <tr>
-                                <td>战神:<label class="herolv"></label></td>
-                            </tr>
-                        </table>
+                                </tr>
+                                <tr>
+                                    <td>登入:<label class="last_login_time"></label></td>
+                                    <td>登出:<label class="last_logout_time"></label></td>
+                                </tr>
+                                <tr>
+                                    <td>战神:<label class="herolv"></label></td>
+                                </tr>
+                            </table>
+                            <div class="row">
+                                <button id="btnTest" class="btn btn-info" onclick="">恢复角色</button>
+                                <button class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="getPlayerName()">强制下线</button>
+                                <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">申请元宝</button>
+                                <button class="btn btn-info">IP禁止登录</button>
+                                <button class="btn btn-info">设备禁止登录</button>
+                                <button class="btn btn-info">账号禁止登录</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="row hidden">
                         <table class="roleWears" border="1" id="cloneWearsTarget">

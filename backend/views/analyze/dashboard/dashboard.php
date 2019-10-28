@@ -5,7 +5,7 @@ use yii\widgets\menu;
 ?>
 <?php
 /* @var $this yii\web\View */
-$this->title = '';
+$this->title = '数据概况';
 $this->registerCss("
 .dtop-items-title {
     display: inline-block;
@@ -222,6 +222,3 @@ $(function () {
         </div>
     </div>
 </div>
-<script>
-
-</script>

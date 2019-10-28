@@ -15,35 +15,35 @@ class ModelDashBoard extends Model
      *
      * @return int
      */
-    public function getTodayArpu($gameId)
-    {
-        //公式：今日充值金额/今日登录用户数
-        $loginNumber=0;
-        $amount=0;
-        $distributions=$this->getDistributions($gameId);
-        if ($distributions)
-        {
-            for ($i=0;$i<count($distributions);$i++)
-            {
-                $gameId=$distributions[$i]['gameId'];
-                $distributionId=$distributions[$i]['distributionId'];
-                ModelLoginLog::TabSuffix($gameId,$distributionId);
-                $login=new ModelLoginLog();
-                $loginNumber=$loginNumber+$login->getTodayLoginUserNumber();
-                $orderAmount=MyTabOrders::todayAmountByDistribution($gameId,$distributionId);
-                if ($orderAmount && $orderAmount['amount'])
-                {
-                    $amount=$amount+(float)($orderAmount['amount']);
-                }
-            }
-        }
-        if ($loginNumber==0)
-        {
-            return 0;
-        }else{
-            return (int)($amount/$loginNumber);
-        }
-    }
+//    public function getTodayArpu($gameId)
+//    {
+//        //公式：今日充值金额/今日登录用户数
+//        $loginNumber=0;
+//        $amount=0;
+//        $distributions=$this->getDistributions($gameId);
+//        if ($distributions)
+//        {
+//            for ($i=0;$i<count($distributions);$i++)
+//            {
+//                $gameId=$distributions[$i]['gameId'];
+//                $distributionId=$distributions[$i]['distributionId'];
+//                ModelLoginLog::TabSuffix($gameId,$distributionId);
+//                $login=new ModelLoginLog();
+//                $loginNumber=$loginNumber+$login->getTodayLoginUserNumber();
+//                $orderAmount=MyTabOrders::todayAmountByDistribution($gameId,$distributionId);
+//                if ($orderAmount && $orderAmount['amount'])
+//                {
+//                    $amount=$amount+(float)($orderAmount['amount']);
+//                }
+//            }
+//        }
+//        if ($loginNumber==0)
+//        {
+//            return 0;
+//        }else{
+//            return (int)($amount/$loginNumber);
+//        }
+//    }
 
     /**
      * 获取今日的ARPPU
@@ -64,14 +64,14 @@ class ModelDashBoard extends Model
     public function getTodayLoginUserNumber($gameId)
     {
         $number=0;
-        $distributions=$this->getDistributions($gameId);
-        if ($distributions)
+        $distributors=$this->getDistributors($gameId);
+        if ($distributors)
         {
-            for ($i=0;$i<count($distributions);$i++)
+            for ($i=0;$i<count($distributors);$i++)
             {
-                $gameId=$distributions[$i]['gameId'];
-                $distributionId=$distributions[$i]['distributionId'];
-                ModelLoginLog::TabSuffix($gameId,$distributionId);
+                $gameId=$distributors[$i]['gameId'];
+                $distributorId=$distributors[$i]['distributorId'];
+                ModelLoginLog::TabSuffix($gameId,$distributorId);
                 $model=new ModelLoginLog();
                 $number+=$model->getTodayLoginUserNumber();
             }
@@ -81,14 +81,14 @@ class ModelDashBoard extends Model
     public function getLast30dayLoginUserNumber($gameId)
     {
         $number=0;
-        $distributions=$this->getDistributions($gameId);
-        if ($distributions)
+        $distributors=$this->getDistributors($gameId);
+        if ($distributors)
         {
-            for ($i=0;$i<count($distributions);$i++)
+            for ($i=0;$i<count($distributors);$i++)
             {
-                $gameId=$distributions[$i]['gameId'];
-                $distributionId=$distributions[$i]['distributionId'];
-                ModelLoginLog::TabSuffix($gameId,$distributionId);
+                $gameId=$distributors[$i]['gameId'];
+                $distributorId=$distributors[$i]['distributorId'];
+                ModelLoginLog::TabSuffix($gameId,$distributorId);
                 $model=new ModelLoginLog();
                 $number+=$model->getLast30LoginUserNumber();
             }
@@ -98,14 +98,14 @@ class ModelDashBoard extends Model
     public function getLast7dayLoginUserNumber($gameId)
     {
         $number=0;
-        $distributions=$this->getDistributions($gameId);
-        if ($distributions)
+        $distributors=$this->getDistributors($gameId);
+        if ($distributors)
         {
-            for ($i=0;$i<count($distributions);$i++)
+            for ($i=0;$i<count($distributors);$i++)
             {
-                $gameId=$distributions[$i]['gameId'];
-                $distributionId=$distributions[$i]['distributionId'];
-                ModelLoginLog::TabSuffix($gameId,$distributionId);
+                $gameId=$distributors[$i]['gameId'];
+                $distributorId=$distributors[$i]['distributorId'];
+                ModelLoginLog::TabSuffix($gameId,$distributorId);
                 $model=new ModelLoginLog();
                 $number+=$model->getLast7LoginUserNumber();
             }
@@ -115,15 +115,15 @@ class ModelDashBoard extends Model
     public function getLast30dayLoginDeviceNumber($gameId)
     {
         $number=0;
-        $distributions=$this->getDistributions();
-        if ($distributions)
-            for ($i=0;$i<count($distributions);$i++)
+        $distributors=$this->getDistributors();
+        if ($distributors)
+            for ($i=0;$i<count($distributors);$i++)
         {
-            for ($i=0;$i<count($distributions);$i++)
+            for ($i=0;$i<count($distributors);$i++)
             {
-                $gameId=$distributions[$i]['gameId'];
-                $distributionId=$distributions[$i]['distributionId'];
-                ModelLoginLog::TabSuffix($gameId,$distributionId);
+                $gameId=$distributors[$i]['gameId'];
+                $distributorId=$distributors[$i]['distributorId'];
+                ModelLoginLog::TabSuffix($gameId,$distributorId);
                 $model=new ModelLoginLog();
                 $number+=$model->getLast30LoginDeviceNumber();
             }
@@ -133,14 +133,14 @@ class ModelDashBoard extends Model
     public function getLast7dayLoginDeviceNumber($gameId)
     {
         $number=0;
-        $distributions=$this->getDistributions($gameId);
-        if ($distributions)
+        $distributors=$this->getDistributors($gameId);
+        if ($distributors)
         {
-            for ($i=0;$i<count($distributions);$i++)
+            for ($i=0;$i<count($distributors);$i++)
             {
-                $gameId=$distributions[$i]['gameId'];
-                $distributionId=$distributions[$i]['distributionId'];
-                ModelLoginLog::TabSuffix($gameId,$distributionId);
+                $gameId=$distributors[$i]['gameId'];
+                $distributorId=$distributors[$i]['distributorId'];
+                ModelLoginLog::TabSuffix($gameId,$distributorId);
                 $model=new ModelLoginLog();
                 $number+=$model->getLast7LoginDeviceNumber();
             }
@@ -151,14 +151,25 @@ class ModelDashBoard extends Model
     {
 
     }
+    private function getDistributors($gameId)
+    {
+        $uid = \Yii::$app->user->id;
+        $permission = new MyTabPermission();
+        $distributors = $permission->getDistributorByUidAndGameId($uid,$gameId);
+        if ($distributors)
+        {
+            return $distributors;
+        }
+        return null;
+    }
     private function getDistributions($gameId)
     {
         $uid = \Yii::$app->user->id;
         $permission = new MyTabPermission();
-        $distributions = $permission->getDistributionByUidAndGameId($uid,$gameId);
-        if ($distributions)
+        $distributors = $permission->getDistributionByUidAndGameId($uid,$gameId);
+        if ($distributors)
         {
-            return $distributions;
+            return $distributors;
         }
         return null;
     }

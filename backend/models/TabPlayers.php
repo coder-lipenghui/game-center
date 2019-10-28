@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property int $distributionId 渠道编号
+ * @property int $distributorId 分销商ID
  * @property int $gameId 游戏编号
  * @property string $account 系统分配的唯一标识
  * @property string $distributionUserId 分销商用户ID
@@ -35,8 +36,8 @@ class TabPlayers extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['distributionId', 'gameId', 'account', 'distributionUserId', 'distributionUserAccount'], 'required'],
-            [['distributionId', 'gameId'], 'integer'],
+            [['distributionId','distributorId', 'gameId', 'account', 'distributionUserId', 'distributionUserAccount'], 'required'],
+            [['distributionId','distributionId', 'gameId'], 'integer'],
             [['regtime'], 'safe'],
             [['account', 'distributionUserId', 'regdeviceId', 'regip'], 'string', 'max' => 255],
             [['distributionUserAccount'], 'string', 'max' => 100],
@@ -52,6 +53,7 @@ class TabPlayers extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'distributionId' => Yii::t('app', 'Distribution ID'),
+            'distributorId'=>Yii::t('app','Distributor ID'),
             'gameId' => Yii::t('app', 'Game ID'),
             'account' => Yii::t('app', 'Account'),
             'distributionUserId' => Yii::t('app', 'Distribution User ID'),
@@ -68,5 +70,9 @@ class TabPlayers extends \yii\db\ActiveRecord
     public function getGame()
     {
         return $this->hasOne(TabGames::className(), ['id' => 'gameId']);
+    }
+    public function getDistributor()
+    {
+        return $this->hasOne(TabDistributor::className(),['id'=>'distributorId']);
     }
 }

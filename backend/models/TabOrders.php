@@ -9,7 +9,8 @@ use Yii;
  *
  * @property int $id
  * @property int $gameId 游戏ID
- * @property int $distributionId 分销ID
+ * @property int $distributorId 分销商ID
+ * @property int $distributionId 分销渠道ID
  * @property string $orderId 系统订单号
  * @property string $distributionOrderId 渠道侧的订单ID
  * @property string $distributionUserId 渠道玩家ID
@@ -42,8 +43,8 @@ class TabOrders extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'distributionId', 'orderId', 'distributionUserId', 'gameRoleId', 'gameServerId', 'gameServername', 'gameAccount'], 'required'],
-            [['gameId', 'distributionId', 'gameServerId', 'payTime', 'createTime'], 'integer'],
+            [['gameId', 'distributorId','distributionId', 'orderId', 'distributionUserId', 'gameRoleId', 'gameServerId', 'gameServername', 'gameAccount'], 'required'],
+            [['gameId', 'distributorId','distributionId', 'gameServerId', 'payTime', 'createTime'], 'integer'],
             [['payAmount'], 'number'],
             [['payStatus', 'delivered'], 'string'],
             [['orderId', 'distributionOrderId', 'gameRoleName', 'gameAccount', 'productName'], 'string', 'max' => 255],
@@ -60,6 +61,7 @@ class TabOrders extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'gameId' => Yii::t('app', 'Game ID'),
+            'distributorId' => Yii::t('app', 'Distributor ID'),
             'distributionId' => Yii::t('app', 'Distribution ID'),
             'orderId' => Yii::t('app', 'Order ID'),
             'distributionOrderId' => Yii::t('app', 'Distribution Order ID'),
