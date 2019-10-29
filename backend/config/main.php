@@ -111,7 +111,7 @@ return [
             'rules' => [
                 '<controller:\w+>/<id:\d+>'=>'<controller>/view',
                 '<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
-                'center/<controller:\w+>/payment-callback/<distributionId:\d>'=>'center/<controller>/payment-callback',
+                'center/<controller:\w+>/payment-callback/<distributionId:\d+>'=>'center/<controller>/payment-callback',
             ],
         ],
     ],
