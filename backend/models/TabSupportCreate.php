@@ -20,14 +20,16 @@ class TabSupportCreate extends TabSupport
         return [
             [['gameId','distributorId','serverId','type','number'],'required'],
             [['sponsor', 'gameId', 'distributorId', 'serverId', 'type', 'number', 'status', 'verifier'], 'integer'],
-            [['gameId', 'distributorId', 'serverId', 'roleAccount', 'reason', 'type', 'number'], 'required'],
+            [['gameId', 'distributorId', 'serverId','reason', 'type', 'number'], 'required'],
             [['roleAccount', 'reason','roleName'], 'string', 'max' => 255],
+
             ['roleAccount', 'required', 'when' => function($model) {
                 return $model->type == 1;
             }],
             ['roleName', 'required', 'when' => function($model) {
                 return $model->type == 0;
             }],
+
             [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
             [['roleAccount'],'exist','skipOnError' => false,'targetClass'=>TabPlayers::className(),'targetAttribute'=>['roleAccount'=>'account']]
         ];
@@ -37,7 +39,6 @@ class TabSupportCreate extends TabSupport
         $request=\Yii::$app->request;
 
         $this->load($request->queryParams);
-
         if ($this->validate())
         {
             $this->sponsor=\Yii::$app->user->id;
