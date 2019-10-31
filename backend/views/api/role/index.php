@@ -178,6 +178,10 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                                     <td>账号:<label class="account"></label></td>
                                 </tr>
                                 <tr>
+                                    <td>唯一:<label class="seedname"></label></td>
+                                    <td>战神:<label class="herolv"></label></td>
+                                </tr>
+                                <tr>
                                     <td>渠道:<label class="distributionUserId"></label></td>
                                     <td>创建:<label class="create_time"></label></td>
                                 </tr>
@@ -202,9 +206,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                                     <td>登入:<label class="last_login_time"></label></td>
                                     <td>登出:<label class="last_logout_time"></label></td>
                                 </tr>
-                                <tr>
-                                    <td>战神:<label class="herolv"></label></td>
-                                </tr>
+
                             </table>
                             <div class="row">
                                 <button id="btnTest" class="btn btn-info" onclick="">恢复角色</button>
