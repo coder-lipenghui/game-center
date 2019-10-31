@@ -9,6 +9,8 @@
 namespace backend\models;
 
 
+use yii\db\Expression;
+
 class MyTabNotice extends TabNotice
 {
     public $rank=0;
@@ -36,18 +38,14 @@ class MyTabNotice extends TabNotice
     {
         $time=time();
         $query=TabNotice::find();
-        $permission=new MyTabPermission();
-        $games=$permission->allowAccessGame();
-        if (empty($games[$gameid]))
-        {
-            return null;
-        }
-        $query->where(['gameid'=>$gameid,'id'=>1])//,'did'=>$did
-        ->andWhere(['>=','starttime',$time])
-            ->andWhere(['<=','endtime',$time])
+        $query->where(['gameid'=>$gameid])
+            ->where(new Expression('FIND_IN_SET(:distributions, distributions)'))
+            ->addParams(['distributions'=>$did])
+             ->andWhere(['<=','starttime',$time])
+            ->andWhere(['>=','endtime',$time])
             ->orderBy('rank DESC')
             ->asArray();
-//        exit($query->createCommand()->getRawSql());
+        //exit($query->createCommand()->getRawSql());
         return $query->all();
     }
 }

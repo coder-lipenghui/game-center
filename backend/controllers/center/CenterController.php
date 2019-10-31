@@ -153,10 +153,18 @@ class CenterController extends Controller
                 ];
             }
             //TODO 构建公告信息 ###title|||content###title|||content
-            $notice=MyTabNotice::searchGameNotice($game->id,$distribution->id);
-            if (empty($notice))//默认构建一条公告
+            $notices=MyTabNotice::searchGameNotice($game->id,$distribution->id);
+            $notice="";
+            if (empty($notices))//默认构建一条公告
             {
                 $notice="欢迎|||亲爱的玩家您好，欢迎来到《".$game->name."》。如果您在游戏内遇到问题，请先联系我们的客服 我们将尽快为您解决问题。";
+            }else {
+                $temp=[];
+                for ($i = 0; $i < count($notices); $i++){
+                    $item=$notices[$i]['title']."|||".$notices[$i]['body'];
+                    $temp[]=$item;
+                }
+                $notice=join("###",$temp);
             }
             $servers=MyTabServers::searchGameServers($game->id,$distribution->id);
 
@@ -182,7 +190,6 @@ class CenterController extends Controller
     public function actionPaymentCallback()
     {
         $distributionId=$this->getDistributionId();
-
         if ($distributionId!=null)
         {
             $distributionQuery=TabDistribution::find()->where(['id'=>$distributionId]);
