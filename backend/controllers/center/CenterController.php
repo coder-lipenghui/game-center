@@ -118,9 +118,10 @@ class CenterController extends Controller
                 $this->send(CenterController::$ERROR_DISTRIBUTOR_NOT_FOUND,\Yii::t('app',"分销渠道不存在"));
             }
             $cache=\Yii::$app->cache;
+            $ip=$this->getClientIP();
 //            $cache->flush();//清理缓存
 //            $cache->delete($tokenKey);//根据key清理缓存
-            $tokenKey=md5($requestData['uid'].$requestData['distributionId'].$this->getClientIP().time());
+            $tokenKey=md5($requestData['uid'].$requestData['distributionId'].$ip.time());
             $token=$cache->get($tokenKey);
             if(empty($token) || $token===null)
             {
@@ -166,7 +167,7 @@ class CenterController extends Controller
                 }
                 $notice=join("###",$temp);
             }
-            $servers=MyTabServers::searchGameServers($game->id,$distribution->id);
+            $servers=MyTabServers::searchGameServers($game->id,$distribution->id,$player,$ip);
 
             $data['serverInfo']=$servers;
             $data['anncInfo']=$notice;

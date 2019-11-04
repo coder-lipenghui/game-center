@@ -11,18 +11,30 @@ use yii\db\Expression;
 
 class MyTabServers extends TabServers
 {
-    public static function searchGameServers($gameId,$distributionId)
-    {
+    public static function searchGameServers($gameId,$distributionId,$player,$ip){
+
         self::openServer($gameId,$distributionId);
+        $filter=[];
+        if (!empty($player))
+        {
+            $whiteQuery=TabWhitelist::find();
+            $whiteQuery->where(['or',"ip='$ip'","distributionUserId='$player->distributionUserId'"]);
+            $list=$whiteQuery->all();
+            if (empty($list))
+            {
+                $filter=['<=','openDateTime',date('Y-m-d H:i:s',time())];
+            }else{
+                $filter=[];
+            }
+        }
         $query=TabServers::find()
             ->select(['id','name','index','status','socket'=>'CONCAT_WS(":",url,netPort)'])
             ->where(['gameid'=>$gameId])
-            ->andWhere(['<=','openDateTime',date('Y-m-d H:i:s',time())])
+            ->andWhere($filter)
             ->andWhere(new Expression('FIND_IN_SET(:distributions, distributions)'))
             ->addParams(['distributions'=>$distributionId])
             ->asArray();
         return $query->all();
-
     }
     public static function openServer($gameId,$distributionId)
     {
