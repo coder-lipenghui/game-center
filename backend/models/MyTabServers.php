@@ -17,7 +17,8 @@ class MyTabServers extends TabServers
         $query=TabServers::find()
             ->select(['id','name','index','status','socket'=>'CONCAT_WS(":",url,netPort)'])
             ->where(['gameid'=>$gameId])
-            ->where(new Expression('FIND_IN_SET(:distributions, distributions)'))
+            ->andWhere(['<=','openDateTime',date('Y-m-d H:i:s',time())])
+            ->andWhere(new Expression('FIND_IN_SET(:distributions, distributions)'))
             ->addParams(['distributions'=>$distributionId])
             ->asArray();
         return $query->all();
@@ -32,7 +33,7 @@ class MyTabServers extends TabServers
             ['and',
                 ['gameId'=>$gameId],
                 ['status'=>6],
-                ['>=','openDateTime',date('Y-m-d H:i:i',time())],
+                ['>=','openDateTime',date('Y-m-d H:i:s',time())],
                 new Expression('FIND_IN_SET(:value, distributions)'),
             ],['value'=>$distributionId]);
     }
@@ -44,7 +45,6 @@ class MyTabServers extends TabServers
             ->where($cond);
 
         $todayOpen=$query->count('*');
-//        exit($query->createCommand()->getRawSql());
         $todayOpen=$todayOpen?$todayOpen:0;
 
         return $todayOpen;
