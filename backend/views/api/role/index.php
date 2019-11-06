@@ -170,9 +170,9 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         <li role="presentation" ><a href="javascript:;" onclick="handlerTabSelected(this,'itemsAttribute')">玩家物品</a></li>
                         <li role="presentation" ><a href="javascript:;" onclick="handlerTabSelected(this,'paramsAttribute')">玩家变量</a></li>
                     </ul>
-                    <div class="row hidden">
-                        <div  id="cloneAttrTarget">
-                            <table class="table table-condensed roleAttribute">
+                    <div class="row">
+                        <div  id="cloneAttrTarget" class="roleAttribute">
+                            <table class="table table-condensed">
                                 <tr>
                                     <td>名称:<label class="chrname"></label></td>
                                     <td>账号:<label class="account"></label></td>
@@ -209,12 +209,12 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
 
                             </table>
                             <div class="row">
-                                <button id="btnTest" class="btn btn-info" onclick="">恢复角色</button>
-                                <button class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="getPlayerName()">强制下线</button>
+                                <button id="btnTest" class="btn btn-info hidden" onclick="">恢复角色</button>
+                                <button class="btn btn-info hidden" data-toggle="modal" data-target="#myModal" onclick="getPlayerName()">强制下线</button>
                                 <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">申请元宝</button>
-                                <button class="btn btn-info">IP禁止登录</button>
-                                <button class="btn btn-info">设备禁止登录</button>
-                                <button class="btn btn-info">账号禁止登录</button>
+                                <button class="btn btn-info hidden">IP禁止登录</button>
+                                <button class="btn btn-info hidden">设备禁止登录</button>
+                                <button class="btn btn-info hidden">账号禁止登录</button>
                             </div>
                         </div>
                     </div>
