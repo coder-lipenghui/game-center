@@ -57,14 +57,9 @@ class TabSupportSearch extends TabSupport
             'query' => $query,
         ]);
         $this->load($params);
-//        exit($params);
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
-
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
 //            'sponsor' => \Yii::$app->user->id,
@@ -77,6 +72,7 @@ class TabSupportSearch extends TabSupport
         $query->andWhere(['or',['gameId'=>$games,'distributorId'=>$distributors],['sponsor'=>Yii::$app->user->id]]);
 
         $query->andFilterWhere(['like', 'roleAccount', $this->roleAccount])
+            ->orderBy('status')
             ->andFilterWhere(['like', 'reason', $this->reason]);
 //        exit($query->createCommand()->getRawSql());
 
