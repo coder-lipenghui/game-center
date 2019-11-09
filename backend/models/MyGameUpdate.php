@@ -93,7 +93,9 @@ class MyGameUpdate extends TabGameUpdate
             ->asArray();
             if($distributionId)
             {
-             $query->andWhere(['distributionId'=>$distributionId]);
+                $query->andWhere(['distributionId'=>$distributionId]);
+            }else{
+                $query->andWhere(['distributionId'=>null]);
             }
         return $query;
     }
