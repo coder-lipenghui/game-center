@@ -21,12 +21,12 @@ class TabSupportCreate extends TabSupport
             [['gameId','distributorId','serverId','type','number'],'required'],
             [['sponsor', 'gameId', 'distributorId', 'serverId', 'type', 'number', 'status', 'verifier'], 'integer'],
             [['gameId', 'distributorId', 'serverId','reason', 'type', 'number'], 'required'],
-            [['roleAccount', 'reason','roleName'], 'string', 'max' => 255],
+            [['roleAccount', 'reason','roleId'], 'string', 'max' => 255],
 
             ['roleAccount', 'required', 'when' => function($model) {
                 return $model->type == 1;
             }],
-            ['roleName', 'required', 'when' => function($model) {
+            ['roleId', 'required', 'when' => function($model) {
                 return $model->type == 0;
             }],
 
@@ -42,6 +42,7 @@ class TabSupportCreate extends TabSupport
         if ($this->validate())
         {
             $this->sponsor=\Yii::$app->user->id;
+            $this->applyTime=date('Y-m-d H:i:s');
             return $this->save();
         }
         return false;
@@ -50,7 +51,7 @@ class TabSupportCreate extends TabSupport
     public function allow($id)
     {
         $query=self::find();
-        $support=$query->where(['id'=>$id])->one();//,'status'=>0,'deliver'=>0
+        $support=$query->where(['id'=>$id,'status'=>0,'deliver'=>0])->one();
         //权限检测
         if ($support)
         {
@@ -59,6 +60,7 @@ class TabSupportCreate extends TabSupport
             {
                 $support->verifier=\Yii::$app->user->id;
                 $support->status=1;//同意
+                $support->consentTime=date('Y-m-d H:i:s');
                 if($support->save())
                 {
                     if ($support->type==1)
@@ -76,7 +78,7 @@ class TabSupportCreate extends TabSupport
                     }else{
                         //普通的走邮件
                         $cmdMail=new CmdMail();
-                        $cmdMail->playerName=$support->roleName;
+                        $cmdMail->playerName=$support->roleId;
                         $cmdMail->title="金钻发放";
                         $cmdMail->content="[$support->number]金钻已到账，祝您游戏愉快。";
                         $cmdMail->gameId=$support->gameId;
@@ -114,6 +116,7 @@ class TabSupportCreate extends TabSupport
             {
                 $support->verifier=\Yii::$app->user->id;
                 $support->status=2;//拒绝
+                $support->consentTime=date('Y-m-d H:i:s');
                 $support->save();
             }
         }
@@ -123,7 +126,7 @@ class TabSupportCreate extends TabSupport
         $requestBody=[
             'channelId'=>$support->distributorId,
             'paytouser'=>$support->roleAccount,
-            'paynum'=>time(),
+            'paynum'=>time(),//TODO 生成一个唯一值，防止同时发放
             'paygold'=>$support->number,
             'paymoney'=>$support->number/100,
             'flags'=>1,// 1：充值发放 其他：非充值发放

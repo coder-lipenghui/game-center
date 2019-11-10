@@ -95,7 +95,7 @@ $this->registerJs('
                     </tr>
                     <tr id="roleName">
                         <td>角色名称:</td>
-                        <td><?= $form->field($createModel,'roleName')->textInput()?></td>
+                        <td><?= $form->field($createModel,'roleId')->textInput()?></td>
                     </tr>
                     <tr>
                         <td>申请理由:</td>
@@ -134,23 +134,41 @@ $this->registerJs('
             <?php  echo $this->render('_search', ['model' => $searchModel,'games'=>$games,'distributors'=>$distributors,'servers'=>$servers]); ?>
 
             <?= GridView::widget([
+                'options'=>['style'=>'overflow:auto'],
+                'showFooter'=>true,
                 'dataProvider' => $dataProvider,
-//                'filterModel' => $searchModel,
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-
-//                    'id',
+                    'columns' => [
+                    [
+                        'class'=>'yii\grid\CheckboxColumn',
+                        'name'=>'supportId',
+                        'footer' =>
+                            Html::a('批量同意', "javascript:void(0);", ['class' => 'btn btn-success gridview'])."&nbsp".
+                            Html::a('批量拒绝', "javascript:void(0);", ['class' => 'btn btn-warning gridview'])."&nbsp".
+                            Html::a('批量删除', "javascript:void(0);", ['class' => 'btn btn-danger gridview' ]),
+                        'footerOptions'=>['colspan'=>11],
+                    ],
+//                    [
+//                        'class' => 'yii\grid\SerialColumn',
+//                        'footerOptions' => ['class'=>'hide'],
+//                    ],
                     [
                         'attribute'=>'sponsor',
-                        'value'=>'sponsorUser.username'
+                        'label'=>'申请人',
+                        'value'=>'sponsorUser.username',
+                        'footerOptions' => ['class'=>'hide'],
                     ],
-//                    'gameId',
-//                    'distributorId',
                     [
                         'attribute'=>'serverId',
+                        'label'=>'区服',
                         'value'=>function($model){
-                            return $model->server->name."($model->serverId)";
-                        }
+                            if (!empty($model->server))
+                            {
+                                return $model->server->name."($model->serverId)";
+                            }else{
+                                return $model->serverId;
+                            }
+                        },
+                        'footerOptions' => ['class'=>'hide'],
                     ],
                     [
                         'attribute'=>'roleAccount',
@@ -160,11 +178,17 @@ $this->registerJs('
                             {
                                 return $model->roleAccount;
                             }else{
-                                return $model->roleName;
+                                return $model->roleId;
                             }
-                        }
+                        },
+                        'footerOptions' => ['class'=>'hide'],
                     ],
-                    'reason',
+                    [
+                        'attribute'=>'reason',
+                        'label'=>'理由    ',
+                        'value'=>'reason',
+                        'footerOptions' => ['class'=>'hide'],
+                    ],
                     [
                         'attribute'=>'type',
                         'label'=>'扶持类型',
@@ -178,11 +202,18 @@ $this->registerJs('
                                 $type="有充值积分";
                             }
                             return '<span class="label label-'.$class.'">'.$type.'</span>';
-                        }
+                        },
+                        'footerOptions' => ['class'=>'hide'],
                     ],
-                    'number',
+                    [
+                        'attribute'=>'number',
+                        'label'=>'数量',
+                        'value'=>'number',
+                        'footerOptions' => ['class'=>'hide'],
+                    ],
                     [
                         'attribute'=>'deliver',
+                        'label'=>'到账',
                         'value'=>function($model){
                             $deliver="";
                             switch ($model->deliver)
@@ -197,7 +228,8 @@ $this->registerJs('
                                     break;
                             }
                             return $deliver;
-                        }
+                        },
+                        'footerOptions' => ['class'=>'hide'],
                     ],
                     [
                         'attribute'=>'status',
@@ -222,10 +254,16 @@ $this->registerJs('
                                     break;
                             }
                             return '<span class="label label-'.$class.'">'.$status.'</span>';
-                        }
+                        },
+                        'footerOptions' => ['class'=>'hide'],
+                    ],
+                    [
+                        'attribute'=>'applyTime',
+                        'label'=>'申请时间'
                     ],
                     [
                         'label'=>'操作',
+                        'footerOptions' => ['class'=>'hide'],
                         'class' => 'common\components\ActionColumn',
                         'template' => "{:allow} {:refuse} {:delete}",
                         'buttons' => [
