@@ -50,7 +50,7 @@ class HongshouzhiController extends CenterController
         $this->paymentSuccess           = "SUCCESS";
 
         $jsonData=file_get_contents("php://input");
-        \Yii::error("请求参数:".$jsonData,"order");
+
 
         if (empty($jsonData))
         {
@@ -77,10 +77,8 @@ class HongshouzhiController extends CenterController
                 return false;
             }
             $appKey=$distribution->appKey;
-
-            $paramStr = "order_id=".$order_id."&mem_id=".$mem_id."&app_id=".$app_id."&money=".$money."&order_status=".$order_status."&paytime=".$paytime."&attach=".$attach."&app_key=".$appKey;
+            $paramStr = "order_id=".$order_id."&mem_id=".$mem_id."&app_id=".$app_id."&money=".$urldata['money']."&order_status=".$order_status."&paytime=".$paytime."&attach=".$attach."&app_key=".$appKey;
             $verifySign = md5($paramStr);
-
             if (0 == strcasecmp($sign, $verifySign)){
                 return [
                     'orderId'=>$attach,
@@ -89,7 +87,8 @@ class HongshouzhiController extends CenterController
                     'payAmount'=>$urldata['money']*100,
                 ];
             }else{
-                \Yii::error("sign对比失败","order");
+                \Yii::error("请求参数:".$jsonData,"order");
+                \Yii::error("sign对比失败:".$sign."==>".$verifySign,"order");
             }
         }
         return false;
