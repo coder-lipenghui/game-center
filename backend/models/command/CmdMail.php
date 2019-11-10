@@ -54,7 +54,6 @@ class CmdMail extends BaseCmd
     public function buildCommand()
     {
         $this->command=join(' ',[$this->name,"user:".$this->playerName,$this->title,$this->content,$this->items]);
-        //exit($this->command);
     }
     public function buildServers()
     {
@@ -76,7 +75,6 @@ class CmdMail extends BaseCmd
                 $this->serverList[$i]['name']=$serverData[$this->serverList[$i]['id']];
                 $this->serverList[$i]['secretKey']=$key;
             }
-            //exit(json_encode($this->serverList));
         }
     }
 }

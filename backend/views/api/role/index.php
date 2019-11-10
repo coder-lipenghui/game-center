@@ -14,7 +14,53 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset']);
 ?>
 
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+<div class="modal fade" id="unvoice" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h5 class="modal-title" id="myModalLabel">禁言</h5>
+            </div>
+
+            <div class="modal-body" id="kick_playerName">
+                <?php
+                $unvoiceForm=ActiveForm::begin([
+                    'id'=>'unvoiceForm',
+                    'method'=>'post',
+                    'options'=>['class'=>'form-inline']
+                ]);
+                ?>
+                <table class="table table-condensed" style="table-layout: fixed;">
+                    <tr class="hidden">
+                        <td width="100">游戏:</td>
+                        <td><?= $unvoiceForm->field($unvoiceModel,'gameId')->textInput(['id'=>'unvoiceGameId'])->label(false);?></td>
+                    </tr>
+                    <tr class="hidden">
+                        <td>区服:</td>
+                        <td><?=$unvoiceForm->field($unvoiceModel,'serverId')->textInput(['id'=>'unvoiceServerId'])->label(false);;?></td>
+                    </tr>
+                    <tr>
+                        <td width="100">角色名:</td>
+                        <td><?=$unvoiceForm->field($unvoiceModel,'roleName')->textInput(['placeholder'=>'角色名称','id'=>'unvoiceRoleName'])->label(false);;?></td>
+                    </tr>
+                    <tr>
+                        <td>禁言时长:</td>
+                        <td><?=$unvoiceForm->field($unvoiceModel,'time')->textInput(['placeholder'=>'禁言时长(max:9999999)','id'=>'unvoiceTime'])->label(false);;?></td>
+                    </tr>
+                </table>
+                <?php
+                ActiveForm::end();
+                ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="submitUnvoice()">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="OffLine" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -38,10 +84,9 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" class="btn btn-primary" onclick="submitKick()">确认</button>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal -->
+        </div>
+    </div>
 </div>
-<!-- 申请扶持 -->
 <div class="modal fade" tabindex="-1" role="dialog" id="applyForVcion">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -54,7 +99,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                 $form=ActiveForm::begin([
                     'id'=>'createSupportForm',
                     'fieldConfig' => ['template' => '{input}'],
-                    'class'=>'form-inline'
+                    'class'=>'form-inline',
                 ]);
                 ?>
                 <div class="alert alert-info alert-dismissible" role="alert">
@@ -68,35 +113,6 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         <td width="100">基础:</td>
                         <td>
                             <div class="row">
-                                <div class="col-md-3"><?=$form->field($supportModel,'gameId')->dropDownList(
-                                        $games,
-                                        [
-                                            "class"=>"selectpicker form-control col-xs-2",
-                                            "data-width"=>"fit",
-                                            "id"=>"supportGames",
-                                            "onchange"=>"changeSupportGame(this,'#supportDistributors')",
-                                            "title"=>"选择游戏"
-                                        ]
-                                    )?></div>
-                                <div class="col-md-3"><?=$form->field($supportModel,'distributorId')->dropDownList(
-                                        [],
-                                        [
-                                            "class"=>"selectpicker form-control col-xs-2",
-                                            "data-width"=>"fit",
-                                            "id"=>"supportDistributors",
-                                            "onchange"=>"changeSupportDistributor(this,'#supportGames','#supportServers')",
-                                            "title"=>"分销商"
-                                        ]
-                                    )?></div>
-                                <div class="col-md-3"><?=$form->field($supportModel,'serverId')->dropDownList(
-                                        [],
-                                        [
-                                            "class"=>"selectpicker form-control col-xs-2",
-                                            "data-width"=>"fit",
-                                            "id"=>"supportServers",
-                                            "title"=>"选择区服"
-                                        ]
-                                    )?></div>
                                 <div class="col-md-3"><?=$form->field($supportModel,'type')->dropDownList(
                                         [0=>"非充值",1=>"充值"],
                                         [
@@ -107,16 +123,46 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                                             "onchange"=>"changeSupportType()"
                                         ]
                                     )?></div>
+                                <div class="col-md-3">
+                                    <?=$form->field($supportModel,'gameId')->dropDownList(
+                                        $games,
+                                        [
+                                            "class"=>"selectpicker form-control col-xs-2 hidden",
+                                            "data-width"=>"fit",
+                                            "id"=>"supportGames",
+//                                            "onchange"=>"changeSupportGame(this,'#supportDistributors')",
+                                            "title"=>"选择游戏"
+                                        ]
+                                    )?></div>
+                                <div class="col-md-3"><?=$form->field($supportModel,'distributorId')->dropDownList(
+                                        [],
+                                        [
+                                            "class"=>"selectpicker form-control col-xs-2 hidden",
+                                            "data-width"=>"fit",
+                                            "id"=>"supportDistributors",
+//                                            "onchange"=>"changeSupportDistributor(this,'#supportGames','#supportServers')",
+                                            "title"=>"分销商"
+                                        ]
+                                    )?></div>
+                                <div class="col-md-3"><?=$form->field($supportModel,'serverId')->dropDownList(
+                                        [],
+                                        [
+                                            "class"=>"selectpicker form-control col-xs-2 hidden",
+                                            "data-width"=>"fit",
+                                            "id"=>"supportServers",
+                                            "title"=>"选择区服"
+                                        ]
+                                    )?></div>
                             </div>
                         </td>
                     </tr>
                     <tr id="roleAccount">
                         <td>角色账号:</td>
-                        <td><?= $form->field($supportModel,'roleAccount')->textInput()?></td>
+                        <td><?= $form->field($supportModel,'roleAccount')->textInput(['id'=>'txtRoleAccount'])?></td>
                     </tr>
                     <tr id="roleName">
                         <td>角色名称:</td>
-                        <td><?= $form->field($supportModel,'roleName')->textInput()?></td>
+                        <td><?= $form->field($supportModel,'roleId')->textInput(['id'=>'txtRoleName'])?></td>
                     </tr>
                     <tr>
                         <td>申请理由:</td>
@@ -171,7 +217,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         <li role="presentation" ><a href="javascript:;" onclick="handlerTabSelected(this,'paramsAttribute')">玩家变量</a></li>
                     </ul>
                     <div class="row">
-                        <div  id="cloneAttrTarget" class="roleAttribute">
+                        <div  id="cloneAttrTarget" class="roleAttribute hidden">
                             <table class="table table-condensed">
                                 <tr>
                                     <td>名称:<label class="chrname"></label></td>
@@ -209,6 +255,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
 
                             </table>
                             <div class="row">
+                                <button id="btnUnvoice" class="btn btn-info" data-toggle="modal" data-target="#unvoice" onclick="">禁言</button>
                                 <button id="btnTest" class="btn btn-info hidden" onclick="">恢复角色</button>
                                 <button class="btn btn-info hidden" data-toggle="modal" data-target="#myModal" onclick="getPlayerName()">强制下线</button>
                                 <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">申请元宝</button>

@@ -9,6 +9,7 @@
 namespace backend\controllers\api;
 
 use backend\models\command\CmdMail;
+use backend\models\command\CmdUnvoice;
 use yii\web\Controller;
 use backend\models\command\CmdKick;
 use backend\models\MyTabPermission;
@@ -65,5 +66,22 @@ class CmdController extends Controller
             'searchModel'=>$mailModel,
             'games'=>$games,
         ]);
+    }
+
+    /**
+     * 禁言玩家
+     * @return false|string
+     */
+    public function actionUnvoice()
+    {
+        $request=\Yii::$app->request;
+        $cmdModel=new CmdUnvoice();
+        $cmdModel->load($request->queryParams);
+        if ($cmdModel->validate()){
+            $result=$cmdModel->execu();
+        }else{
+            return json_encode($cmdModel->getErrors());
+        }
+        return json_encode($result);
     }
 }

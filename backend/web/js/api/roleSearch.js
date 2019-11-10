@@ -5,15 +5,25 @@ $(document).ready(function(){
     })
 })
 function changeGame(sender) {
+    $("#supportGames").val($("#games").val());
     getDistributor("#platform",true,$("#games").val(),null,"../");
+    getDistributor("#supportDistributors",true,$("#games").val(),null,"../");
 };
 function changePt(sender) {
     var gid=$("#games").val();
     var pid=$("#platform").val();
     getServers("#servers",true, gid, pid,null,"../");
+    getServers("#supportServers",true, gid, pid,null,"../");
 }
 function changeServer(sender) {
-    // alert($("#servers").val());
+    var gameId=$("#games").val();
+    var serverId=$("#servers").val();
+    $("#supportGames").val(gameId);
+    $("#supportDistributors").val($("#platform").val());
+    $("#supportServers").val(serverId);
+
+    $("#unvoiceGameId").val(gameId);
+    $("#unvoiceServerId").val(serverId);
 }
 function changeSupportGame(sender,target) {
     getDistributor(target,true,$(sender).val(),null,"../");
@@ -30,18 +40,46 @@ function createSupport() {
         type: 'get',
         data: formData,
         dataType: "json",
-        url: "../support/create",
+        url: "../../support/create",
         async: true,
         success: function(data) {
             if (data.code==1)
             {
-                $("#myModal").modal("toggle");
+                alert("申请成功");
+                $("#applyForVcion").modal("toggle");
             }else{
                 alert(data.msg);
             }
         },
         error: function(data) {
-            alert('获取数据失败');
+            alert('操作失败');
+        }
+    });
+}
+
+/**
+ * 禁言玩家
+ */
+function submitUnvoice() {
+    var form=$("#unvoiceForm");
+    var formData = form.serialize();
+    $.ajax({
+        type: 'get',
+        data: formData,
+        dataType: "json",
+        url: "../cmd/unvoice",
+        async: true,
+        success: function(data) {
+            if (data.code==1)
+            {
+                alert("操作成功");
+                $("#unvoice").modal("toggle");
+            }else{
+                alert(data.msg);
+            }
+        },
+        error: function(data) {
+            alert('操作失败');
         }
     });
 }
@@ -92,7 +130,6 @@ function doAjaxSubmit() {
 
             if (data && data.items)
             {
-                //先不考虑效率问题
                 for (var i=0;i<Object.keys(data.items).length;i++)
                 {
                     var roleJson=data.items[i];
@@ -124,6 +161,44 @@ function doAjaxSubmit() {
 }
 
 /**
+ *
+ * @param sender
+ */
+function showRoleInfo(sender) {
+    var seedId=$(sender).attr("seedId");
+    $(".roleLabel").removeClass("glyphicon glyphicon-menu-right");
+    $(sender).addClass("glyphicon glyphicon-menu-right");
+
+    //显示对应角色的背包信息
+    // $(".roleWears").addClass("hidden");
+    // $("#role_wears_"+seedId).removeClass("hidden");
+
+    //显示对应角色的舒心信息
+    $(".roleAttribute").addClass("hidden");
+    //role_attr_
+    $("#role_attr_"+seedId).removeClass("hidden");
+
+    $("#txtRoleAccount").val($("#role_attr_"+seedId+" .account").text());
+    $("#txtRoleName").val($("#role_attr_"+seedId+" .seedname").text());
+    $("#unvoiceRoleName").val($("#role_attr_"+seedId+" .chrname").text());
+}
+/**
+ * 构建玩家属性
+ * @param data
+ */
+function buildAttribute(data,show) {
+    var roleAttr=$("#cloneAttrTarget").clone().attr("id","role_attr_"+data.seedId);
+
+    $("#baseAttribute").append(roleAttr);
+    if(show==false)
+    {
+        roleAttr.addClass("hidden");
+    }
+    for (var key in data) {
+        $("#role_attr_"+data.seedId+" ."+key).text(data[key]);
+    }
+}
+/**
  * 角色、物品、变量标签点击操作
  * @param sender
  * @param id
@@ -147,22 +222,7 @@ function handlerTabPosSelected(sender,id) {
     $("#"+id).removeClass("hidden");
 }
 
-/**
- * 构建玩家属性
- * @param data
- */
-function buildAttribute(data,show) {
-    var roleAttr=$("#cloneAttrTarget").clone().attr("id","role_attr_"+data.seedId);
 
-    $("#baseAttribute").append(roleAttr);
-    if(show==false)
-    {
-        roleAttr.addClass("hidden");
-    }
-    for (var key in data) {
-        $("#role_attr_"+data.seedId+" ."+key).text(data[key]);
-    }
-}
 /**
  * 构建玩家穿戴装备物品
  * @param data
@@ -220,19 +280,7 @@ function buildItemBag(seedid,data) {
         buildWearItem(seedid,wears);
     }
 }
-function showRoleInfo(sender) {
-    var seedId=$(sender).attr("seedId");
-    $(".roleLabel").removeClass("glyphicon glyphicon-menu-right");
-    $(sender).addClass("glyphicon glyphicon-menu-right");
 
-    //显示对应角色的背包信息
-    $(".roleWears").addClass("hidden");
-    $("#role_wears_"+seedId).removeClass("hidden");
-
-    //显示对应角色的舒心信息
-    $(".roleAttribute").addClass("hidden");
-    $("#role_attr_"+seedId).removeClass("hidden");
-}
 function prohibitLogin(type,account) {
      $.ajax({
         url:"../../blacklist/",

@@ -60,13 +60,6 @@ class BaseCmd extends Model
         for ($i=0;$i<count($this->serverList);$i++)
         {
             $server=$this->serverList[$i];
-            if (false)
-            {
-                $server['ip']="169.254.78.164";
-                $server['port']="8306";
-                $server['secretKey']="";
-            }
-
             try{
                 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
                 //3秒发送超时
@@ -81,8 +74,6 @@ class BaseCmd extends Model
                     $this->result[]=['name'=>$server['name'],'code'=>'-2','msg'=>'链接失败'];
                     continue;
                 }
-//                $this->command="level 141 200".$server['secretKey'];
-//                $this->command="kick 141";
                 $in = md5($this->command.$server['secretKey']).$this->command."\n";
                 if (!socket_write($socket, $in, strlen($in))) {
                     $this->result[]=['name'=>$server['name'],'code'=>'-3','msg'=>'命令发送失败'];

@@ -8,6 +8,7 @@ namespace backend\controllers\api;
  */
 
 use backend\models\command\CmdKick;
+use backend\models\command\CmdUnvoice;
 use backend\models\MyTabPlayers;
 use common\helps\ItemDefHelper;
 use Yii;
@@ -78,6 +79,7 @@ class RoleController extends BaseController
                 return $this->render('index', [
                     'searchModel'=>$searchModel,
                     'kickModel'=>new CmdKick(),
+                    'unvoiceModel'=>new CmdUnvoice(),
                     'games'=>$games,
                     'distributors'=>$distributors,
                     'servers'=>$servers,

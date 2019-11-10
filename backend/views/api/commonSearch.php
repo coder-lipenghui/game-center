@@ -21,10 +21,6 @@ use yii\widgets\Pjax;
 /* @var $model backend\models\api\RoleInfo */
 /* @var $form yii\widgets\ActiveForm */
 $this->registerJsFile('@web/js/common.js');
-$this->registerJsFile('@web/js/api/dropdown_menu.js',['depends'=>'yii\web\YiiAsset']);
-$this->registerJs('$(function(){
-    //getGame("#games",true,null,"../");
-})');
 ?>
 
 <div class="panel-body">
