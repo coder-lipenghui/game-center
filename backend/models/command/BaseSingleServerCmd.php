@@ -3,40 +3,25 @@
 
 namespace backend\models\command;
 
+
 use backend\models\TabServers;
 use yii\helpers\ArrayHelper;
 
-/**
- * Class CmdUnvoice 对玩家进行禁言操作
- * @package backend\models\command
- */
-class CmdUnvoice extends BaseCmd
+class BaseSingleServerCmd extends BaseCmd
 {
-    public $name="chatoff";
-    public $roleName="";
-    public $time;
     public $gameId;
     public $serverId;
     public function rules()
     {
         $parentRules= parent::rules();
         $myRules=[
-            [['roleName','serverId','time','gameId'],'required'],
-            [['roleName'],'string'],
-            [['time'],'integer','max'=>999999],
+            [['serverId','gameId'],'required'],
             [['gameId','serverId'],'integer']
         ];
         return array_merge($parentRules,$myRules);
     }
-
-    public function buildCommand()
-    {
-        $this->command=join(" ",[$this->name,$this->roleName,$this->time]);
-    }
-
     public function buildServers()
     {
-        //TODO 增加权限校验
         $key="longcitywebonline12345678901234567890";
         $serverQuery=TabServers::find()
             ->select(['id','name','port'=>'masterPort','ip'=>'url'])

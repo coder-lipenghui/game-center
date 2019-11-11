@@ -18,12 +18,19 @@ function changePt(sender) {
 function changeServer(sender) {
     var gameId=$("#games").val();
     var serverId=$("#servers").val();
+
     $("#supportGames").val(gameId);
     $("#supportDistributors").val($("#platform").val());
     $("#supportServers").val(serverId);
 
     $("#unvoiceGameId").val(gameId);
     $("#unvoiceServerId").val(serverId);
+
+    $("#allowLoginGameId").val(gameId);
+    $("#allowLoginServerId").val(serverId);
+
+    $("#denyLoginGameId").val(gameId);
+    $("#denyLoginServerId").val(serverId);
 }
 function changeSupportGame(sender,target) {
     getDistributor(target,true,$(sender).val(),null,"../");
@@ -33,20 +40,24 @@ function changeSupportDistributor(sender,target1,target2) {
     var did=$(sender).val();
     getServers(target2,true, gid, did,null,"../");
 }
-function createSupport() {
-    var form=$("#createSupportForm");
+
+/**
+ * command操作
+ */
+function doCmdSubmit(form,url,modal) {
+    var form=$("#"+form);
     var formData = form.serialize();
     $.ajax({
         type: 'get',
         data: formData,
         dataType: "json",
-        url: "../../support/create",
+        url: url,
         async: true,
         success: function(data) {
-            if (data.code==1)
+            if (data.code==1 || data.code=="1")
             {
-                alert("申请成功");
-                $("#applyForVcion").modal("toggle");
+                alert("操作成功");
+                $("#"+modal).modal("toggle");
             }else{
                 alert(data.msg);
             }
@@ -56,32 +67,26 @@ function createSupport() {
         }
     });
 }
-
-/**
- * 禁言玩家
- */
+/**禁言*/
 function submitUnvoice() {
-    var form=$("#unvoiceForm");
-    var formData = form.serialize();
-    $.ajax({
-        type: 'get',
-        data: formData,
-        dataType: "json",
-        url: "../cmd/unvoice",
-        async: true,
-        success: function(data) {
-            if (data.code==1)
-            {
-                alert("操作成功");
-                $("#unvoice").modal("toggle");
-            }else{
-                alert(data.msg);
-            }
-        },
-        error: function(data) {
-            alert('操作失败');
-        }
-    });
+    doCmdSubmit("unvoiceForm","../cmd/unvoice","unvoice");
+}
+/**扶持*/
+function createSupport() {
+    doCmdSubmit("createSupportForm","../../support/create","applyForVcion")
+}
+/**踢人*/
+function submitKick()
+{
+    doCmdSubmit("kickForm","../cmd/kick","")
+}
+/**封角色*/
+function denyCharacter() {
+    doCmdSubmit("denyLoginForm","../cmd/deny-login","denyLogin")
+}
+/**解封角色*/
+function allowCharacter() {
+    doCmdSubmit("allowLoginForm","../cmd/allow-login","allowLogin")
 }
 function changeSupportType() {
     var type=$("#supportType").val();
@@ -96,21 +101,7 @@ function changeSupportType() {
 function getPlayerName() {
     $("#cmdkick-playername").val($("#roleinfo-chrname").val());
 }
-function submitKick()
-{
-    var form=$("#kickForm");
-    $.ajax({
-        url:"../cmd/kick",
-        type: "get",
-        dataType: "json",
-        success:function (data) {
-            alert(data.code+data.msg);
-        },
-        error:function (msg) {
-            alert("请求失败"+msg.code);
-        }
-    });
-}
+
 function doAjaxSubmit() {
     var form=$("#searchForm");
     var formData = form.serialize();
@@ -174,13 +165,17 @@ function showRoleInfo(sender) {
     // $("#role_wears_"+seedId).removeClass("hidden");
 
     //显示对应角色的舒心信息
+    var account=$("#role_attr_"+seedId+" .account").text();
+    var seedName=$("#role_attr_"+seedId+" .seedname").text();
+    var roleName=$("#role_attr_"+seedId+" .chrname").text();
     $(".roleAttribute").addClass("hidden");
-    //role_attr_
     $("#role_attr_"+seedId).removeClass("hidden");
 
-    $("#txtRoleAccount").val($("#role_attr_"+seedId+" .account").text());
-    $("#txtRoleName").val($("#role_attr_"+seedId+" .seedname").text());
-    $("#unvoiceRoleName").val($("#role_attr_"+seedId+" .chrname").text());
+    $("#txtRoleAccount").val(account);
+    $("#txtRoleName").val(seedName);
+    $("#unvoiceRoleName").val(roleName);
+    $("#allowLoginRoleName").val(roleName);
+    $("#denyLoginRoleName").val(roleName);
 }
 /**
  * 构建玩家属性

@@ -14,6 +14,91 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset']);
 ?>
 
+<div class="modal fade" id="denyLogin" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h5 class="modal-title" id="myModalLabel">禁止角色登录</h5>
+            </div>
+
+            <div class="modal-body">
+                被禁止登录的角色会在SDK登录后无法进入游戏，跳回到SDK登录
+                <?php
+                $denyForm=ActiveForm::begin([
+                    'id'=>'denyLoginForm',
+                    'method'=>'post',
+                    'options'=>['class'=>'form-inline']
+                ]);
+                ?>
+                <table class="table table-condensed" style="table-layout: fixed;">
+                    <tr class="hidden">
+                        <td width="100">游戏:</td>
+                        <td><?= $denyForm->field($denyLoginModel,'gameId')->textInput(['id'=>'denyLoginGameId'])->label(false);?></td>
+                    </tr>
+                    <tr class="hidden">
+                        <td>区服:</td>
+                        <td><?=$denyForm->field($denyLoginModel,'serverId')->textInput(['id'=>'denyLoginServerId'])->label(false);;?></td>
+                    </tr>
+                    <tr>
+                        <td width="100">角色名:</td>
+                        <td><?=$denyForm->field($denyLoginModel,'roleName')->textInput(['placeholder'=>'角色名称','id'=>'denyLoginRoleName'])->label(false);;?></td>
+                    </tr>
+                </table>
+                <?php
+                ActiveForm::end();
+                ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="denyCharacter()">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="allowLogin" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h5 class="modal-title" id="myModalLabel">允许登录</h5>
+            </div>
+
+            <div class="modal-body">
+                <?php
+                $allowForm=ActiveForm::begin([
+                    'id'=>'allowLoginForm',
+                    'method'=>'post',
+                    'options'=>['class'=>'form-inline']
+                ]);
+                ?>
+                <table class="table table-condensed" style="table-layout: fixed;">
+                    <tr class="hidden">
+                        <td width="100">游戏:</td>
+                        <td><?= $allowForm->field($allowLoginModel,'gameId')->textInput(['id'=>'allowLoginGameId'])->label(false);?></td>
+                    </tr>
+                    <tr class="hidden">
+                        <td>区服:</td>
+                        <td><?=$allowForm->field($allowLoginModel,'serverId')->textInput(['id'=>'allowLoginServerId'])->label(false);;?></td>
+                    </tr>
+                    <tr>
+                        <td width="100">角色名:</td>
+                        <td><?=$allowForm->field($allowLoginModel,'roleName')->textInput(['placeholder'=>'角色名称','id'=>'allowLoginRoleName'])->label(false);;?></td>
+                    </tr>
+                </table>
+                <?php
+                ActiveForm::end();
+                ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="allowCharacter()">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="unvoice" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -217,7 +302,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         <li role="presentation" ><a href="javascript:;" onclick="handlerTabSelected(this,'paramsAttribute')">玩家变量</a></li>
                     </ul>
                     <div class="row">
-                        <div  id="cloneAttrTarget" class="roleAttribute hidden">
+                        <div  id="cloneAttrTarget" class="roleAttribute">
                             <table class="table table-condensed">
                                 <tr>
                                     <td>名称:<label class="chrname"></label></td>
@@ -256,8 +341,9 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                             </table>
                             <div class="row">
                                 <button id="btnUnvoice" class="btn btn-info" data-toggle="modal" data-target="#unvoice" onclick="">禁言</button>
-                                <button id="btnTest" class="btn btn-info hidden" onclick="">恢复角色</button>
-                                <button class="btn btn-info hidden" data-toggle="modal" data-target="#myModal" onclick="getPlayerName()">强制下线</button>
+                                <button id="btnAllowLogin" class="btn btn-info" data-toggle="modal" data-target="#denyLogin">禁止登录</button>
+                                <button id="btnDenyLogin" class="btn btn-info" data-toggle="modal" data-target="#allowLogin">允许登录</button>
+                                <button class="btn btn-info hidden" data-toggle="modal" data-target="#myModal">强制下线</button>
                                 <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">申请元宝</button>
                                 <button class="btn btn-info hidden">IP禁止登录</button>
                                 <button class="btn btn-info hidden">设备禁止登录</button>

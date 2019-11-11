@@ -51,7 +51,7 @@ function  getDashboardInfo(gameId,gameName) {
             }
             if (data['totalPayingUser'] && data['totalPayingUser']>0)
             {
-                $("#totalArppu").text(data['totalRevenue']/data['totalPayingUser']);
+                $("#totalArppu").text((data['totalRevenue']/data['totalPayingUser']).toFixed(1));
             }else{
                 $("#totalArppu").text('0');
             }

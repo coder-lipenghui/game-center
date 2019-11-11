@@ -7,6 +7,8 @@ namespace backend\controllers\api;
  * Time: 22:59
  */
 
+use backend\models\command\CmdAllowCharacter;
+use backend\models\command\CmdDenyCharacter;
 use backend\models\command\CmdKick;
 use backend\models\command\CmdUnvoice;
 use backend\models\MyTabPlayers;
@@ -80,6 +82,8 @@ class RoleController extends BaseController
                     'searchModel'=>$searchModel,
                     'kickModel'=>new CmdKick(),
                     'unvoiceModel'=>new CmdUnvoice(),
+                    'allowLoginModel'=>new CmdAllowCharacter(),
+                    'denyLoginModel'=>new CmdDenyCharacter(),
                     'games'=>$games,
                     'distributors'=>$distributors,
                     'servers'=>$servers,

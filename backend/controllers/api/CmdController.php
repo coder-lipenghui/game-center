@@ -8,6 +8,8 @@
 
 namespace backend\controllers\api;
 
+use backend\models\command\CmdAllowCharacter;
+use backend\models\command\CmdDenyCharacter;
 use backend\models\command\CmdMail;
 use backend\models\command\CmdUnvoice;
 use yii\web\Controller;
@@ -20,8 +22,6 @@ class CmdController extends Controller
      */
     public function actionKick()
     {
-        $code=0;
-        $msg="命令运行失败";
         $request=\Yii::$app->request;
         $cmdModel=new CmdKick();
         $cmdModel->load($request->queryParams);
@@ -76,6 +76,40 @@ class CmdController extends Controller
     {
         $request=\Yii::$app->request;
         $cmdModel=new CmdUnvoice();
+        $cmdModel->load($request->queryParams);
+        if ($cmdModel->validate()){
+            $result=$cmdModel->execu();
+        }else{
+            return json_encode($cmdModel->getErrors());
+        }
+        return json_encode($result);
+    }
+
+    /**
+     * 允许玩家登录
+     * @return false|string
+     */
+    public function actionAllowLogin()
+    {
+        $request=\Yii::$app->request;
+        $cmdModel=new CmdAllowCharacter();
+        $cmdModel->load($request->queryParams);
+        if ($cmdModel->validate()){
+            $result=$cmdModel->execu();
+        }else{
+            return json_encode($cmdModel->getErrors());
+        }
+        return json_encode($result);
+    }
+
+    /**
+     * 禁止玩家账号登录
+     * @return false|string
+     */
+    public function actionDenyLogin()
+    {
+        $request=\Yii::$app->request;
+        $cmdModel=new CmdDenyCharacter();
         $cmdModel->load($request->queryParams);
         if ($cmdModel->validate()){
             $result=$cmdModel->execu();
