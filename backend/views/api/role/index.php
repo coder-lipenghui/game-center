@@ -302,7 +302,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         <li role="presentation" ><a href="javascript:;" onclick="handlerTabSelected(this,'paramsAttribute')">玩家变量</a></li>
                     </ul>
                     <div class="row">
-                        <div  id="cloneAttrTarget" class="roleAttribute">
+                        <div  id="cloneAttrTarget" class="roleAttribute hidden">
                             <table class="table table-condensed">
                                 <tr>
                                     <td>名称:<label class="chrname"></label></td>
