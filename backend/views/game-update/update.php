@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use backend\models\TabGames;
+use backend\models\TabDistribution;
 use kartik\datetime\DateTimePicker;
 /* @var $this yii\web\View */
 /* @var $model backend\models\TabGameUpdate */
@@ -38,12 +39,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', '编辑');
                 <tr>
                     <td>渠道：</td>
                     <td>
-                        <?= $form->field($model, 'distributionId')->dropDownList([],
-                            [
-                                'id'=>'gameUpdateDistributions',
-                                'title'=>'选择渠道',
-                                "class"=>"selectpicker form-control col-xs-2",
-                            ])->label(false) ?>
+                        <?= $form->field($model, 'distributionId')->textInput() ?>
                     </td>
                     <td><label class="text-info">非必选,如果某个渠道需要单独维护则需要制定分销渠道ID</label></td>
                 </tr>
