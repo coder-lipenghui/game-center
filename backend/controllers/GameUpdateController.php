@@ -88,7 +88,7 @@ class GameUpdateController extends Controller
 //        $model = $this->findModel($id);
         $model=new MyTabGameUpdate();
         if ($model->adjust($id)) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'id' => $id]);
         }
 
         return $this->render('update', [
