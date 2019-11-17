@@ -1,6 +1,5 @@
-# 奇游游戏中控后台
 [![Build Status](https://dev.azure.com/xxdweb/Game-Center/_apis/build/status/coder-lipenghui.qiyou-center?branchName=master)](https://dev.azure.com/xxdweb/Game-Center/_build/latest?definitionId=1&branchName=master)
-
+# 奇游游戏中控后台
 项目分两部分
 * 中控管理
     * 用户群组及权限管理
