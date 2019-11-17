@@ -13,11 +13,11 @@ class QusanguoController extends CenterController
         $url="http://zsq.73guo.com/sdk.php/LoginNotify/login_verify";
         $appKey=$distribution->appKey;
         $body=[
-            'token'=>$request['token'],
-            'user_id'=>$request['uid'],
+            'user_token'=>$request['token'],
+            'mem_id'=>$request['uid'],
             'app_id'=>$distribution->appID
         ];
-        $signStr = "app_id=".$body['app_id']."&mem_id=".$body['user_id']."&user_token=".$body['token']."&app_key=".$appKey;
+        $signStr = "app_id=".$body['app_id']."&mem_id=".$body['mem_id']."&user_token=".$body['user_token']."&app_key=".$appKey;
         $body['sign']=md5($signStr);
         $params = json_encode($body);
 
@@ -27,7 +27,7 @@ class QusanguoController extends CenterController
         if ($result)
         {
             $resultArr=json_decode($result,true);
-            if ($resultArr['status']=='200')
+            if ($resultArr['status']=='1')
             {
                 $player = array(
                     'distributionUserId'        => $request['uid'],
