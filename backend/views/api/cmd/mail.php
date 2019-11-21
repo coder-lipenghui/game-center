@@ -70,12 +70,12 @@ $this->registerJsFile('@web/js/api/mail.js',['depends'=>'yii\web\YiiAsset']);
                     </td>
                     <td>
                         <?=$form->field($searchModel,'type')->dropDownList(
-                            [1=>'全平台',2=>'全区',3=>'单人'],
+                            [1=>'全区',2=>'单人'],
                             [
                                 "class"=>"selectpicker form-control col-xs-2",
                                 "data-width"=>"fit",
                                 "id"=>"type",
-                                "onchange"=>"changeServer(this)",
+                                "onchange"=>"changeType(this)",
                                 "title"=>"发放类型"
                             ]
                         );?>
@@ -98,7 +98,7 @@ $this->registerJsFile('@web/js/api/mail.js',['depends'=>'yii\web\YiiAsset']);
         </div>
         <div class="row">
             <div class="col-md-3">
-                <?=$form->field($searchModel,'playerName')->textInput(['placeholder'=>'玩家名称'])?>
+                <?=$form->field($searchModel,'playerName')->textInput(['placeholder'=>'玩家名称','id'=>'playerName'])?>
             </div>
         </div>
         <div class="row">
@@ -160,6 +160,8 @@ $this->registerJsFile('@web/js/api/mail.js',['depends'=>'yii\web\YiiAsset']);
                     <button id="btnSub" onclick="doSub()"><span class="glyphicon glyphicon-minus-sign"></span></button>
                     <input id="itemNum" size="5" value="1"/>
                     <button id="btnAdd" onclick="doAdd()"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                    <label>绑定:</label>
+                    <input type="checkbox" id="ckBind" checked="checked"/>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>

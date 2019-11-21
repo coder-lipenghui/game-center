@@ -10,15 +10,29 @@ function doSub() {
     }
     $("#itemNum").val(num);
 }
+function changeType(sender) {
+    var selectIndex=$(sender).val()
+    if (selectIndex==1)
+    {
+        $("#playerName").hide();
+    }else{
+        $("#playerName").show();
+    }
+}
 function btnOk() {
     var item=$("#selectItems").val();
     var num=$("#itemNum").val();
     var curr=$("#cmdmail-items").val();
+    var bind=0;
+    if ($('#ckBind').is(':checked'))
+    {
+        bind=1;
+    }
     if (curr=="")
     {
-        $("#cmdmail-items").val(curr+item+","+num);
+        $("#cmdmail-items").val(curr+item+","+num+","+bind);
     }else{
-        $("#cmdmail-items").val(curr+","+item+","+num);
+        $("#cmdmail-items").val(curr+","+item+","+num+","+bind);
     }
 }
 function doMailAjaxSubmit() {
@@ -30,8 +44,8 @@ function doMailAjaxSubmit() {
         dataType: "json",
         data:formData,
         success:function (data) {
-            $("#cmdResult").text(data[0].msg);
-            $("#myModal").modal('toggle');
+            alert(data[0].msg);
+            $("#cmdmail-items").val("");
         },
         error:function (msg) {
             alert("请求失败"+msg.code);

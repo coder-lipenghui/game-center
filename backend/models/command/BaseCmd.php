@@ -80,7 +80,14 @@ class BaseCmd extends Model
                     continue;
                 }
                 $result=trim(socket_read($socket, 1024));
-                $this->result[]=['name'=>$server['name'],'code'=>'1','msg'=>$result,'server'=>$server['ip'],'port'=>$server['port'],'cmd'=>$this->command];
+                //测试返回命令、端口、区服ip等信息
+                $debug=false;
+                if ($debug)
+                {
+                    $this->result[]=['name'=>$server['name'],'code'=>'1','msg'=>$result,'server'=>$server['ip'],'port'=>$server['port'],'cmd'=>$this->command];
+                }else{
+                    $this->result[]=['name'=>$server['name'],'code'=>'1','msg'=>$result];
+                }
                 socket_close($socket);
             }catch (\Exception $e)
             {

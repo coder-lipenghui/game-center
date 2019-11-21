@@ -22,7 +22,7 @@ class CmdMail extends BaseCmd
     public $gameId;
     public $distributorId;
     public $serverId;       //当是全区或单人的时候
-    public $type=1;           //单平台,全区,单人
+    public $type;           //全服：1、单人：2
 
     public $playerName;     //玩家名称[名称前面需要加user:]或seedId，如果是全服邮件 则用"all"
     public $title;          //邮件标题
@@ -33,9 +33,12 @@ class CmdMail extends BaseCmd
     {
         $parentRules= parent::rules();
         $myRules=[
-            [['playerName','title','content','gameId','distributorId'],'required'],
+            [['title','content','gameId','distributorId','type'],'required'],
             [['playerName','title','content','items'],'string'],
-            [['gameId','serverId','distributorId'],'integer']
+            ['playerName', 'required', 'when' => function($model) {
+                return $model->type == 2;
+            }],
+            [['gameId','serverId','distributorId','type'],'integer']
         ];
         return array_merge($parentRules,$myRules);
     }
@@ -53,8 +56,16 @@ class CmdMail extends BaseCmd
 
     public function buildCommand()
     {
-        $this->command=join(' ',[$this->name,"user:".$this->playerName,$this->title,$this->content,$this->items]);
+        if ($this->type==1)
+        {
+            $this->command=join(' ',[$this->name,'all',$this->title,$this->content,$this->items]);
+        }
+        else if ($this->type==2)
+        {
+            $this->command=join(' ',[$this->name,"user:".$this->playerName,$this->title,$this->content,$this->items]);
+        }
     }
+
     public function buildServers()
     {
         $game=TabGames::find()->where(['id'=>$this->gameId])->one();
