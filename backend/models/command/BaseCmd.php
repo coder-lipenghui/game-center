@@ -86,7 +86,12 @@ class BaseCmd extends Model
                 {
                     $this->result[]=['name'=>$server['name'],'code'=>'1','msg'=>$result,'server'=>$server['ip'],'port'=>$server['port'],'cmd'=>$this->command];
                 }else{
-                    $this->result[]=['name'=>$server['name'],'code'=>'1','msg'=>$result];
+                    if ($result=="done")
+                    {
+                        $this->result[]=['name'=>$server['name'],'code'=>'1','msg'=>$result];
+                    }else{
+                        $this->result[]=['name'=>$server['name'],'code'=>'-5','msg'=>$result];
+                    }
                 }
                 socket_close($socket);
             }catch (\Exception $e)

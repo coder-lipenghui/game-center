@@ -78,10 +78,7 @@ class CmdMail extends BaseCmd
             $serverQuery=TabServers::find()
                 ->select(['id','name','port'=>'masterPort','ip'=>'url'])
                 ->where(['id'=>$this->serverId]);
-            if ($this->type>1)
-            {
-                $serverQuery->where('0=1');
-            }
+
             $this->serverList=$serverQuery->asArray()->all();
             $serverData=ArrayHelper::map($serverQuery->all(),'id','name');
             for ($i=0;$i<count($this->serverList);$i++)
@@ -89,6 +86,7 @@ class CmdMail extends BaseCmd
                 $this->serverList[$i]['name']=$serverData[$this->serverList[$i]['id']];
                 $this->serverList[$i]['secretKey']=$key;
             }
+
         }
     }
 }

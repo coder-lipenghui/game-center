@@ -51,8 +51,7 @@ class TabSupportCreate extends TabSupport
     public function allow($id)
     {
         $query=self::find();
-        $support=$query->where(['id'=>$id,'status'=>0,'deliver'=>0])->one();
-        //权限检测
+        $support=$query->where(['id'=>$id])->andWhere(['!=','deliver',2])->one();
         if ($support)
         {
             $permission=TabPermission::find()->where(['uid'=>\Yii::$app->user->id,'gameId'=>$support->gameId,'distributorId'=>$support->distributorId,'support'=>1])->one();
@@ -80,6 +79,7 @@ class TabSupportCreate extends TabSupport
                         $cmdMail=new CmdMail();
                         $cmdMail->playerName=$support->roleId;
                         $cmdMail->title="金钻发放";
+                        $cmdMail->type=2;
                         $cmdMail->content="[$support->number]金钻已到账，祝您游戏愉快。";
                         $cmdMail->gameId=$support->gameId;
                         $cmdMail->distributorId=$support->distributorId;
@@ -87,7 +87,6 @@ class TabSupportCreate extends TabSupport
                         $cmdMail->items="19008,".$support->number.",0";
                         $cmdMail->buildCommand();
                         $cmdMail->buildServers();
-
                         $result=$cmdMail->execu();
                         if ($result && $result[0]['code']==1)
                         {
