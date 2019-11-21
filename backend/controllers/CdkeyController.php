@@ -212,6 +212,7 @@ class CdkeyController extends Controller
         header('Content-Disposition:attachment;filename='.$file_name.'.xls');
         header("Content-Transfer-Encoding:binary");
         $objWriter->save('php://output');
+        die();
     }
     /**
      * Deletes an existing TabCdkey model.
