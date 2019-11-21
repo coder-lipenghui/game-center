@@ -30,8 +30,8 @@ class QusanguoController extends CenterController
             if ($resultArr['status']=='200')
             {
                 $player = array(
-                    'distributionUserId'        => $request['uid'],
-                    'distributionUserAccount'   => $request['uid'],
+                    'distributionUserId'        => $resultArr['user_id'],
+                    'distributionUserAccount'   => $resultArr['user_account'],
                     'distributionId'            => $distribution->id,
                 );
                 return $player;
@@ -57,34 +57,28 @@ class QusanguoController extends CenterController
             return false;
         }else{
             $urldata = json_decode($jsonData,true);
-            $order_id = isset($urldata['order_id']) ? $urldata['order_id'] : '';
-            $mem_id = isset($urldata['mem_id']) ? $urldata['mem_id'] : '';
-            $app_id = isset($urldata['app_id']) ? intval($urldata['app_id']) : 0;
-            $money = isset($urldata['money']) ? $urldata['money'] : 0.00;
-            $order_status = isset($urldata['order_status']) ? $urldata['order_status'] : '';
-            $paytime = isset($urldata['paytime']) ? intval($urldata['paytime']) : 0;
-            $attach = isset($urldata['attach']) ? $urldata['attach'] : ''; //CP扩展参数
+            $order_id = isset($urldata['out_trade_no']) ? $urldata['out_trade_no'] : '';
+            $money = isset($urldata['price']) ? $urldata['price'] : 0.00;
+            $order_status = isset($urldata['pay_status']) ? $urldata['pay_status'] : '';
+            $attach = isset($urldata['extend']) ? $urldata['extend'] : ''; //CP扩展参数
             $sign = isset($urldata['sign']) ? $urldata['sign'] : ''; // 签名
             $money = number_format($money,2);
 
             //1 校验参数合法性
-            if (empty($urldata) || empty($order_id) || empty($mem_id) || empty($app_id) || empty($money)
-                || empty($order_status) || empty($paytime) || empty($attach) || empty($sign)){
-
+            if (empty($urldata) || empty($order_id) || empty($money) || empty($order_status) || empty($attach) || empty($sign)){
                 //CP添加自定义参数合法检测
                 \Yii::error("参数校验失败","order");
                 return false;
             }
-            //."&mem_id=".$mem_id."&app_id=".$app_id."&paytime=".$paytime.
             $appKey=$distribution->appKey;
-            $paramStr = "order_id=".$order_id."&money=".$urldata['money']."&order_status=".$order_status."&attach=".$attach."&app_key=".$appKey;
+            $paramStr = $order_id.$urldata['price'].$order_status.$attach.$appKey;
             $verifySign = md5($paramStr);
             if (0 == strcasecmp($sign, $verifySign)){
                 return [
                     'orderId'=>$attach,
                     'distributionOrderId'=>$order_id,
-                    'payTime'=>$paytime,
-                    'payAmount'=>$urldata['money']*100,
+                    'payTime'=>time(),
+                    'payAmount'=>$urldata['price']*100,
                 ];
             }else{
                 \Yii::error("请求参数:".$jsonData,"order");
