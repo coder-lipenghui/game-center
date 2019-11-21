@@ -56,6 +56,9 @@ class CmdMail extends BaseCmd
 
     public function buildCommand()
     {
+        $this->content=str_replace("\r\n","",$this->content);
+        $this->content=str_replace("\r","",$this->content);
+        $this->content=str_replace("\n","",$this->content);
         if ($this->type==1)
         {
             $this->command=join(' ',[$this->name,'all',$this->title,$this->content,$this->items]);
