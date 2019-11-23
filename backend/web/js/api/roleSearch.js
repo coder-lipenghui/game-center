@@ -56,7 +56,7 @@ function doCmdSubmit(form,url,modal) {
         success: function(data) {
             if (data.code==1 || data.code=="1")
             {
-                alert("操作成功");
+                alert(data.msg);
                 $("#"+modal).modal("toggle");
             }else{
                 alert(data.msg);
