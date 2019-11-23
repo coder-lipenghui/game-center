@@ -47,7 +47,40 @@ class TabSupportCreate extends TabSupport
         }
         return false;
     }
+    public function autoDeliver()
+    {
+        $bonus=TabBonus::find()->where(['gameId'=>$this->gameId,'distributorId'=>$this->distributorId])->one();
+        if ($bonus)
+        {
+            $bindAmount=$bonus->bindAmount;
+            $unbindAmount=$bonus->unbindAmount;
 
+            if ($this->type==1)//充值
+            {
+                if ($this->number<=$unbindAmount)
+                {
+                    $bonus->unbindAmount=$unbindAmount-$this->number;
+                    if($bonus->save())
+                    {
+                        $this->allow($this->id);
+                        return true;
+                    }
+                }
+            }else//非充值
+            {
+                if ($this->number<=$bindAmount)
+                {
+                    $bonus->bindAmount=$bindAmount-$this->number;
+                    if($bonus->save())
+                    {
+                        $this->allow($this->id);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     public function allow($id)
     {
         $query=self::find();

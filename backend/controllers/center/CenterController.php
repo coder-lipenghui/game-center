@@ -16,6 +16,7 @@ use backend\models\center\EnterGame;
 use backend\models\center\Login;
 use backend\models\MyGameAssets;
 use backend\models\MyGameUpdate;
+use backend\models\MyTabBonus;
 use backend\models\MyTabNotice;
 use backend\models\MyTabOrders;
 use backend\models\MyTabServers;
@@ -24,6 +25,7 @@ use backend\models\report\ModelLoginLog;
 use backend\models\report\ModelRoleLog;
 use backend\models\report\ModelStartLog;
 use backend\models\TabBlacklist;
+use backend\models\TabBonus;
 use backend\models\TabCdkeyRecord;
 use backend\models\TabCdkeyVariety;
 use backend\models\TabDistribution;
@@ -195,7 +197,6 @@ class CenterController extends Controller
         {
             $distributionQuery=TabDistribution::find()->where(['id'=>$distributionId]);
             $distribution=$distributionQuery->one();
-
             $orderArray=$this->orderValidate($distribution);
 
             if ($orderArray!=null)
@@ -224,6 +225,10 @@ class CenterController extends Controller
                                 {
                                     return $this->paymentDeliverFailed;
                                 }
+
+                                //增加奖金池额度
+                                $this->addBonus($order);
+
                                 return $this->paymentSuccess;
                             }else{
                                 $msg="支付状态更新失败";
@@ -273,6 +278,12 @@ class CenterController extends Controller
         {
             $this->send(self::$ERROR_IN_BLACKLIST,\Yii::t('app',"您已经被禁止登录"));
         }
+    }
+    protected function addBonus($order)
+    {
+        $bonus=new MyTabBonus();
+
+        $bonus->addBonusByOrder($order);
     }
     /**
      * 获取渠道ID

@@ -85,7 +85,12 @@ class SupportController extends Controller
         $model = new TabSupportCreate();
         if ($model->create())
         {
-            return ['code'=>1,'msg'=>'申请成功','info'=>'success'];
+            if ($model->autoDeliver())
+            {
+                return ['code'=>1,'msg'=>'发放成功','info'=>'success'];
+            }else{
+                return ['code'=>1,'msg'=>'申请成功','info'=>'success'];
+            }
         }
         return ['code'=>-1,'msg'=>'申请失败','info'=>$model->getErrors(),'param'=>Yii::$app->request->queryParams];
     }
