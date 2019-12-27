@@ -9,7 +9,9 @@ use Yii;
  *
  * @property int $id
  * @property int $gameId 游戏ID
- * @property int $distributions 分销管理ID，非分销商ID
+ * @property int $distributorId 分销商ID
+ * @property string $distributions 分销管理ID，非分销商ID
+ * @property int $type 区服类型:1 android 2 ios 3全平台
  * @property string $name 区服名称
  * @property int $index 根据分销渠道的递增ID
  * @property int $status 区服状态,1:新服 2:正常 3:白名单 4:维护中 5:未开区 6:自动开区
@@ -22,9 +24,6 @@ use Yii;
  * @property int $mergeId 合区主区ID
  * @property string $openDateTime 开服时间
  * @property string $createTime 创建时间
- *
- * @property TabDistribution $distribution
- * @property TabGames $game
  */
 class TabServers extends \yii\db\ActiveRecord
 {
@@ -42,11 +41,10 @@ class TabServers extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'name', 'openDateTime','index','netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort','url'], 'required'],
-            [['gameId', 'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId'], 'integer'],
+            [['gameId', 'name', 'openDateTime'], 'required'],
+            [['gameId', 'distributorId', 'type', 'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId'], 'integer'],
             [['openDateTime', 'createTime'], 'safe'],
-            [['name', 'url','distributions'], 'string', 'max' => 255],
-            [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
+            [['distributions', 'name', 'url'], 'string', 'max' => 255],
         ];
     }
 
@@ -57,36 +55,33 @@ class TabServers extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'gameId' => Yii::t('app', '游戏ID'),
-            'distributions' => Yii::t('app', '分销渠道'),
-            'name' => Yii::t('app', '区服名称'),
-            'index' => Yii::t('app', '显示ID'),
-            'status' => Yii::t('app', '状态'),
-            'url' => Yii::t('app', '域名'),
-            'netPort' => Yii::t('app', 'Net端口'),
-            'masterPort' => Yii::t('app', 'Master端口'),
-            'contentPort' => Yii::t('app', 'Content端口'),
-            'smallDbPort' => Yii::t('app', 'DB小端口'),
-            'bigDbPort' => Yii::t('app', 'DB大端口'),
-            'mergeId' => Yii::t('app', '已合区至'),
-            'openDateTime' => Yii::t('app', '开区时间'),
-            'createTime' => Yii::t('app', '创建时间'),
+            'gameId' => Yii::t('app', 'Game ID'),
+            'distributorId' => Yii::t('app', 'Distributor ID'),
+            'distributions' => Yii::t('app', 'Distributions'),
+            'type' => Yii::t('app', 'Type'),
+            'name' => Yii::t('app', 'Name'),
+            'index' => Yii::t('app', 'Index'),
+            'status' => Yii::t('app', 'Status'),
+            'url' => Yii::t('app', 'Url'),
+            'netPort' => Yii::t('app', 'Net Port'),
+            'masterPort' => Yii::t('app', 'Master Port'),
+            'contentPort' => Yii::t('app', 'Content Port'),
+            'smallDbPort' => Yii::t('app', 'Small Db Port'),
+            'bigDbPort' => Yii::t('app', 'Big Db Port'),
+            'mergeId' => Yii::t('app', 'Merge ID'),
+            'openDateTime' => Yii::t('app', 'Open Date Time'),
+            'createTime' => Yii::t('app', 'Create Time'),
         ];
     }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-//    public function getDistribution()
-//    {
-//        return $this->hasOne(TabDistribution::className(), ['id' => 'distributionId']);
-//    }
-
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getGame()
     {
         return $this->hasOne(TabGames::className(), ['id' => 'gameId']);
+    }
+    public function getDistributor()
+    {
+        return $this->hasOne(TabDistributor::className(),['id'=>'distributorId']);
     }
 }

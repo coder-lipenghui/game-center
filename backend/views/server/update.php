@@ -5,19 +5,19 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\TabServers */
 
-$this->title = Yii::t('app', 'Update Tab Servers: {name}', [
+$this->title = Yii::t('app', '{name}', [
     'name' => $model->name,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tab Servers'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '区服列表'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->params['breadcrumbs'][] = Yii::t('app', '编辑修改');
 ?>
 <div class="tab-servers-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <?= $this->render('_form', [
+                'model' => $model,
+            ]) ?>
+        </div>
+    </div>
 </div>

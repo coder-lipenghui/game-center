@@ -52,6 +52,7 @@ class MyTabGameUpdate extends TabGameUpdate
                 }
                 return true;
             }else{
+                //exit(json_encode($model->getErrors()));
                 return false;
             }
         }

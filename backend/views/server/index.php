@@ -26,38 +26,23 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
-//        'filterModel' => $searchModel,
-                'columns' => [
-//                    ['class' => 'yii\grid\SerialColumn'],
-            'id',
-//            'gameId',
+                'columns' => ['id',
                     [
                         'attribute'=>'gameId',
                         'value'=>'game.name'
                     ],
-            'distributions',
-//                    [
-//                        'attribute'=>'distributions',
-//                        'label'=>'分销渠道',
-//                        'value'=>function($model){
-//                            $distribution=\backend\models\TabDistribution::findOne($model->distributions);
-//                            $distributor=\backend\models\TabDistributor::findOne($distribution->distributorId);
-//                            return $distributor->name;
-//                        }
-//                    ],
+                    ['attribute'=>'distributorId','label'=>'分销商','value'=>'distributor.name'],
                     'name',
                     'index',
                     'status',
                     'url:url',
-                    'netPort',
-                    'masterPort',
-                    'contentPort',
-                    'smallDbPort',
-                    'bigDbPort',
+//                    'netPort',
+//                    'masterPort',
+//                    'contentPort',
+//                    'smallDbPort',
+//                    'bigDbPort',
                     'mergeId',
                     'openDateTime',
-                    'createTime',
-
                     ['class' => 'yii\grid\ActionColumn'],
                 ],
             ]); ?>

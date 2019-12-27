@@ -116,13 +116,10 @@ class CenterController extends Controller
             $distribution=TabDistribution::find()->where(['id'=>$loginModel->distributionId,'gameId'=>$game->id])->one();
             if ($distribution===null)
             {
-                echo($distribution->id.$distribution->name.$game->id);
                 $this->send(CenterController::$ERROR_DISTRIBUTOR_NOT_FOUND,\Yii::t('app',"分销渠道不存在"));
             }
             $cache=\Yii::$app->cache;
             $ip=$this->getClientIP();
-//            $cache->flush();//清理缓存
-//            $cache->delete($tokenKey);//根据key清理缓存
             $tokenKey=md5($requestData['uid'].$requestData['distributionId'].$ip.time());
             $token=$cache->get($tokenKey);
             if(empty($token) || $token===null)
@@ -155,28 +152,52 @@ class CenterController extends Controller
                     'uid'=>$token['distributionUserId']
                 ];
             }
-            //TODO 构建公告信息 ###title|||content###title|||content
-            $notices=MyTabNotice::searchGameNotice($game->id,$distribution->id);
-            $notice="";
-            if (empty($notices))//默认构建一条公告
-            {
-                $notice="欢迎|||亲爱的玩家您好，欢迎来到《".$game->name."》。如果您在游戏内遇到问题，请先联系我们的客服 我们将尽快为您解决问题。";
-            }else {
-                $temp=[];
-                for ($i = 0; $i < count($notices); $i++){
-                    $item=$notices[$i]['title']."|||".$notices[$i]['body'];
-                    $temp[]=$item;
-                }
-                $notice=join("###",$temp);
-            }
-            $servers=MyTabServers::searchGameServers($game->id,$distribution->id,$player,$ip);
+            $data['serverInfo']=$this->getServers($game,$distribution,$player,$ip);
+            $data['anncInfo']=$this->getNotice($game,$distribution);
 
-            $data['serverInfo']=$servers;
-            $data['anncInfo']=$notice;
         }else{
             $this->send(CenterController::$ERROR_PARAMS,\Yii::t('app',"参数错误"),$loginModel->getErrors());
         }
         $this->send(1,'success',$data);
+    }
+
+    /**
+     * 拉取区服信息
+     * @param $game
+     * @param $distribution
+     * @param $player
+     * @param $ip
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    protected function getServers($game,$distribution,$player,$ip)
+    {
+        $servers=MyTabServers::searchGameServers($game->id,$distribution,$player,$ip);
+        return $servers;
+    }
+
+    /**
+     * 拉取公告信息
+     * @param $game
+     * @param $distribution
+     * @return string
+     */
+    protected function getNotice($game,$distribution)
+    {
+        //TODO 构建公告信息 ###title|||content###title|||content
+        $notices=MyTabNotice::searchGameNotice($game->id,$distribution->id);
+        $notice="";
+        if (empty($notices))//默认构建一条公告
+        {
+            $notice="欢迎|||亲爱的玩家您好，欢迎来到《".$game->name."》。如果您在游戏内遇到问题，请先联系我们的客服 我们将尽快为您解决问题。";
+        }else {
+            $temp=[];
+            for ($i = 0; $i < count($notices); $i++){
+                $item=$notices[$i]['title']."|||".$notices[$i]['body'];
+                $temp[]=$item;
+            }
+            $notice=join("###",$temp);
+        }
+        return $notice;
     }
     /**
      * 支付回调接口
@@ -455,6 +476,15 @@ class CenterController extends Controller
                         $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$enterModle->serverId])->one();
                         if ($server)
                         {
+//                            if (!empty($server->mergeId))
+//                            {
+//                                $mergeId=$server->mergeId;
+//                                $server=TabServers::find()->where(['id'=>$mergeId]);
+//                                if (empty($server))
+//                                {
+//                                    return ['code'=>-14,'msg'=>'未找到主区信息'];
+//                                }
+//                            }
                             $sign      = md5($account . $loginTime . $game->loginKey);
                             $requestBody=[
                                 'uname'     => $account,

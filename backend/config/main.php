@@ -97,6 +97,14 @@ return [
                     'logVars' => ['*'],
                     'logFile' => '@runtime/logs/cdkey.log',
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'categories' => ['bonus'],
+                    'levels' => ['error'],
+//                    'logVars' => ['_POST','_GET','_FILES','_COOKIE'],
+                    'logVars' => ['*'],
+                    'logFile' => '@runtime/logs/bonus.log',
+                ],
             ],
         ],
         'errorHandler' => [

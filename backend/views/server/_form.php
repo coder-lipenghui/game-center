@@ -1,5 +1,6 @@
 <?php
 
+use kartik\datetime\DateTimePicker;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -36,9 +37,37 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'mergeId')->textInput() ?>
 
-    <?= $form->field($model, 'openDateTime')->textInput() ?>
+    <?= $form->field($model, 'openDateTime')->widget(DateTimePicker::classname(), [
 
-    <?= $form->field($model, 'createTime')->textInput() ?>
+        'removeButton' => false,
+        'options' => [
+            'value'=>$model->openDateTime,
+            'placeholder' => '开区时间',
+        ],
+        'pluginOptions' => [
+            'autoclose' => true,
+            'todayHighlight' => true,
+            'startView'=>2,     //起始范围（0:分 1:时 2:日 3:月 4:年）
+            'maxView'=>4,       //最大选择范围（年）
+            'minView'=>0,       //最小选择范围（年）
+        ]
+    ])->label(false); ?>
+
+    <?= $form->field($model, 'createTime')->widget(DateTimePicker::classname(), [
+
+        'removeButton' => false,
+        'options' => [
+            'value'=>$model->createTime,
+            'placeholder' => '创建时间',
+        ],
+        'pluginOptions' => [
+            'autoclose' => true,
+            'todayHighlight' => true,
+            'startView'=>2,     //起始范围（0:分 1:时 2:日 3:月 4:年）
+            'maxView'=>4,       //最大选择范围（年）
+            'minView'=>0,       //最小选择范围（年）
+        ]
+    ])->label(false);?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

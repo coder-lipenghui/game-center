@@ -160,6 +160,7 @@ class DashboardController extends Controller
         \Yii::$app->response->format=Response::FORMAT_JSON;
         return MyTabPlayers::getLast30RegUser($gameId);
     }
+
     public function actionLast30dayRegDevice($gameId)
     {
         \Yii::$app->response->format=Response::FORMAT_JSON;
@@ -171,14 +172,17 @@ class DashboardController extends Controller
         \Yii::$app->response->format=Response::FORMAT_JSON;
         return MyTabOrders::getLast30Revenue($gameId);
     }
+
     public function actionLast30dayArpu($gameId)
     {
 
     }
+
     public function actionLast30dayArppu($gameId)
     {
 
     }
+
     public function actionLast30dayPayingUser($gameId)
     {
         \Yii::$app->response->format=Response::FORMAT_JSON;

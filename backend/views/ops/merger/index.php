@@ -25,6 +25,8 @@ $this->registerJs('
                     <label class="text-info" id="msgBoxText">合区操作</label>
                     <ul class="text-info hidden" >
                         <li>merger_pre.php:注释掉20-25的更改中控区服状态的代码</li>
+                        <li>merger_pre.php:注释掉"send pay log"，相关的前往GMT的http请求</li>>
+                        <li>merger_chr.php: mail部分增加'$db->query("ALTER TABLE mail DROP PRIMARY KEY;");'</li>
                         <li>hequ_client.php
                             <ul>
                                 <li>fscoket处增加 error_reporting(E_ALL ^ E_WARNING);  规避掉警告</li>

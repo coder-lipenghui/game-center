@@ -4,7 +4,6 @@
 namespace backend\models\ops;
 
 use backend\models\TabGames;
-use backend\models\TabOpsMergeLog;
 use PHPUnit\Framework\Exception;
 use Yii;
 use backend\models\TabServers;
@@ -18,6 +17,7 @@ class MergerModel extends Model
     public $activeServerId;//
     public $passiveServerId;//
     public $type=1;
+    //kz]QXa4i&$Ha*68,!C7H25x73Xr!xTV@
     public $secretKey='kz]QXa4i&$Ha*68,!C7H25x73Xr!xTV@';
     public $version='10002';
     public function rules()
@@ -71,12 +71,12 @@ class MergerModel extends Model
                         return ['code' => -1, 'msg' => '主动区服务器数据库超过2G,请优化后合区!'];
                     }
                     if ($activeJsonArr['msg']['net_ver'] != 'close') {
-                        return ['code' => -1, 'msg' => '主动区服引擎未退出,请在退出引擎后合区!'];
+                        return ['code' => -1, 'msg' => '主动区服引擎未退出,请在退出引擎后合区!'.$activeJsonArr['msg']['netport']];
                     }
                 } elseif ($activeJsonArr['res'] === 'false') {
                     return ['code' => -1, 'msg' => $activeJsonArr['msg']];
                 } else {
-                    return ['code' => -1, 'msg' => '主动区地址不存在:' . $activeUrl];
+                    return ['code' => -1, 'msg' => '主动区地址不存在:' . $activeUrl.json_encode($activeJsonArr)];
                 }
                 //被动区
                 $curl = new CurlHttpClient();
@@ -162,13 +162,13 @@ class MergerModel extends Model
                         return ['code'=>1,'msg'=>'success'];
                         break;
                     default:
-                        return ['code'=>-1,'msg'=>'未知异常:'.$mergeResult];
+                        return ['code'=>-1,'msg'=>'未知异常:'.$mergeResult.$hqUrl];
                 }
 
             } elseif ($mergeJsonArr['res'] === 'false') {
                 exit($mergeJsonArr['msg']);
             } else {
-                exit('sys error02');
+                exit('sys error02'.json_encode($mergeJsonArr));
             }
         }else{
             $result['info']=$this->getErrors();

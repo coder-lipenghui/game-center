@@ -165,4 +165,7 @@ class ModelLoginLog extends  TabLogLogin
     {
         $query=self::find();
     }
+
+
+
 }

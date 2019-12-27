@@ -87,8 +87,8 @@ class ServerController extends Controller
             $bodyParams=$request->getBodyParams();
             if (count($bodyParams)>0)
             {
-                $distributions=$bodyParams['TabServers']['distributions'];
-                $bodyParams['TabServers']['distributions']=implode(",",$distributions);
+//                $distributions=$bodyParams['TabServers']['distributions'];
+//                $bodyParams['TabServers']['distributions']=implode(",",$distributions);
                 $model->load($bodyParams);
                 if ($model->validate())
                 {

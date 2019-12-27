@@ -12,10 +12,8 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="tab-servers-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
+    <div class="panel panel-default">
+        <div class="panel-body">
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
@@ -24,27 +22,31 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'gameId',
-            'distributions',
-            'name',
-            'index',
-            'status',
-            'url:url',
-            'netPort',
-            'masterPort',
-            'contentPort',
-            'smallDbPort',
-            'bigDbPort',
-            'mergeId',
-            'openDateTime',
-            'createTime',
-        ],
-    ]) ?>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'id',
+                    'gameId',
+                    'distributions',
+                    'name',
+                    'index',
+                    'status',
+                    'url:url',
+                    'netPort',
+                    'masterPort',
+                    'contentPort',
+                    'smallDbPort',
+                    'bigDbPort',
+                    'mergeId',
+                    'openDateTime',
+                    'createTime',
+                ],
+            ]) ?>
+        </div>
+    </div>
 
 </div>
