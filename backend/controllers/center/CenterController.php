@@ -25,8 +25,6 @@ use backend\models\report\ModelLoginLog;
 use backend\models\report\ModelRoleLog;
 use backend\models\report\ModelStartLog;
 use backend\models\TabBlacklist;
-use backend\models\TabBonus;
-use backend\models\TabCdkeyRecord;
 use backend\models\TabCdkeyVariety;
 use backend\models\TabDistribution;
 use backend\models\TabGames;

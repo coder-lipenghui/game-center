@@ -8,6 +8,7 @@
 
 namespace common\helps;
 use backend\models\TabItemdefDzy;
+use Yii;
 
 class ItemDefHelper
 {
@@ -16,16 +17,18 @@ class ItemDefHelper
      * @param $gameid 游戏名称
      * @param $itemid 物品id
      */
-    public static function getNameById($gameid,$id)
+    public static function getNameById($gameId,$id)
     {
         $cache=\Yii::$app->cache;
-        $key="itemdef_".$gameid."_".$id;
+        $key="itemdef_".$gameId."_".$id;
         $name=null;
         if($cache->get($key))
         {
             $name=$cache->get($key);
         }else{
-            $itemdef=TabItemdefDzy::find()->where(['id'=>$id])->asArray()->one();
+            $db=Yii::$app->get('db_log');
+            $sql="select * from tab_itemdef_$gameId where id=$id limit 1";
+            $itemdef=$db->createCommand($sql)->queryOne();
             try{
                 $name=$itemdef['name'];
                 $cache->set($key,$name,36000);
@@ -36,9 +39,11 @@ class ItemDefHelper
         }
         return $name;
     }
-    public static function getIdByName($gameid,$name)
+    public static function getIdByName($gameId,$name)
     {
-        $itemdef=TabItemdefDzy::find()->where(['name'=>$name])->asArray()->one();
+        $db=Yii::$app->get('db_log');
+        $sql="select * from tab_itemdef_$gameId where 'name'=$name limit 1";
+        $itemdef=$db->createCommand($sql)->queryOne();
         $id=null;
         try{
            $id=$itemdef['id'];
@@ -48,10 +53,11 @@ class ItemDefHelper
         }
         return $id;
     }
-    public static function getItemInfoById($gameid,$id)
+    public static function getItemInfoById($gameId,$id)
     {
-        //TODO 将查询的结果按照 itemid:[id,name,xxx]的形式存cookie
-        $itemdef=TabItemdefDzy::find()->select(['id','name','icon_id','res_id','description'])->where(['id'=>$id])->asArray()->one();
+        $db=Yii::$app->get('db_log');
+        $sql="select * from tab_itemdef_$gameId where id=$id limit 1";
+        $itemdef=$db->createCommand($sql)->queryOne();
         return $itemdef;
     }
 }
