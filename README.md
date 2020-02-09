@@ -1,13 +1,15 @@
-[![Build Status](https://dev.azure.com/xxdweb/Game-Center/_apis/build/status/coder-lipenghui.qiyou-center?branchName=master)](https://dev.azure.com/xxdweb/Game-Center/_build/latest?definitionId=1&branchName=master)
-# 奇游游戏中控后台
-项目分两部分
-* 中控管理
+# 游戏中控后台
+项目分三部分
+* 登录充值相关
+    * 平台侧SDK登录相关
+    * 平台侧SDK充值：验证及发货
+* 游戏相关管理
     * 用户群组及权限管理
     * 游戏开区、公告、更新等相关操作
     * 游戏数据分析：玩家生态环境、活动参与度等
     * 数据分析：活跃、留存等
-* API功能
-    * 玩家日志查询
+* 游戏日志查询
+    * 玩家日志查询:物品、货币、升级等日志信息
 ## 注意事项
 1. model业务逻辑操作需要从Gii生成的model中剥离（新增model继承自生成的model）
 ## 分销商SDK登录充值接口编写
