@@ -1,23 +1,18 @@
 <?php
 
-namespace backend\controllers;
+namespace backend\controllers\ops;
 
-use backend\models\MyTabGameScript;
-use backend\models\MyTabPermission;
-use backend\models\MyTabServers;
-use backend\models\ops\MyTabUpdateScript;
 use Yii;
-use backend\models\TabGameScript;
-use backend\models\TabGameScriptSearch;
-use yii\data\ActiveDataProvider;
+use backend\models\ops\TabUpdateScriptLog;
+use backend\models\ops\TabUpdateScriptLogSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * GameScriptController implements the CRUD actions for TabGameScript model.
+ * UpdateScriptController implements the CRUD actions for TabUpdateScriptLog model.
  */
-class GameScriptController extends Controller
+class UpdateScriptController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -35,66 +30,53 @@ class GameScriptController extends Controller
     }
 
     /**
-     * Lists all TabGameScript models.
+     * Lists all TabUpdateScriptLog models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new TabGameScriptSearch();
+        $searchModel = new TabUpdateScriptLogSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        $permissionModel=new MyTabPermission();
-        $games=$permissionModel->allowAccessGame();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'games'=>$games
         ]);
     }
 
     /**
-     * Displays a single TabGameScript model.
+     * Displays a single TabUpdateScriptLog model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        $model=$this->findModel($id);
-        $servers = MyTabServers::getServersByGameId($model->gameId);
         return $this->render('view', [
-            'model' => $model,
-            'servers'=>$servers,
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new TabGameScript model.
+     * Creates a new TabUpdateScriptLog model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $permissionModel=new MyTabPermission();
-        $games=$permissionModel->allowAccessGame();
-        $model = new MyTabGameScript();
-        if($model->uploadZip())
-        {
+        $model = new TabUpdateScriptLog();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
+
         return $this->render('create', [
             'model' => $model,
-            'games'=>$games,
         ]);
     }
-    public function actionUpdateScript()
-    {
-        $model=new MyTabUpdateScript();
-        return $model->doUpdate();
-    }
+
     /**
-     * Updates an existing TabGameScript model.
+     * Updates an existing TabUpdateScriptLog model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -114,7 +96,7 @@ class GameScriptController extends Controller
     }
 
     /**
-     * Deletes an existing TabGameScript model.
+     * Deletes an existing TabUpdateScriptLog model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -128,15 +110,15 @@ class GameScriptController extends Controller
     }
 
     /**
-     * Finds the TabGameScript model based on its primary key value.
+     * Finds the TabUpdateScriptLog model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TabGameScript the loaded model
+     * @return TabUpdateScriptLog the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TabGameScript::findOne($id)) !== null) {
+        if (($model = TabUpdateScriptLog::findOne($id)) !== null) {
             return $model;
         }
 

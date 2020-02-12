@@ -98,4 +98,8 @@ class MyTabGameScript extends TabGameScript
         $this->logTime=time();
         return $this->save();
     }
+    public function updateScript()
+    {
+
+    }
 }

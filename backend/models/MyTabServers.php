@@ -71,6 +71,10 @@ class MyTabServers extends TabServers
                 ['>=','openDateTime',date('Y-m-d H:i:s',time())],
             ]);
     }
+    public static function getServersByGameId($gameId)
+    {
+        return self::find()->where(['gameId'=>$gameId])->asArray()->all();
+    }
     public static function todayOpen()
     {
         $cond=['between','openDateTime',strtotime(date('Y-m-d')." 00:00:00"),strtotime(date('Y-m-d')."23:59:59")];
