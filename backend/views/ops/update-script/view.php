@@ -36,6 +36,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'serverId',
             'scriptName',
             'operator',
+            'status',
+            'info',
             'logTime:datetime',
             ],
             ]) ?>

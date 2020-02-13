@@ -13,6 +13,7 @@ use Yii;
  * @property double $fileSize 文件大小
  * @property int $userId 上传人
  * @property string $comment 备注
+ * @property string $md5 上传文件的MD5值
  * @property int $logTime 记录时间
  */
 class TabGameScript extends \yii\db\ActiveRecord
@@ -31,10 +32,11 @@ class TabGameScript extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'fileName', 'fileSize', 'userId', 'comment', 'logTime'], 'required'],
+            [['gameId', 'fileName', 'fileSize', 'userId', 'comment', 'md5', 'logTime'], 'required'],
             [['gameId', 'userId', 'logTime'], 'integer'],
             [['fileSize'], 'number'],
             [['fileName', 'comment'], 'string', 'max' => 255],
+            [['md5'], 'string', 'max' => 100],
         ];
     }
 
@@ -45,12 +47,13 @@ class TabGameScript extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'gameId' => Yii::t('app', '游戏名称'),
-            'fileName' => Yii::t('app', '脚本名称'),
-            'fileSize' => Yii::t('app', '脚本大小'),
-            'userId' => Yii::t('app', '上传人'),
-            'comment' => Yii::t('app', '备注'),
-            'logTime' => Yii::t('app', '上传时间'),
+            'gameId' => Yii::t('app', 'Game ID'),
+            'fileName' => Yii::t('app', 'File Name'),
+            'fileSize' => Yii::t('app', 'File Size'),
+            'userId' => Yii::t('app', 'User ID'),
+            'comment' => Yii::t('app', 'Comment'),
+            'md5' => Yii::t('app', 'Md5'),
+            'logTime' => Yii::t('app', 'Log Time'),
         ];
     }
     public function getGame()

@@ -17,8 +17,8 @@ class TabUpdateScriptLogSearch extends TabUpdateScriptLog
     public function rules()
     {
         return [
-            [['id', 'gameId', 'serverId', 'logTime'], 'integer'],
-            [['scriptName', 'operator'], 'safe'],
+            [['id', 'gameId', 'serverId', 'operator', 'status', 'logTime'], 'integer'],
+            [['scriptName', 'info'], 'safe'],
         ];
     }
 
@@ -61,11 +61,13 @@ class TabUpdateScriptLogSearch extends TabUpdateScriptLog
             'id' => $this->id,
             'gameId' => $this->gameId,
             'serverId' => $this->serverId,
+            'operator' => $this->operator,
+            'status' => $this->status,
             'logTime' => $this->logTime,
         ]);
 
         $query->andFilterWhere(['like', 'scriptName', $this->scriptName])
-            ->andFilterWhere(['like', 'operator', $this->operator]);
+            ->andFilterWhere(['like', 'info', $this->info]);
 
         return $dataProvider;
     }

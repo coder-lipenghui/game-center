@@ -18,7 +18,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'scriptName')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'operator')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'operator')->textInput() ?>
+
+    <?= $form->field($model, 'status')->textInput() ?>
+
+    <?= $form->field($model, 'info')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'logTime')->textInput() ?>
 

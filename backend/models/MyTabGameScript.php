@@ -59,9 +59,15 @@ class MyTabGameScript extends TabGameScript
             {
                 mkdir($dir);
             }
-            $dir=$dir."/".$this->fileName.".".$fileInfo->extension;
+            $dir=$dir."/".$this->gameId;
+            if (!is_dir($dir))
+            {
+                mkdir($dir);
+            }
+            $dir=$dir."/".$this->fileName;
             if($fileInfo->saveAs($dir))
             {
+                $this->md5=md5_file($dir);
                 if(!$this->rocoard())
                 {
                     echo(json_encode($this->getErrors()));

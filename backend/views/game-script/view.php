@@ -106,4 +106,10 @@ $this->registerJsFile('@web/js/ops/script.js',['depends'=>'yii\web\YiiAsset']);
             <button class="btn btn-success" onclick="updateAllServer()">全服更新</button>
         </div>
     </div>
+    <div class="alert alert-primary alert-default" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <div id="updateInfo">
+            更新信息:
+        </div>
+    </div>
 </div>

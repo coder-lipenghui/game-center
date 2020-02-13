@@ -28,6 +28,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'operator') ?>
 
+    <?php // echo $form->field($model, 'status') ?>
+
+    <?php // echo $form->field($model, 'info') ?>
+
     <?php // echo $form->field($model, 'logTime') ?>
 
     <div class="form-group">

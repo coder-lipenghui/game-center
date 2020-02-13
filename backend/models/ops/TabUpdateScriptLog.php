@@ -11,7 +11,9 @@ use Yii;
  * @property int $gameId
  * @property int $serverId
  * @property string $scriptName
- * @property string $operator
+ * @property int $operator
+ * @property int $status
+ * @property string $info
  * @property int $logTime
  */
 class TabUpdateScriptLog extends \yii\db\ActiveRecord
@@ -30,9 +32,9 @@ class TabUpdateScriptLog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'serverId', 'scriptName', 'logTime'], 'required'],
-            [['gameId', 'serverId', 'logTime'], 'integer'],
-            [['scriptName', 'operator'], 'string', 'max' => 255],
+            [['gameId', 'serverId', 'scriptName', 'operator', 'status', 'info', 'logTime'], 'required'],
+            [['gameId', 'serverId', 'operator', 'status', 'logTime'], 'integer'],
+            [['scriptName', 'info'], 'string', 'max' => 255],
         ];
     }
 
@@ -47,6 +49,8 @@ class TabUpdateScriptLog extends \yii\db\ActiveRecord
             'serverId' => Yii::t('app', 'Server ID'),
             'scriptName' => Yii::t('app', 'Script Name'),
             'operator' => Yii::t('app', 'Operator'),
+            'status' => Yii::t('app', 'Status'),
+            'info' => Yii::t('app', 'Info'),
             'logTime' => Yii::t('app', 'Log Time'),
         ];
     }
