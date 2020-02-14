@@ -9,5 +9,20 @@ namespace backend\models\command;
  */
 class BaseUniversalCmd extends BaseSingleServerCmd
 {
-
+    public $cmd="";
+    public function rules()
+    {
+        $rule=[
+            [['cmd'],'required'],
+            [['cmd'],'string','max'=>255],
+        ];
+        return array_merge(parent::rules(),$rule);
+    }
+    public function buildCommand()
+    {
+        if ($this->cmd!="")
+        {
+            $this->command=$this->cmd;
+        }
+    }
 }

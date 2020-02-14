@@ -54,7 +54,7 @@ $this->registerJs('
                                             "data-width"=>"fit",
                                             "id"=>"games",
                                             "onchange"=>"changeGame(this,'#distributors')",
-                                            "title"=>"选择游戏"
+                                            "label"=>"选择游戏"
                                         ]
                                     )?></div ≤>
                                 <div class="col-md-3"><?=$form->field($createModel,'distributorId')->dropDownList(
