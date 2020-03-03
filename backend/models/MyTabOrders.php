@@ -376,32 +376,42 @@ class MyTabOrders extends TabOrders
             if ($server===null)
             {
                 $msg="区服不存在";
-                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
+                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$server->getFirstError());
                 return false;
             }
             $distribution=TabDistribution::find()->where(['id'=>$order->distributionId])->one();
             if ($distribution===null)
             {
                 $msg="渠道不存在";
-                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$order->getFirstError());
+                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$distribution->getFirstError());
+                return false;
+            }
+            $product=TabProduct::find()->where(['id'=>$order->productId])->one();
+            if (empty($product))
+            {
+                $msg="计费信息不存在";
+                LoggerHelper::OrderError($order->gameId,$order->distributionId,$msg,$product->getFirstError());
                 return false;
             }
             $requestBody=[
                 'channelId'=>$distribution->id,
                 'paytouser'=>$order->gameAccount,
+                'roleid'=>$order->gameRoleId,
                 'paynum'=>$order->orderId,
+                'payscript'=>$product->productScript,
                 'paygold'=>$order->payAmount/100*$distribution->ratio,//发放元宝数量= 分/100*比例
                 'paymoney'=>$order->payAmount/100,
                 'flags'=>1,// 1：充值发放 其他：非充值发放
                 'paytime'=>$order->payTime,
                 'serverid'=>$order->gameServerId,
+                'type'=>$product->type,
             ];
             $game=TabGames::find()->where(['id'=>$server->gameId])->one();
             if($game)
             {
                 $paymentKey=$game->paymentKey;
 
-                $requestBody['flag'] = md5($requestBody['paynum'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
+                $requestBody['flag'] = md5($requestBody['type'].$requestBody['payscript'].$requestBody['paynum'] .$requestBody['roleid']. urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
 
                 $url="http://".$server->url."/app/ckcharge.php?".http_build_query($requestBody);
 

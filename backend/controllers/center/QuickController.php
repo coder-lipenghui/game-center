@@ -87,13 +87,13 @@ class QuickController extends CenterController
             return false;
         }
     }
-    public function getOrderFromDistribution($request,$distribution,$order)
-    {
-        return [
-            'distributionOrderId'=>'testorderid',
-            'accessKey'=>'其他字段'
-        ];
-    }
+//    public function getOrderFromDistribution($request,$distribution,$order)
+//    {
+//        return [
+//            'distributionOrderId'=>'testorderid',
+//            'accessKey'=>'其他字段'
+//        ];
+//    }
     //-----------------------------------------//
     //          qucik侧用到的一些方法            //
     //-----------------------------------------//

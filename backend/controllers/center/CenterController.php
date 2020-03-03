@@ -31,6 +31,7 @@ use backend\models\TabGames;
 use backend\models\TabOrders;
 use backend\models\TabOrdersDebug;
 use backend\models\TabPlayers;
+use backend\models\TabProduct;
 use backend\models\TabServers;
 use common\helps\CurlHttpClient;
 use common\helps\LoggerHelper;
@@ -381,13 +382,16 @@ class CenterController extends Controller
                 }
                 if ($order!=null)
                 {
+//                    $product=TabProduct::find()->where(['id'=>$order->productId])
                     $distributionOrder=$this->getOrderFromDistribution($requestData,$distribution,$order);
 
                     $result['code']=1;
                     $result['msg']='success';
                     $result['data']=[
                         'orderId'=>$order->orderId,
-                        'distributionOrderId'=>$distributionOrderId
+                        'distributionOrderId'=>$distributionOrderId,
+                        'productName'=>$order->productName,
+                        'productPrice'=>$order->payAmount,
                     ];
                     if ($distributionOrder!=null)
                     {
@@ -404,7 +408,7 @@ class CenterController extends Controller
             }
 
         }else{
-            return ['code'=>-1,'msg'=>'参数错误','data'=>[]];
+            return ['code'=>-1,'msg'=>'参数错误','data'=>$model->getErrors()];
         }
     }
 

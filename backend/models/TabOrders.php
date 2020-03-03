@@ -10,7 +10,7 @@ use Yii;
  * @property int $id
  * @property int $gameId 游戏ID
  * @property int $distributorId 分销商ID
- * @property int $distributionId 分销渠道ID
+ * @property int $distributionId 分销ID
  * @property string $orderId 系统订单号
  * @property string $distributionOrderId 渠道侧的订单ID
  * @property string $distributionUserId 渠道玩家ID
@@ -19,6 +19,7 @@ use Yii;
  * @property int $gameServerId 游戏服务器id
  * @property string $gameServername
  * @property string $gameAccount 游戏帐号uniqueKey
+ * @property int $productId 商品ID
  * @property string $productName 商品名称
  * @property double $payAmount 订单金额
  * @property string $payStatus 是否已付款 0未支付 1已支付
@@ -43,13 +44,14 @@ class TabOrders extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'distributorId','distributionId', 'orderId', 'distributionUserId', 'gameRoleId', 'gameServerId', 'gameServername', 'gameAccount'], 'required'],
-            [['gameId', 'distributorId','distributionId', 'gameServerId', 'payTime', 'createTime'], 'integer'],
+            [['gameId', 'distributionId', 'orderId', 'distributionUserId', 'gameRoleId', 'gameServerId', 'gameServername', 'gameAccount', 'productId'], 'required'],
+            [['gameId', 'distributorId', 'distributionId', 'gameServerId', 'productId', 'payTime', 'createTime'], 'integer'],
             [['payAmount'], 'number'],
             [['payStatus', 'delivered'], 'string'],
             [['orderId', 'distributionOrderId', 'gameRoleName', 'gameAccount', 'productName'], 'string', 'max' => 255],
             [['distributionUserId', 'gameRoleId', 'payMode'], 'string', 'max' => 100],
             [['gameServername'], 'string', 'max' => 50],
+            [['orderId'], 'unique'],
         ];
     }
 
@@ -71,6 +73,7 @@ class TabOrders extends \yii\db\ActiveRecord
             'gameServerId' => Yii::t('app', 'Game Server ID'),
             'gameServername' => Yii::t('app', 'Game Servername'),
             'gameAccount' => Yii::t('app', 'Game Account'),
+            'productId' => Yii::t('app', 'Product ID'),
             'productName' => Yii::t('app', 'Product Name'),
             'payAmount' => Yii::t('app', 'Pay Amount'),
             'payStatus' => Yii::t('app', 'Pay Status'),

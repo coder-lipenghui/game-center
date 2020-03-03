@@ -12,6 +12,7 @@ namespace backend\models\center;
 use backend\models\TabGames;
 use backend\models\TabOrders;
 use backend\models\TabPlayers;
+use backend\models\TabProduct;
 use yii\db\Exception;
 
 
@@ -29,7 +30,7 @@ class CreateOrder extends TabOrders
     public function rules()
     {
         $myRules=[
-            [['account','sku','roleId','account','roleLevel','serverId','serverName','money','roleName','distributionId'],'required'],
+            [['account','sku','roleId','account','roleLevel','serverId','productId','serverName','money','roleName','distributionId'],'required'],
             [['sku','roleId','account','serverName','account','payStatus', 'delivered','roleName'],'string'],
             [['serverId','roleLevel','money'],'integer'],
             [['gameId', 'distributionId', 'gameServerId'], 'integer'],
@@ -61,31 +62,42 @@ class CreateOrder extends TabOrders
             $player=$playerQuery->one();
             if ($player!=null)
             {
-                //生成订单号
-                try{
-                    $orderId=substr(md5($this->gameId.$this->distributionUserId.$this->roleId.$this->gameAccount.$this->money.microtime()),8,16);
-                    $this->gameId=$game->id;
-                    $this->gameServerId=$this->serverId;
-                    $this->gameServername=$this->serverName;
-                    $this->gameRoleId=$this->roleId;
-                    $this->gameRoleName=$this->roleName;
-                    $this->orderId=$orderId;
-                    $this->gameAccount=$this->account;
-                    $this->payAmount=$this->money;
-                    if ($this->save())
+                //获取计费点信息
+                $productQuery=TabProduct::find()->where(['productId'=>$this->productId,'productName'=>$this->productName]);
+                $product=$productQuery->one();
+                if (!empty($product))
+                {
+                    //生成订单号
+                    try{
+                        $orderId=substr(md5($this->gameId.$this->distributionUserId.$this->roleId.$this->gameAccount.$this->money.microtime()),8,16);
+                        $this->gameId=$game->id;
+                        $this->gameServerId=$this->serverId;
+                        $this->gameServername=$this->serverName;
+                        $this->gameRoleId=$this->roleId;
+                        $this->gameRoleName=$this->roleName;
+                        $this->orderId=$orderId;
+                        $this->gameAccount=$this->account;
+                        $this->payAmount=$this->money;
+                        $this->productId=$product->id;
+                        if ($this->save())
+                        {
+                            return $this;
+                        }else{
+                            \Yii::error(['DistributionId'=>$this->distributionId,'Error'=>'新增订单失败','ErrorInfo'=>$orderId],'order');
+                            return null;
+                        }
+                        return null;
+                    }catch (Exception $exception)
                     {
-                        return $this;
-                    }else{
-                        \Yii::error(['DistributionId'=>$this->distributionId,'Error'=>'新增订单失败','ErrorInfo'=>$orderId],'order');
+                        $error=$exception->getMessage();
+                        \Yii::error(['DistributionId'=>$this->distributionId,'Error'=>'新增订单异常','ErrorInfo'=>$error],'order');
                         return null;
                     }
-                    return null;
-                }catch (Exception $exception)
-                {
-                    $error=$exception->getMessage();
-                    \Yii::error(['DistributionId'=>$this->distributionId,'Error'=>'新增订单异常','ErrorInfo'=>$error],'order');
+                }else{
+                    \Yii::error(['DistributionId'=>$this->distributionId,'Error'=>'不存在计费信息','ErrorInfo'=>$productQuery->createCommand()->getRawSql()],'order');
                     return null;
                 }
+
             }else{
                 \Yii::error(['DistributionId'=>$this->distributionId,'Error'=>'玩家不存在','ErrorInfo'=>$playerQuery->createCommand()->getRawSql()],'order');
                 return null;
