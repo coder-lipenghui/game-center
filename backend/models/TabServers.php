@@ -11,7 +11,6 @@ use Yii;
  * @property int $gameId 游戏ID
  * @property int $distributorId 分销商ID
  * @property string $distributions 分销管理ID，非分销商ID
- * @property int $type 区服类型:1 android 2 ios 3全平台
  * @property string $name 区服名称
  * @property int $index 根据分销渠道的递增ID
  * @property int $status 区服状态,1:新服 2:正常 3:白名单 4:维护中 5:未开区 6:自动开区
@@ -42,7 +41,7 @@ class TabServers extends \yii\db\ActiveRecord
     {
         return [
             [['gameId', 'name', 'openDateTime'], 'required'],
-            [['gameId', 'distributorId', 'type', 'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId'], 'integer'],
+            [['gameId', 'distributorId', 'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId'], 'integer'],
             [['openDateTime', 'createTime'], 'safe'],
             [['distributions', 'name', 'url'], 'string', 'max' => 255],
         ];
@@ -58,7 +57,7 @@ class TabServers extends \yii\db\ActiveRecord
             'gameId' => Yii::t('app', 'Game ID'),
             'distributorId' => Yii::t('app', 'Distributor ID'),
             'distributions' => Yii::t('app', 'Distributions'),
-            'type' => Yii::t('app', 'Type'),
+//            'type' => Yii::t('app', 'Type'),
             'name' => Yii::t('app', 'Name'),
             'index' => Yii::t('app', 'Index'),
             'status' => Yii::t('app', 'Status'),
