@@ -533,6 +533,9 @@ class CenterController extends Controller
                                 case -8:
                                     $msg="玩家数据记录失败";
                                     break;
+                                default:
+                                    $msg="登录出现位置异常";
+
                             }
                             return ['code'=>$code,'msg'=>$msg];
                         }else{
