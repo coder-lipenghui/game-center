@@ -33,6 +33,7 @@ $this->registerJsFile('@web/js/api/itemSearch.js',['depends'=>'yii\web\YiiAsset'
             <?= GridView::widget([
                 'id'=>'itemLog',
                 'dataProvider' => $dataProvider,
+//                'key'=>['gameId'=>$gameId],
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
                     'playername',
@@ -46,7 +47,7 @@ $this->registerJsFile('@web/js/api/itemSearch.js',['depends'=>'yii\web\YiiAsset'
                             $src=$model['src'];
                             $name="";
                             try {
-                                $name = \common\helps\RecordHelper::getNameById(1,$model['src']);
+                                $name = \common\helps\RecordHelper::getNameById($model['gameId'],$model['src']);
                             }catch(Exception $e){
 
                             }
@@ -57,7 +58,7 @@ $this->registerJsFile('@web/js/api/itemSearch.js',['depends'=>'yii\web\YiiAsset'
                         'attribute'=>'mTypeID',
                         'label'=>'物品名称',
                         'value'=>function($model){
-                            $name=\common\helps\ItemDefHelper::getNameById(1,$model['mTypeID']);
+                            $name=\common\helps\ItemDefHelper::getNameById($model['gameId'],$model['mTypeID']);
                             return $name?$name:$model['mTypeID'];
                         }
                     ],

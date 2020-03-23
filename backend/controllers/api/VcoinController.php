@@ -56,6 +56,10 @@ class VcoinController extends BaseController
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);
                 unset($arrayData['_links']);
+                for ($i=0;$i<count($arrayData['items']);$i++)
+                {
+                    $arrayData['items'][$i]['gameId']=$searchModel->gameId;
+                }
                 $dataProvider->setModels($arrayData['items']);
                 $dataProvider->setPagination([
                     'totalCount'=>$arrayData['_meta']['totalCount']

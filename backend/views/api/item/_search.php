@@ -89,12 +89,12 @@ use yii\widgets\Pjax;
                 'placeholder' => '开始时间'
             ],
             'pluginOptions' => [
-                'format'=>'yyyy-mm-dd H:i:s',
+                'format'=>'yyyy-mm-dd h:i:s',
                 'autoclose' => true,
                 'removeButton' => false,
-                'startView'=>1,
-                'maxView'=>3,  //最大选择范围（年）
-                'minView'=>1,  //最小选择范围（年）
+//                'startView'=>1,
+//                'maxView'=>4,  //最大选择范围（年）
+//                'minView'=>1,  //最小选择范围（年）
             ]
 
         ]);?>
@@ -107,11 +107,11 @@ use yii\widgets\Pjax;
             ],
 
             'pluginOptions' => [
-                'format'=>'yyyy-mm-dd H:i:s',
+                'format'=>'yyyy-mm-dd h:i:s',
                 'autoclose' => true,
-                'startView'=>1,
-                'maxView'=>3,  //最大选择范围（年）
-                'minView'=>1,  //最小选择范围（年）
+//                'startView'=>1,
+//                'maxView'=>4,  //最大选择范围（年）
+//                'minView'=>1,  //最小选择范围（年）
             ]
         ]);?>
     </div>

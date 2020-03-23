@@ -53,6 +53,11 @@ class ItemController extends BaseController
             {
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);
+                for ($i=0;$i<count($arrayData['items']);$i++)
+                {
+                    $arrayData['items'][$i]['gameId']=$searchModel->gameId;
+                }
+                //exit(json_encode($arrayData['items']));
                 $dataProvider->setModels($arrayData['items']);
                 unset($arrayData['_links']);
                 $dataProvider->setPagination([

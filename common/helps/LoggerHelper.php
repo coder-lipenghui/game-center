@@ -23,6 +23,10 @@ class LoggerHelper
     {
         LoggerHelper::log(['gameId'=>$gameId,'DistributionId'=>$distributionId,'Error'=>$message,'ErrorInfo'=>$errorInfo],'login');
     }
+    public static function RebateError($gameId,$distributionId,$message,$errorInfo)
+    {
+        LoggerHelper::log(['gameId'=>$gameId,'DistributionId'=>$distributionId,'Error'=>$message,'ErrorInfo'=>$errorInfo],'rebate');
+    }
     private static  function log($array,$type)
     {
         \Yii::error($array,$type);

@@ -10,18 +10,29 @@ namespace common\helps;
 
 
 use backend\models\TabActionType;
+use Yii;
 
 class RecordHelper
 {
     public static function getNameById($gameId,$id)
     {
-        $record=TabActionType::find()->where(['actionId'=>$id])->asArray()->one();
+        $cache=\Yii::$app->cache;
+        $key="src_".$gameId."_".$id;
         $name=null;
-        try{
-            $name=$record['actionName'];
-        }catch (\Exception $e)
+        if($cache->get($key))
         {
-
+            $name=$cache->get($key);
+        }else{
+            $db=Yii::$app->get('db_log');
+            $sql="select * from tab_src_$gameId where actionId=$id limit 1";
+            $record=$db->createCommand($sql)->queryOne();
+            try{
+                $name=$record['actionName'];
+                $cache->set($key,$name,36000);
+            }catch (\Exception $e)
+            {
+//            return "未获取到物品名称";
+            }
         }
         return $name;
     }
