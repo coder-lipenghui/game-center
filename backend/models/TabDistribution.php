@@ -194,6 +194,24 @@ class TabDistribution extends \yii\db\ActiveRecord
             ");
             $query->execute();
             $query->pdoStatement->closeCursor();
+
+            //用户返利表
+            $query=Yii::$app->get('db_log')->createCommand("
+                DROP TABLE IF EXISTS `tab_contact_".$gameId."_".$distributorId."`;
+                CREATE TABLE `tab_contact_".$gameId."_".$distributorId."`(
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `activeAccount` varchar(255) NOT NULL,
+                  `activeRoleId` varchar(255) NOT NULL,
+                  `passivityAccount` varchar(255) NOT NULL,
+                  `passivityRoleId` varchar(255) NOT NULL,
+                  `serverId` int(11) NOT NULL,
+                  `logTime` int(10) NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                SET FOREIGN_KEY_CHECKS = 1;");
+            $query->execute();
+            $query->pdoStatement->closeCursor();
+
         }catch (Exception $exception)
         {
             exit($exception->getMessage());

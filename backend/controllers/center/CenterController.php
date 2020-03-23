@@ -17,8 +17,10 @@ use backend\models\center\Login;
 use backend\models\MyGameAssets;
 use backend\models\MyGameUpdate;
 use backend\models\MyTabBonus;
+use backend\models\MyTabContact;
 use backend\models\MyTabNotice;
 use backend\models\MyTabOrders;
+use backend\models\MyTabRebate;
 use backend\models\MyTabServers;
 use backend\models\report\ModelLevelLog;
 use backend\models\report\ModelLoginLog;
@@ -27,6 +29,7 @@ use backend\models\report\ModelStartLog;
 use backend\models\TabBlacklist;
 use backend\models\TabCdkeyVariety;
 use backend\models\TabDistribution;
+use backend\models\TabDistributor;
 use backend\models\TabGames;
 use backend\models\TabOrders;
 use backend\models\TabOrdersDebug;
@@ -245,9 +248,10 @@ class CenterController extends Controller
                                 {
                                     return $this->paymentDeliverFailed;
                                 }
-
                                 //增加奖金池额度
                                 $this->addBonus($order);
+                                //好友返利
+                                $this->addRebate($order);
 
                                 return $this->paymentSuccess;
                             }else{
@@ -299,12 +303,27 @@ class CenterController extends Controller
             $this->send(self::$ERROR_IN_BLACKLIST,\Yii::t('app',"您已经被禁止登录"));
         }
     }
+
+    /**
+     *
+     * @param $order
+     */
+    protected function addRebate($order)
+    {
+        $rebate=new MyTabRebate();
+        $rebate->addRebateByOrder($order);
+    }
+    /**
+     * 奖金池增加
+     * @param $order
+     */
     protected function addBonus($order)
     {
         $bonus=new MyTabBonus();
 
         $bonus->addBonusByOrder($order);
     }
+
     /**
      * 获取渠道ID
      */
@@ -363,11 +382,9 @@ class CenterController extends Controller
         $jsonData=file_get_contents("php://input");
         $requestData=json_decode(urldecode($jsonData),true);
         $model->load(['CreateOrder'=>$requestData]);
-
         if ($model->validate())
         {
             $distributionOrderId=null;
-
             $distribution=TabDistribution::find()->where(['id'=>$model->distributionId])->one();
             if ($distribution)
             {
@@ -629,13 +646,39 @@ class CenterController extends Controller
                 }else{
                     return ['code'=>-3,'msg'=>'渠道不存在','data'=>[]];
                 }
-
             }else{
                 return ['code'=>-2,'msg'=>'游戏不存在','data'=>[]];
             }
 
         }else{
             return ['code'=>-1,'msg'=>'上报参数错误','data'=>[]];
+        }
+    }
+    public function actionContact()
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        $request=\Yii::$app->request;
+        $model=new MyTabContact();
+        $model->load(['MyTabContact'=>$request->queryParams]);
+        if ($model->validate())
+        {
+            $game=TabGames::find()->where(['sku'=>$model->sku])->one();
+            if (!empty($game))
+            {
+                $distribution=TabDistribution::find()->where(['id'=>$request->get('distributionId')])->one();
+                if (empty($distribution))
+                {
+                    return ['code'=>-2,'msg'=>'未知渠道','data'=>$model->getErrors()];
+                }
+                $realModel=new MyTabContact();
+                $realModel::TabSuffix($game->id,$distribution->distributorId);
+                $realModel->load(['MyTabContact'=>$request->queryParams]);
+                return $realModel->doBind();
+            }else{
+                return ['code'=>-2,'msg'=>'游戏不存在','data'=>$model->getErrors()];
+            }
+        }else{
+            return ['code'=>-1,'msg'=>'参数错误','data'=>$model->getErrors()];
         }
     }
     public function actionCdkey()

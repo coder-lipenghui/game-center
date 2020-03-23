@@ -91,6 +91,14 @@ return [
                 ],
                 [
                     'class' => 'yii\log\FileTarget',
+                    'categories' => ['rebate'],
+                    'levels' => ['error'],
+//                    'logVars' => ['_POST','_GET','_FILES','_COOKIE'],
+                    'logVars' => ['*'],
+                    'logFile' => '@runtime/logs/rebate.log',
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
                     'categories' => ['cdkey'],
                     'levels' => ['error'],
 //                    'logVars' => ['_POST','_GET','_FILES','_COOKIE'],
