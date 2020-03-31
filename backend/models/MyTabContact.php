@@ -37,6 +37,10 @@ class MyTabContact extends TabContact
     {
         if ($this->validate())
         {
+            if ($this->activeRoleId==$this->passivityRoleId)
+            {
+                return ['code'=>-9,'msg'=>'不能关联自己'];
+            }
             $game=TabGames::find()->where(['sku'=>$this->sku])->one();
             if (!empty($game))
             {
@@ -47,47 +51,54 @@ class MyTabContact extends TabContact
                     $role::TabSuffix(self::$gid,self::$did);
                     $playerQuery=$role::find()->where(['roleId'=>$this->activeRoleId,'serverId'=>$this->serverId,'gameId'=>$game->id]);
                     $player=$playerQuery->one();
-                    $target=$role::find()->where(['roleId'=>$this->passivityRoleId,'serverId'=>$this->serverId,'gameId'=>$game->id])->one();
                     if (!empty($player))
                     {
-                        if (!empty($target))
+                        $createTime=(time()-$player->createTime)/60/60;
+                        if($createTime>24)
                         {
+                            return ['code'=>1,'msg'=>'创角超过24小时无法绑定及更改'];
+                        }else{
                             $contact=self::find()->where(['activeRoleId'=>$this->activeRoleId])->one();
-                            if (!empty($contact))
+                            $target=$role::find()->where(['roleId'=>$this->passivityRoleId,'serverId'=>$this->serverId,'gameId'=>$game->id])->one();
+                            if (!empty($target))
                             {
-                                if ($contact['passivityRoleId']!=$this->passivityRoleId)
+                                if (!empty($contact))
                                 {
-                                    $contact['passivityRoleId']=$this->passivityRoleId;
-                                    if($contact->update(false))
+                                    if ($contact['passivityRoleId']!=$this->passivityRoleId)
                                     {
-                                        return ['code'=>1,'msg'=>'修改成功'];
+//                                        $contact['passivityRoleId']=$this->passivityRoleId;
+//                                        if($contact->update(false))
+//                                        {
+//                                            return ['code'=>1,'msg'=>'修改成功'];
+//                                        }else{
+//                                            return ['code'=>-5,'msg'=>'修改失败','data'=>$contact->getErrors()];
+//                                        }
+                                        return ['code'=>-8,'msg'=>'请联系客服进行更改'];
                                     }else{
-                                        return ['code'=>-5,'msg'=>'修改失败','data'=>$contact->getErrors()];
+                                        return ['code'=>-7,'msg'=>'未做修改'];
                                     }
                                 }else{
-                                    return ['code'=>1,'msg'=>'未做修改'];
+                                    $this->passivityAccount=$target->account;
+                                    $this->logTime=time();
+                                    if($this->save())
+                                    {
+                                        return ['code'=>1,'msg'=>'关联成功'];
+                                    }else{
+                                        return ['code'=>-6,'msg'=>'关联失败,请联系客服'];
+                                    }
                                 }
                             }else{
-                                $this->passivityAccount=$target->account;
-                                $this->logTime=time();
-                                if($this->save())
-                                {
-                                    return ['code'=>1,'msg'=>'关联成功'];
-                                }else{
-                                    return ['code'=>-5,'msg'=>'关联失败'];
-                                }
+                                return ['code'=>-5,'msg'=>'关联账号不存在'];
                             }
-                        }else{
-                            return ['code'=>-4,'msg'=>'关联账号不存在'];
                         }
                     }else{
-                        return ['code'=>-3,'msg'=>'账号异常','data'=>$playerQuery->createCommand()->getRawSql()];
+                        return ['code'=>-4,'msg'=>'账号异常','data'=>$playerQuery->createCommand()->getRawSql()];
                     }
                 }else{
-                    return ['code'=>-2,'msg'=>'未知区服'];
+                    return ['code'=>-3,'msg'=>'未知区服'];
                 }
             }else{
-                return ['code'=>-1,'msg'=>'未知游戏'];
+                return ['code'=>-2,'msg'=>'未知游戏'];
             }
         }else{
             return ['code'=>-1,'msg'=>'参数错误','data'=>$this->getErrors()];
