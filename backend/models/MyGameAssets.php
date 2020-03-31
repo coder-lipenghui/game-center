@@ -66,13 +66,7 @@ class MyGameAssets extends TabGameAssets
         $data=$query->one();
         if ($data)
         {
-            $url=$cdnUrl."/".$gameId;
-            if (key_exists('distributionId',$data) && $data['distributionId'])
-            {
-                $url=$url."/".$data['distributionId']."/".$this->platform."/";
-            }else{
-                $url=$url."/default/".$this->platform."/";
-            }
+            $url=$cdnUrl."/".$gameId."/assets/";
             $data['url']=$url;
             return ['code'=>1,'msg'=>'检到分包资源','data'=>$data];
         }
