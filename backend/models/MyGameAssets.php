@@ -67,7 +67,7 @@ class MyGameAssets extends TabGameAssets
         if ($data)
         {
             $url=$cdnUrl."/".$gameId."/assets/";
-            $data['url']=$url;
+            $data['url']=$url.$data['version']."/";
             return ['code'=>1,'msg'=>'检到分包资源','data'=>$data];
         }
         return null;
@@ -77,7 +77,7 @@ class MyGameAssets extends TabGameAssets
         $query=self::find()
             ->select(['id','versionFile','version','projectFile','distributionId'])
             ->where(['enable'=>1])
-//            ->andWhere(['>','version',$version])
+            ->andWhere(['>','version',$version])
 //            ->andWhere(['<=','executeTime',time()])
             ->andWhere(['gameId'=>$gameId])
 //            ->orderBy('version DESC')

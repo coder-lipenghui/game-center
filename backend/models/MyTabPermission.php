@@ -97,7 +97,8 @@ class MyTabPermission extends TabPermission
     public function getDistributorByUidAndGameId($uid,$gameId)
     {
         $query=TabPermission::find();
-        $query->select(['gameId','distributorId'])->where(['uid'=>$uid,'gameId'=>$gameId])->asArray();
+        $query->select(['gameId','distributorId'])->where(['uid'=>$uid,'gameId'=>$gameId])->groupBy(['distributorId'])->asArray();
+//        exit($query->createCommand()->getRawSql());
         $data=$query->all();
         return $data;
     }

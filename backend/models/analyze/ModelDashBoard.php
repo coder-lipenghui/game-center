@@ -105,8 +105,8 @@ class ModelDashBoard extends Model
             {
                 $gameId=$distributors[$i]['gameId'];
                 $distributorId=$distributors[$i]['distributorId'];
-                ModelLoginLog::TabSuffix($gameId,$distributorId);
                 $model=new ModelLoginLog();
+                $model::TabSuffix($gameId,$distributorId);
                 $number+=$model->getLast7LoginUserNumber();
             }
         }
