@@ -128,7 +128,6 @@ class ModelServerData extends Model
         $roleData=new ModelRoleLog();
         $roleData::TabSuffix($this->gameId,$this->distributorId);
         $roleQuery=$roleData::find()->select(['account'])->where(["FROM_UNIXTIME(createTime,'%Y-%m-%d')"=>$createTime,'serverId'=>$sid])->groupBy('account');
-//        exit($roleQuery->createCommand()->getRawSql());
         $roleResult=$roleQuery->asArray()->all();
         //获取账号前往登录日志表筛选
         if (!empty($roleResult))
@@ -136,7 +135,8 @@ class ModelServerData extends Model
             $comparedData[0]=count($roleResult);
             for ($i=0;$i<count($comparedDay);$i++)
             {
-                array_push($comparedDate,date("Y-m-d", strtotime("$createTime +$i day")));
+                $tmpDate=date("Y-m-d", strtotime("$createTime +$comparedDay[$i] day"));
+                array_push($comparedDate,$tmpDate);
             }
             for ($i=0;$i<count($comparedDay);$i++)
             {
@@ -144,7 +144,6 @@ class ModelServerData extends Model
                 $loginData::TabSuffix($this->gameId,$this->distributorId);
                 $loginQuery=$loginData::find()->select(['account'])->where(["FROM_UNIXTIME(logTime,'%Y-%m-%d')"=>$comparedDate[$i],'serverId'=>$sid])->groupBy("account");
                 $loginResult=$loginQuery->asArray()->all();
-//                exit($loginQuery->createCommand()->getRawSql());
                 $num=0;
                 $roles=array_column($roleResult,"account");
                 //TODO 找一种更高效的对比方查找方式
@@ -158,9 +157,6 @@ class ModelServerData extends Model
                 $comparedData[$i+1]=$num;
             }
         }
-//        else{
-//            return ['code'=>-1,'msg'=>'不存在数据'];
-//        }
         return $comparedData;
     }
 }
