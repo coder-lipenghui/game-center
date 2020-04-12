@@ -57,8 +57,46 @@ function getRetainData(documentId, type,url) {
         }
     });
 }
-function showSingleData(data) {
-    
+
+function getPayData(documentId, type,url) {
+    $("#"+documentId).empty();
+    var gameId=$("#retainGames").val();
+    var distributorId=$("#retainDistributors").val();
+    var serverId=$("#retainServers1").val();
+    $.ajax({
+        type: 'get',
+        data: {
+            type: type,
+            gameId: gameId,
+            distributorId: distributorId,
+            serverId: serverId
+        },
+        dataType: "json",
+        url: (url == null ? "" : url) + "../server/get-pay-data",
+        async: true,
+        success: function (data) {
+            if (data.code==1)
+            {
+                if (type==1)
+                {
+                    var userNum=data.data[0];
+                    var payUserNum=data.data[1];
+                    var revenue=data.data[2]/100;
+                    $("#totalUser").text(userNum);
+                    $("#totalPayUser").text(payUserNum);
+                    $("#totalRevenue").text(revenue);
+                    $("#payUserProportion").text(userNum==0?"0":(payUserNum/userNum*100).toFixed(1)+"%");
+                    $("#arppu").text(payUserNum==0?"0":(revenue/payUserNum).toFixed(2));
+                    $("#arpu").text(userNum==0?"0":(revenue/userNum).toFixed(2));
+                }
+            }else{
+                alert(data.msg);
+            }
+        }
+    });
+}
+function searchPayDashboard() {
+    getPayData("temp",1,"");
 }
 function buildDataView(data) {
     var element="";
@@ -85,7 +123,6 @@ function changeGame() {
     getDistributor("#retainDistributors",true,gameId,null,"../");
 }
 function searchLatestServers() {
-    //TODO 展示数据
     $("#tableTop").removeClass("hidden");
     getRetainData("top10",1,"")
 }
@@ -97,3 +134,4 @@ function searchSingleDays() {
     $("#tableSingleDays").removeClass("hidden");
     getRetainData("tbSingleDays",3,"")
 }
+

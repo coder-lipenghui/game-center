@@ -123,6 +123,7 @@ class DashboardController extends Controller
     {
         return MyTabPlayers::getTodayRegisterDevice($gameId);
     }
+
 //    public function actionTodayArpu($gameId)
 //    {
 //        $dashboard=new ModelDashBoard();
