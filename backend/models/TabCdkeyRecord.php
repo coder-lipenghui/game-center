@@ -14,6 +14,7 @@ use Yii;
  * @property int $serverId 区服ID
  * @property string $roleId 角色ID
  * @property string $roleName 角色名称
+ * @property int $varietyId 激活码分类ID
  * @property string $cdkey 激活码
  * @property int $logTime 记录时间
  *
@@ -37,8 +38,8 @@ class TabCdkeyRecord extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'distributionId', 'account', 'serverId', 'roleId', 'roleName', 'cdkey', 'logTime'], 'required'],
-            [['gameId', 'distributionId', 'serverId', 'logTime'], 'integer'],
+            [['gameId', 'distributionId', 'account', 'serverId', 'roleId', 'roleName', 'cdkey', 'logTime','varietyId'], 'required'],
+            [['gameId', 'distributionId', 'serverId', 'logTime','varietyId'], 'integer'],
             [['account', 'roleId', 'roleName', 'cdkey'], 'string', 'max' => 100],
             [['distributionId'], 'exist', 'skipOnError' => true, 'targetClass' => TabDistribution::className(), 'targetAttribute' => ['distributionId' => 'id']],
             [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
@@ -59,6 +60,7 @@ class TabCdkeyRecord extends \yii\db\ActiveRecord
             'serverId' => Yii::t('app', 'Server ID'),
             'roleId' => Yii::t('app', 'Role ID'),
             'roleName' => Yii::t('app', 'Role Name'),
+            'varietyId'=> Yii::t('app', 'Variety Id'),
             'cdkey' => Yii::t('app', 'Cdkey'),
             'logTime' => Yii::t('app', 'Log Time'),
         ];
