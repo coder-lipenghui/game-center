@@ -212,6 +212,43 @@ class CurlHttpClient
 		return $result;
 	}
 
+    public function sendPostJsonData ($url, $postdata, $ip = null, $timeout = 10)
+    {
+        //set various curl options first
+
+        // set url to post to
+        curl_setopt($this->ch, CURLOPT_URL, $url);
+
+        // return into a variable rather than displaying it
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+
+        //bind to specific ip address if it is sent trough arguments
+        if ($ip)
+        {
+            curl_setopt($this->ch, CURLOPT_INTERFACE, $ip);
+        }
+
+        //set curl function timeout to $timeout
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, $timeout);
+
+        //set method to post
+        curl_setopt($this->ch, CURLOPT_POST, true);
+
+        $post_string = is_array($postdata) ? json_encode($postdata) : $postdata;
+
+        // set post string
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $post_string);
+
+        //and finally send curl request
+        $result = curl_exec($this->ch);
+
+        if ($this->hasError())
+        {
+            return false;
+        }
+
+        return $result;
+    }
 
 	/**
 	 * Send post request to target URL
