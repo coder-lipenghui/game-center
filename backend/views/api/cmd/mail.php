@@ -8,7 +8,6 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use backend\models\TabItemdefDzy;
 $this->title = Yii::t('app', '邮件');
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/api/itemSearch.js',['depends'=>'yii\web\YiiAsset']);
@@ -148,7 +147,7 @@ $this->registerJsFile('@web/js/api/mail.js',['depends'=>'yii\web\YiiAsset']);
                         echo Html::dropDownList(
                                 "selectItems",
                                 null,
-                                \yii\helpers\ArrayHelper::map(TabItemdefDzy::find()->select(['id','name'])->all(),'id','name'),
+                                \yii\helpers\ArrayHelper::map(\common\helps\ItemDefHelper::getAllItem(1),'id','name'),
                                 [
                                     'id'=>'selectItems',
                                     'class'=>'selectpicker',

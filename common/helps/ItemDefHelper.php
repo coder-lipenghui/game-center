@@ -20,7 +20,7 @@ class ItemDefHelper
     public static function getNameById($gameId,$id)
     {
         $cache=\Yii::$app->cache;
-        $key="itemdef_".$gameId."_".$id;
+        $key="item_".$gameId."_".$id;
         $name=null;
         if($cache->get($key))
         {
@@ -31,7 +31,7 @@ class ItemDefHelper
             $itemdef=$db->createCommand($sql)->queryOne();
             try{
                 $name=$itemdef['name'];
-                $cache->set($key,$name,36000);
+                $cache->set($key,$name,3600);
             }catch (\Exception $e)
             {
 //            return "未获取到物品名称";
@@ -59,5 +59,12 @@ class ItemDefHelper
         $sql="select * from tab_itemdef_$gameId where id=$id limit 1";
         $itemdef=$db->createCommand($sql)->queryOne();
         return $itemdef;
+    }
+    public static function getAllItem($gameId)
+    {
+        $db=Yii::$app->get('db_log');
+        $sql="select id,name from tab_itemdef_$gameId";
+        $items=$db->createCommand($sql)->query();
+        return $items;
     }
 }
