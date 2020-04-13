@@ -24,7 +24,7 @@ $this->registerJsFile('@web/js/api/mail.js',['depends'=>'yii\web\YiiAsset']);
         <div class="row">
             <div class="col-md-2">
                 <?= $form->field($model, 'items')->dropDownList(
-                    ArrayHelper::map(TabItemdefDzy::find()->select(['id','name'])->asArray()->all(),'id','name'),
+                    ArrayHelper::map(\common\helps\ItemDefHelper::getAllItem(1),'id','name'),
                     [
                         "id"=>"selectItems",
                         "class"=>"selectpicker",
