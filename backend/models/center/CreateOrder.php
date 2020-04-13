@@ -63,7 +63,7 @@ class CreateOrder extends TabOrders
             if ($player!=null)
             {
                 //获取计费点信息
-                $productQuery=TabProduct::find()->where(['productId'=>$this->productId,'productName'=>$this->productName]);
+                $productQuery=TabProduct::find()->where(['productId'=>$this->productId]);//'productName'=>$this->productName
                 $product=$productQuery->one();
                 if (!empty($product))
                 {
@@ -79,6 +79,7 @@ class CreateOrder extends TabOrders
                         $this->gameAccount=$this->account;
                         $this->payAmount=$this->money;
                         $this->productId=$product->id;
+                        $this->productName=$product->productName;
                         if ($this->save())
                         {
                             return $this;
