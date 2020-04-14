@@ -45,7 +45,7 @@ class ExportCDKEYModel extends AutoCDKEYModel
      */
     public function getCdkeys($varietyId)
     {
-        $query=self::find()->select(['cdkey'])->where(['varietyId'=>$varietyId])->asArray();//->limit(1)
+        $query=self::find()->select(['cdkey'])->where(['varietyId'=>$varietyId,'used'=>0])->asArray();//->limit(1)
 
         $data=$query->all();
 
