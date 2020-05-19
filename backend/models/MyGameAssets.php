@@ -36,14 +36,14 @@ class MyGameAssets extends TabGameAssets
                 {
                     //检测渠道差异更新
                     $query=$this->getQuery($game->id,$this->version,$this->distributionId);
-                    $data=$this->getData($query,$game->id,$cdn->url);
+                    $data=$this->getData($query,$game->id,$this->distributionId,$cdn->url);
                     if ($data)
                     {
                         return $data;
                     }else{
                         //检测统一按游戏ID的更新
                         $query=$this->getQuery($game->id,$this->version);
-                        $data=$this->getData($query,$game->id,$cdn->url);
+                        $data=$this->getData($query,$game->id,$this->distributionId,$cdn->url);
                         if ($data)
                         {
                             return $data;
@@ -61,16 +61,28 @@ class MyGameAssets extends TabGameAssets
             return ['code'=>-1,'msg'=>'参数错误','data'=>$this->getErrors()];
         }
     }
-    private function getData($query,$gameId,$cdnUrl)
+    private function getData($query,$gameId,$distributionId,$cdnUrl)
     {
         $data=$query->one();
         if ($data)
         {
             $url=$cdnUrl."/".$gameId."/assets/";
             $data['url']=$url.$data['version']."/";
+            $data['total']=$this->getTotalNum($gameId,$distributionId);
             return ['code'=>1,'msg'=>'检到分包资源','data'=>$data];
         }
         return null;
+    }
+    private function getTotalNum($gameId,$distributionId=null)
+    {
+        $query=self::find()
+            ->where(['enable'=>1])
+            ->andWhere(['gameId'=>$gameId]);
+        if($distributionId)
+        {
+            $query->andWhere(['distributionId'=>$distributionId]);
+        }
+        return $query->count();
     }
     private function getQuery($gameId,$version,$distributionId=null)
     {
