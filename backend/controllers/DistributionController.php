@@ -3,7 +3,7 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\TabDistribution;
+use backend\models\MyTabDistribution;
 use backend\models\TabDistributionSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -64,7 +64,7 @@ class DistributionController extends Controller
      */
     public function actionCreate()
     {
-        $model = new TabDistribution();
+        $model = new MyTabDistribution();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $model->createLogTables($model->gameId,$model->distributorId);
@@ -119,7 +119,7 @@ class DistributionController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = TabDistribution::findOne($id)) !== null) {
+        if (($model = MyTabDistribution::findOne($id)) !== null) {
             return $model;
         }
 
