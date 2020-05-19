@@ -157,6 +157,17 @@ $('#paramModal').on('show.bs.modal', function (event) {
                             return "1:".$model->ratio;
                         }
                     ],
+                    [
+                        'attribute'=>'rebate',
+                        'value'=>function($model){
+                            if($model->rebate<=0)
+                            {
+                                return "未开启";
+                            }else{
+                                return $model->rebate."%";
+                            }
+                        }
+                    ],
                     'support',
                     [
                         'attribute'=>'enabled',

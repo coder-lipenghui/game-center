@@ -3,13 +3,6 @@
 namespace common\helps;
 
 /**
- * @version   2.0.x
- * @copyright &copy; 2015 Lampix.net
- * @author    Dragan Dinic <dragan@dinke.net>
- * @license   http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- */
-
-/**
  * Curl based HTTP Client
  * Simple but effective OOP wrapper around Curl php lib.
  *
@@ -17,7 +10,7 @@ namespace common\helps;
  * sending post data, managing cookies, etc.
  *
  * Samle usage:
- * $curl = new /Dinke/CurlHttpClient;
+ * $curl = new CurlHttpClient;
  * $useragent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:19.0)";
  * $curl->setUserAgent($useragent);
  * $curl->storeCookies("/tmp/cookies.txt");

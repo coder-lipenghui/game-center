@@ -44,7 +44,6 @@ class MyTabPermission extends TabPermission
             ->where(['tab_permission.uid'=>Yii::$app->user->id]);
 
         $data=ArrayHelper::map($query->all(),'id','name');
-
         return $data;
     }
     public function allowAccessDistributor($gameId)

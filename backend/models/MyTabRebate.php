@@ -9,7 +9,7 @@ use common\helps\LoggerHelper;
 
 class MyTabRebate extends TabOrdersRebate
 {
-    public function addRebateByOrder($order)
+    public function addRebateByOrder($order,$ratio)
     {
         if ($order && $order->payStatus==1)
         {
@@ -28,7 +28,10 @@ class MyTabRebate extends TabOrdersRebate
                         LoggerHelper::RebateError($order->gameId, $order->distributionId, $msg, '');
                         return false;
                     }else{
-                        self::deliver($rebateOrder->orderId);
+                        if(self::deliver($rebateOrder->orderId))
+                        {
+                            
+                        }
                     }
                 }else{
                     $account=TabPlayers::find()->where(['account'=>$target->passivityAccount])->one();
@@ -49,7 +52,7 @@ class MyTabRebate extends TabOrdersRebate
                         $this->distributionId=$order->distributionId;
                         $this->distributionOrderId=$order->distributionOrderId;
                         $this->gameServerId=$order->gameServerId;
-                        $this->payAmount=$order->payAmount*0.1;
+                        $this->payAmount=$order->payAmount*($ratio/100);
                         $this->payTime=$order->payTime;
                         $this->gameServername=$order->gameServername;
                         $this->createTime=time();

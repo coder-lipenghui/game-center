@@ -13,7 +13,7 @@ use yii\helpers\Html; ?>
             <div class="col-md-1">
                 <?= Html::dropDownList("游戏",
                     [],
-                    array_merge(["--选择--"],$games),
+                    $games,
                     [
                         'class'=>'selectpicker form-control col-md-2',
                         'title'=>'游戏',
@@ -24,7 +24,7 @@ use yii\helpers\Html; ?>
             <div class="col-md-2">
                 <?= Html::dropDownList("渠道",
                     [],
-                    array_merge(["--选择--"],$games),
+                    $games,
                     [
                         'class'=>'selectpicker form-control col-md-2',
                         'title'=>'渠道',

@@ -4,7 +4,7 @@ namespace backend\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\TabDistribution;
+use backend\models\MyTabDistribution;
 
 /**
  * TabDistributionSearch represents the model behind the search form of `backend\models\TabDistribution`.
@@ -40,7 +40,7 @@ class TabDistributionSearch extends TabDistribution
      */
     public function search($params)
     {
-        $query = TabDistribution::find();
+        $query = MyTabDistribution::find();
 
         // add conditions that should always apply here
 

@@ -90,6 +90,9 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                 <div class="col-md-1">
                     <?= $form->field($model, 'ratio')->textInput(['maxlength' => true,'value'=>100]) ?>
                 </div>
+                <div class="col-md-1">
+                    <?= $form->field($model, 'rebate')->textInput(['maxlength' => true]) ?>
+                </div>
             </div>
         </div>
         <div class="panel-heading">
