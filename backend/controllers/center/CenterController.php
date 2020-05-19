@@ -22,19 +22,17 @@ use backend\models\MyTabNotice;
 use backend\models\MyTabOrders;
 use backend\models\MyTabRebate;
 use backend\models\MyTabServers;
+use backend\models\MyTabFeedback;
 use backend\models\report\ModelLevelLog;
 use backend\models\report\ModelLoginLog;
 use backend\models\report\ModelRoleLog;
 use backend\models\report\ModelStartLog;
 use backend\models\TabBlacklist;
-use backend\models\TabCdkeyVariety;
-use backend\models\TabDistribution;
-use backend\models\TabDistributor;
+use backend\models\MyTabDistribution;
 use backend\models\TabGames;
 use backend\models\TabOrders;
 use backend\models\TabOrdersDebug;
 use backend\models\TabPlayers;
-use backend\models\TabProduct;
 use backend\models\TabServers;
 use common\helps\CurlHttpClient;
 use common\helps\LoggerHelper;
@@ -115,7 +113,7 @@ class CenterController extends Controller
             //登录权限检测
             $this->checkLoginPremission($requestData,$game);
 
-            $distribution=TabDistribution::find()->where(['id'=>$loginModel->distributionId,'gameId'=>$game->id])->one();
+            $distribution=MyTabDistribution::find()->where(['id'=>$loginModel->distributionId,'gameId'=>$game->id])->one();
             if ($distribution===null)
             {
                 $this->send(CenterController::$ERROR_DISTRIBUTOR_NOT_FOUND,\Yii::t('app',"分销渠道不存在"));
@@ -218,7 +216,7 @@ class CenterController extends Controller
         $distributionId=$this->getDistributionId();
         if ($distributionId!=null)
         {
-            $distributionQuery=TabDistribution::find()->where(['id'=>$distributionId]);
+            $distributionQuery=MyTabDistribution::find()->where(['id'=>$distributionId]);
             $distribution=$distributionQuery->one();
             $orderArray=$this->orderValidate($distribution);
 
@@ -233,7 +231,7 @@ class CenterController extends Controller
                 if($order)
                 {
                     //充值金额校验
-                    if ($order->payAmount==$orderArray['payAmount'])
+                    if ($order->payAmount==$orderArray['payAmount'] || $distribution->isDebug==1)
                     {
                         //更新支付状态
                         $order->setAttribute('distributorId',$distribution->distributorId);
@@ -251,8 +249,10 @@ class CenterController extends Controller
                                 //增加奖金池额度
                                 $this->addBonus($order);
                                 //好友返利
-                                $this->addRebate($order);
-
+                                if ($distribution->rebate>0)
+                                {
+                                    $this->addRebate($order,$distribution->rebate);
+                                }
                                 return $this->paymentSuccess;
                             }else{
                                 $msg="支付状态更新失败";
@@ -288,6 +288,39 @@ class CenterController extends Controller
     }
 
     /**
+     * 问题反馈
+     * @return array
+     */
+    public function actionFeedback()
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        $request=\Yii::$app->request;
+        $model=new MyTabFeedback();
+        $model->load(['MyTabFeedback'=>$request->queryParams]);
+        if ($model->validate())
+        {
+            $game=TabGames::find()->where(['sku'=>$model->sku])->one();
+            if (!empty($game))
+            {
+                $distribution=MyTabDistribution::find()->where(['id'=>$request->get('distributionId')])->one();
+                if (empty($distribution))
+                {
+                    return ['code'=>-2,'msg'=>'未知渠道','data'=>$model->getErrors()];
+                }
+                $realModel=new MyTabFeedback();
+                $realModel::TabSuffix($game->id,$distribution->distributorId);
+                $realModel->gameId=$game->id;
+                $realModel->distributorId=$distribution->distributorId;
+                $realModel->load(['MyTabFeedback'=>$request->queryParams]);
+                return $realModel->feedback();
+            }else{
+                return ['code'=>-2,'msg'=>'游戏不存在','data'=>$model->getErrors()];
+            }
+        }else{
+            return ['code'=>-1,'msg'=>'参数错误','data'=>$model->getErrors()];
+        }
+    }
+    /**
      * 检测用户登录权限
      * @param $requestData 客户端请求信息
      * @param $game 游戏信息
@@ -308,10 +341,10 @@ class CenterController extends Controller
      *
      * @param $order
      */
-    protected function addRebate($order)
+    protected function addRebate($order,$ratio)
     {
         $rebate=new MyTabRebate();
-        $rebate->addRebateByOrder($order);
+        $rebate->addRebateByOrder($order,$ratio);
     }
     /**
      * 奖金池增加
@@ -385,7 +418,7 @@ class CenterController extends Controller
         if ($model->validate())
         {
             $distributionOrderId=null;
-            $distribution=TabDistribution::find()->where(['id'=>$model->distributionId])->one();
+            $distribution=MyTabDistribution::find()->where(['id'=>$model->distributionId])->one();
             if ($distribution)
             {
                 $order=null;
@@ -453,6 +486,7 @@ class CenterController extends Controller
         }
         return $result;
     }
+
     /**
      * 从渠道侧获取订单号接口,需要在派生类中重写该方法
      * return array 包含渠道订单号码及其他参数的数组
@@ -592,6 +626,14 @@ class CenterController extends Controller
         $model=new MyGameAssets();
         return $model->getAssetsInfo();
     }
+
+    /**
+     * 方成谜接口
+     */
+    public function actionAntiAddiction()
+    {
+
+    }
     /**
      * 数据上报接口
      * 必须要：sku、distributionId、type、uid、account字段
@@ -609,7 +651,7 @@ class CenterController extends Controller
             {
                 $gameId=$game->id;
                 $distributionId=$requestData['distributionId'];
-                $distribution=TabDistribution::find()->where(['id'=>$distributionId])->one();
+                $distribution=MyTabDistribution::find()->where(['id'=>$distributionId])->one();
                 if ($distribution)
                 {
                     $distributorId=$distribution->distributorId;
@@ -621,10 +663,6 @@ class CenterController extends Controller
                             $enterApp=new ModelStartLog();
                             return $enterApp->doRecord($requestData);
                             break;
-//                        case self::$REPORT_TYPE_SELECT_SERVER:
-//                            break;
-//                        case self::$REPORT_TYPE_ENTER_SERVER:
-//                            break;
                         case self::$REPORT_TYPE_CREATE_ROLE:
                             ModelRoleLog::TabSuffix($gameId,$distributorId);
                             $createRole=new ModelRoleLog();
@@ -665,7 +703,7 @@ class CenterController extends Controller
             $game=TabGames::find()->where(['sku'=>$model->sku])->one();
             if (!empty($game))
             {
-                $distribution=TabDistribution::find()->where(['id'=>$request->get('distributionId')])->one();
+                $distribution=MyTabDistribution::find()->where(['id'=>$request->get('distributionId')])->one();
                 if (empty($distribution))
                 {
                     return ['code'=>-2,'msg'=>'未知渠道','data'=>$model->getErrors()];
