@@ -56,7 +56,7 @@ use yii\widgets\Pjax;
                 "class"=>"selectpicker form-control col-xs-2",
                 "data-width"=>"fit",
                 "id"=>"servers",
-                "onchange"=>"changeServer(this)",
+                "onchange"=>"getServerData(this)",
                 "title"=>"选择区服"
             ]
         );?>

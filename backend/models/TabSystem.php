@@ -12,6 +12,7 @@ use Yii;
  * @property string $systemName
  * @property int $parentId
  * @property string $type
+ * @property int $denominator
  */
 class TabSystem extends \yii\db\ActiveRecord
 {
@@ -37,7 +38,7 @@ class TabSystem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['systemId', 'parentId'], 'integer'],
+            [['systemId', 'parentId', 'denominator'], 'integer'],
             [['systemName'], 'required'],
             [['systemName'], 'string', 'max' => 100],
             [['type'], 'string', 'max' => 20],
@@ -55,6 +56,7 @@ class TabSystem extends \yii\db\ActiveRecord
             'systemName' => Yii::t('app', 'System Name'),
             'parentId' => Yii::t('app', 'Parent ID'),
             'type' => Yii::t('app', 'Type'),
+            'denominator' => Yii::t('app', 'Denominator'),
         ];
     }
 }
