@@ -12,14 +12,12 @@ use Yii;
  * @property int $distributionId 分销渠道ID
  * @property string $versionFile
  * @property string $projectFile
- * @property int $version 版本号
+ * @property string $versionCode versionCode
+ * @property string $versionName versionName
+ * @property int $total 分包总数
  * @property int $executeTime 开启时间
  * @property int $enable 是否开启
- * @property string $svn SVN版本号
  * @property string $comment 备注信息
- *
- * @property TabDistribution $distribution
- * @property TabGames $game
  */
 class TabGameAssets extends \yii\db\ActiveRecord
 {
@@ -37,12 +35,10 @@ class TabGameAssets extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'projectFile', 'version'], 'required'],
-            [['gameId', 'distributionId', 'version', 'executeTime', 'enable'], 'integer'],
-            [['versionFile', 'projectFile'], 'string', 'max' => 100],
-            [['svn', 'comment'], 'string', 'max' => 255],
-            [['distributionId'], 'exist', 'skipOnError' => true, 'targetClass' => TabDistribution::className(), 'targetAttribute' => ['distributionId' => 'id']],
-            [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
+            [['gameId', 'total'], 'required'],
+            [['gameId', 'distributionId', 'total', 'executeTime', 'enable'], 'integer'],
+            [['versionFile', 'projectFile', 'versionCode', 'versionName'], 'string', 'max' => 100],
+            [['comment'], 'string', 'max' => 255],
         ];
     }
 
@@ -57,27 +53,12 @@ class TabGameAssets extends \yii\db\ActiveRecord
             'distributionId' => Yii::t('app', 'Distribution ID'),
             'versionFile' => Yii::t('app', 'Version File'),
             'projectFile' => Yii::t('app', 'Project File'),
-            'version' => Yii::t('app', 'Version'),
+            'versionCode' => Yii::t('app', 'Version Code'),
+            'versionName' => Yii::t('app', 'Version Name'),
+            'total' => Yii::t('app', 'Total'),
             'executeTime' => Yii::t('app', 'Execute Time'),
             'enable' => Yii::t('app', 'Enable'),
-            'svn' => Yii::t('app', 'Svn'),
             'comment' => Yii::t('app', 'Comment'),
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getDistribution()
-    {
-        return $this->hasOne(TabDistribution::className(), ['id' => 'distributionId']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getGame()
-    {
-        return $this->hasOne(TabGames::className(), ['id' => 'gameId']);
     }
 }

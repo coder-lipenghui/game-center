@@ -20,13 +20,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'projectFile')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'version')->textInput() ?>
+    <?= $form->field($model, 'versionCode')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'versionName')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'total')->textInput() ?>
 
     <?= $form->field($model, 'executeTime')->textInput() ?>
 
     <?= $form->field($model, 'enable')->textInput() ?>
-
-    <?= $form->field($model, 'svn')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
 

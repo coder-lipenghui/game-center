@@ -32,10 +32,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'distributionId',
             'versionFile',
             'projectFile',
-            //'version',
+            //'versionCode',
+            //'versionName',
+            //'total',
             //'executeTime:datetime',
             //'enable',
-            //'svn',
             //'comment',
 
                 ['class' => 'yii\grid\ActionColumn'],

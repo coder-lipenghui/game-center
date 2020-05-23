@@ -17,8 +17,8 @@ class TabGameAssetsSearch extends TabGameAssets
     public function rules()
     {
         return [
-            [['id', 'gameId', 'distributionId', 'version', 'executeTime', 'enable'], 'integer'],
-            [['versionFile', 'projectFile', 'svn', 'comment'], 'safe'],
+            [['id', 'gameId', 'distributionId', 'total', 'executeTime', 'enable'], 'integer'],
+            [['versionFile', 'projectFile', 'versionCode', 'versionName', 'comment'], 'safe'],
         ];
     }
 
@@ -61,14 +61,15 @@ class TabGameAssetsSearch extends TabGameAssets
             'id' => $this->id,
             'gameId' => $this->gameId,
             'distributionId' => $this->distributionId,
-            'version' => $this->version,
+            'total' => $this->total,
             'executeTime' => $this->executeTime,
             'enable' => $this->enable,
         ]);
 
         $query->andFilterWhere(['like', 'versionFile', $this->versionFile])
             ->andFilterWhere(['like', 'projectFile', $this->projectFile])
-            ->andFilterWhere(['like', 'svn', $this->svn])
+            ->andFilterWhere(['like', 'versionCode', $this->versionCode])
+            ->andFilterWhere(['like', 'versionName', $this->versionName])
             ->andFilterWhere(['like', 'comment', $this->comment]);
 
         return $dataProvider;

@@ -28,13 +28,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'projectFile') ?>
 
-    <?php // echo $form->field($model, 'version') ?>
+    <?php // echo $form->field($model, 'versionCode') ?>
+
+    <?php // echo $form->field($model, 'versionName') ?>
+
+    <?php // echo $form->field($model, 'total') ?>
 
     <?php // echo $form->field($model, 'executeTime') ?>
 
     <?php // echo $form->field($model, 'enable') ?>
-
-    <?php // echo $form->field($model, 'svn') ?>
 
     <?php // echo $form->field($model, 'comment') ?>
 
