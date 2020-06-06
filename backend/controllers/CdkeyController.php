@@ -175,7 +175,6 @@ class CdkeyController extends Controller
     public function actionExport($varietyId,$total,$gameId,$distributorId)
     {
         ini_set('max_execution_time',0); //设置程序的执行时间,0为无上限
-
         ExportCDKEYModel::TabSuffix($gameId,$distributorId);
         $model = new ExportCDKEYModel();
 
@@ -183,9 +182,8 @@ class CdkeyController extends Controller
 
         $objPHPExcel = new \PHPExcel();
         $objWriter = new \PHPExcel_Writer_Excel5($objPHPExcel);
-        $variety=TabCdkeyVariety::find($varietyId)->one();
-
-        $objPHPExcel->getActiveSheet()->setCellValue('A1',  $title."类型:".$variety->getAttribute('name')." 共[$total]个");
+        $variety=TabCdkeyVariety::find()->where(['id'=>$varietyId])->one();
+        $objPHPExcel->getActiveSheet()->setCellValue('A1',  $title."类型:".$variety->name." 共[$total]个");
 
         $data=$model->getCdkeys($varietyId);
 
