@@ -11,14 +11,14 @@ use yii\db\Expression;
 
 class MyTabServers extends TabServers
 {
-    public static function searchGameServers($gameId,$distributoin,$player,$ip){
+    public static function searchGameServers($gameId,$distributoin,$distributionUserId,$ip){
 
         self::openServer($gameId,$distributoin->distributorId);
         $filter=[];
-        if (!empty($player))
+        if (!empty($distributionUserId))
         {
             $whiteQuery=TabWhitelist::find();
-            $whiteQuery->where(['or',"ip='$ip'","distributionUserId='$player->distributionUserId'"]);
+            $whiteQuery->where(['or',"ip='$ip'","distributionUserId='$distributionUserId'"]);
             $list=$whiteQuery->all();
             if (empty($list))
             {

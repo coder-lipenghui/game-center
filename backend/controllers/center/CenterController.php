@@ -120,9 +120,9 @@ class CenterController extends Controller
             }
             $cache=\Yii::$app->cache;
             $ip=$this->getClientIP();
-            $tokenKey=md5($requestData['uid'].$requestData['distributionId'].$ip.time());
+            $tokenKey=md5($requestData['uid'].$requestData['distributionId'].$ip.$loginModel->deviceId);
             $token=$cache->get($tokenKey);
-            if(empty($token) || $token===null)
+            if(empty($token) || $token===null || !$token)
             {
                 $user=$this->loginValidate($requestData,$distribution);
                 if (empty($user) || $user===null)
@@ -139,6 +139,7 @@ class CenterController extends Controller
                         'gameId'=>$game->id,
                         'distributionId'=>$user['distributionId'],
                         'account'=>$player->account,
+                        'distributionUserId'=>$player->distributionUserId,
                     ],
                     600);
                 $data['player']=[
@@ -149,10 +150,11 @@ class CenterController extends Controller
             }else{
                 $data['player']=[
                     'token'=>$tokenKey,
-                    'uid'=>$token['distributionUserId']
+                    'uid'=>$token['distributionUserId'],
+                    'account'=>$token['account']
                 ];
             }
-            $data['serverInfo']=$this->getServers($game,$distribution,$player,$ip);
+            $data['serverInfo']=$this->getServers($game,$distribution,$data['player']['uid'],$ip);
             $data['anncInfo']=$this->getNotice($game,$distribution);
 
         }else{
@@ -165,13 +167,13 @@ class CenterController extends Controller
      * 拉取区服信息
      * @param $game
      * @param $distribution
-     * @param $player
+     * @param $distributionUserId
      * @param $ip
      * @return array|\yii\db\ActiveRecord[]
      */
-    protected function getServers($game,$distribution,$player,$ip)
+    protected function getServers($game,$distribution,$distributionUserId,$ip)
     {
-        $servers=MyTabServers::searchGameServers($game->id,$distribution,$player,$ip);
+        $servers=MyTabServers::searchGameServers($game->id,$distribution,$distributionUserId,$ip);
         return $servers;
     }
 
