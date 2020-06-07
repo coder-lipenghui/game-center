@@ -22,11 +22,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'gameId') ?>
 
-    <?= $form->field($model, 'url') ?>
+    <?= $form->field($model, 'updateUrl') ?>
+
+    <?= $form->field($model, 'assetsUrl') ?>
 
     <?= $form->field($model, 'platform') ?>
 
-    <?= $form->field($model, 'secretId') ?>
+    <?php // echo $form->field($model, 'secretId') ?>
 
     <?php // echo $form->field($model, 'secretKey') ?>
 

@@ -8,10 +8,12 @@
 
 namespace backend\models;
 
+use backend\controllers\LogtypeController;
 use backend\models\command\CmdKick;
 use backend\models\command\CmdMail;
 use common\helps\CurlHelper;
 use common\helps\CurlHttpClient;
+use common\helps\LoggerHelper;
 
 class TabSupportCreate extends TabSupport
 {
@@ -159,11 +161,13 @@ class TabSupportCreate extends TabSupport
             'channelId'=>$support->distributorId,
             'paytouser'=>$support->roleAccount,
             'paynum'=>time(),//TODO 生成一个唯一值，防止同时发放
+            'payscript' =>'',
             'paygold'=>$support->number,
             'paymoney'=>$support->number/100,
             'flags'=>1,// 1：充值发放 其他：非充值发放
             'paytime'=>time(),
             'serverid'=>$support->serverId,
+            'type'=>1
         ];
         $game=TabGames::find()->where(['id'=>$support->gameId])->one();
         if($game)
@@ -173,10 +177,8 @@ class TabSupportCreate extends TabSupport
             {
                 $paymentKey=$game->paymentKey;
 
-                $requestBody['flag'] = md5($requestBody['paynum'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
-
+                $requestBody['flag'] = md5($requestBody['type'].$requestBody['payscript'].$requestBody['paynum'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
                 $url="http://".$server->url."/app/ckcharge.php?".http_build_query($requestBody);
-
                 $curl=new CurlHttpClient();
                 $resultJson=$curl->fetchUrl($url);
                 $result=json_decode($resultJson,true);
@@ -215,9 +217,12 @@ class TabSupportCreate extends TabSupport
                 if ($code==1 || $code==5)
                 {
                     return true;
+                }else{
+                    LoggerHelper::OrderError($game->id, $support->distributorId, $msg, $resultJson);
                 }
             }else{
                 $msg="区服不存在";
+                LoggerHelper::OrderError($game->id, $support->distributorId, $msg,[]);
             }
         }
         return false;

@@ -34,7 +34,7 @@ class MyGameAssets extends TabGameAssets
                 {
                     //检测渠道差异更新
                     $query=$this->getQuery($game->id,$this->version,$this->distributionId,$this->versionCode);
-                    $data=$this->getData($query,$game->id,$this->distributionId,$cdn->url);
+                    $data=$this->getData($query,$game->id,$this->distributionId,$cdn->assetsUrl);
                     if ($data)
                     {
                         return $data;
@@ -42,7 +42,7 @@ class MyGameAssets extends TabGameAssets
                         //检测统一按游戏ID的更新
                         $query=$this->getQuery($game->id,$this->version);
 //                        exit($query->createCommand()->getRawSql());
-                        $data=$this->getData($query,$game->id,$this->distributionId,$cdn->url);
+                        $data=$this->getData($query,$game->id,$this->distributionId,$cdn->assetsUrl);
                         if ($data)
                         {
                             return $data;

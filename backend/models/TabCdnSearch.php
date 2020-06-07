@@ -18,7 +18,7 @@ class TabCdnSearch extends TabCdn
     {
         return [
             [['id', 'gameId'], 'integer'],
-            [['url', 'platform', 'secretId', 'secretKey', 'comment'], 'safe'],
+            [['updateUrl', 'assetsUrl', 'platform', 'secretId', 'secretKey', 'comment'], 'safe'],
         ];
     }
 
@@ -62,7 +62,8 @@ class TabCdnSearch extends TabCdn
             'gameId' => $this->gameId,
         ]);
 
-        $query->andFilterWhere(['like', 'url', $this->url])
+        $query->andFilterWhere(['like', 'updateUrl', $this->updateUrl])
+            ->andFilterWhere(['like', 'assetsUrl', $this->assetsUrl])
             ->andFilterWhere(['like', 'platform', $this->platform])
             ->andFilterWhere(['like', 'secretId', $this->secretId])
             ->andFilterWhere(['like', 'secretKey', $this->secretKey])

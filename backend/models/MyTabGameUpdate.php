@@ -24,7 +24,7 @@ class MyTabGameUpdate extends TabGameUpdate
                 if (false) //目前购买的不是阿里的CDN类型服务器
                 {
                     $cdn=TabCdn::find()
-                        ->select(['url','gameId','secretId','secretKey'])
+                        ->select(['updateUrl','gameId','secretId','secretKey'])
                         ->where(['gameId'=>$this->gameId])
                         ->one();
                     if ($cdn)

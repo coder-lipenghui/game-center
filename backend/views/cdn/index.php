@@ -7,39 +7,40 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\TabCdnSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'CDN管理');
+$this->title = Yii::t('app', 'Tab Cdns');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-cdn-index">
     <div class="panel panel-default">
         <div class="panel-body">
-            <?= Html::a(Yii::t('app', '指定CDN'), ['create'], ['class' => 'btn btn-success']) ?>
+            <?= Html::a(Yii::t('app', 'Create Tab Cdn'), ['create'], ['class' => 'btn btn-success']) ?>
         </div>
     </div>
     <div class="panel panel-default">
         <div class="panel panel-body">
-            <?php Pjax::begin(); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-            <?= GridView::widget([
+                <?php Pjax::begin(); ?>
+                                <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+            
+                            <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
-                'columns' => [
-//                ['class' => 'yii\grid\SerialColumn'],
-                    'id',
-                    [
-                        'attribute'=>'gameId',
-                        'value'=>'game.name'
-                    ],
-                    'url',
-                    'platform',
-        //            'secretId',
-                    //'secretKey',
-                    //'comment',
-                    ['class' => 'yii\grid\ActionColumn'],
+        'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+
+                            'id',
+            'gameId',
+            'updateUrl',
+            'assetsUrl',
+            'platform',
+            //'secretId',
+            //'secretKey',
+            //'comment',
+
+                ['class' => 'yii\grid\ActionColumn'],
                 ],
-            ]); ?>
-            <?php Pjax::end(); ?>
+                ]); ?>
+            
+                <?php Pjax::end(); ?>
         </div>
     </div>
 </div>

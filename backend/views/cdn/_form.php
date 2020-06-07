@@ -14,7 +14,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'gameId')->textInput() ?>
 
-    <?= $form->field($model, 'url')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'updateUrl')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'assetsUrl')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'platform')->textInput(['maxlength' => true]) ?>
 

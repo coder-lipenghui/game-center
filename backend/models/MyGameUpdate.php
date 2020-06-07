@@ -34,14 +34,14 @@ class MyGameUpdate extends TabGameUpdate
                 {
                     //检测渠道差异更新
                     $query=$this->getQuery($game->id,$this->version,$this->distributionId);
-                    $data=$this->getData($query,$game->id,$cdn->url);
+                    $data=$this->getData($query,$game->id,$cdn->updateUrl);
                     if ($data)
                     {
                         return $data;
                     }else{
                         //检测统一按游戏ID的更新
                         $query=$this->getQuery($game->id,$this->version);
-                        $data=$this->getData($query,$game->id,$cdn->url);
+                        $data=$this->getData($query,$game->id,$cdn->updateUrl);
                         if ($data)
                         {
                             return $data;

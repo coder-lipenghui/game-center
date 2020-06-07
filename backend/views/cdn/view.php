@@ -33,7 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'attributes' => [
                         'id',
             'gameId',
-            'url:url',
+            'updateUrl',
+            'assetsUrl',
             'platform',
             'secretId',
             'secretKey',
