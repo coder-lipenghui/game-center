@@ -1,16 +1,16 @@
-function showBarStackData(data,eid) {
+function showBarStackData(data,eid,prefix,suffix) {
     var contener=document.getElementById(eid+'');
     var datas=[];
     var info=[];
-    for (i=1;i<data['legend'].length;i++)
+    for (var i=0;i<data['legend'].length;i++)
     {
         info[i]=[];
-        for(j=0;j<data['info'].length;j++)//10个部位
+        for(var j=0;j<data['info'].length;j++)
         {
             info[i][j]=data['info'][j][i];
         }
         var series={
-            name: '强'+i,
+            name: prefix+(i+1)+suffix,
             type: 'bar',
             stack: '总量',
             label: {
@@ -21,12 +21,13 @@ function showBarStackData(data,eid) {
         }
         datas[i]=series
     }
-    $("#qianghuaTotal").text("强化分布(记录人数:"+data['total']+")")
+    $("#"+eid+"_Total").text("(记录人数:"+data['total']+")")
     var ww=contener.offsetWidth;
     var hh=contener.offsetHeight;
     var myChart = echarts.init(contener,"",{width:ww,height:hh<100?400:hh});
     var option = {
         tooltip: {
+            // formatter: '{a}{b}{c}%',
             trigger: 'axis',
             axisPointer: {            // 坐标轴指示器，坐标轴触发有效
                 type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
@@ -53,6 +54,10 @@ function showBarStackData(data,eid) {
     myChart.setOption(option);
 }
 function showPieNestData(data,eid) {
+    if (eid==10011)
+    {
+        return;
+    }
     var contener=document.getElementById(eid+"");
     var ww=contener.offsetWidth;
     var hh=contener.offsetHeight;
@@ -194,7 +199,11 @@ function getDataByFunUrl(url,type) {
         success: function(data) {
             if (type==10011)
             {
-                showBarStackData(data,type)
+                showBarStackData(data,type,"强","")
+            }
+            if(type==10012)
+            {
+                showBarStackData(data,type,"","级")
             }else
             {
                 //showPieData(data,type)
@@ -202,7 +211,8 @@ function getDataByFunUrl(url,type) {
             }
         },
         error: function(data) {
-            alert('获取数据失败');
+            // alert('获取数据失败');
+            // Console.log("获取数据失败...");
         }
     });
 }
@@ -210,6 +220,9 @@ function init() {
     getGame("games", true,null,"../");
 }
 function getServerData() {
+    getDataByFunUrl('bar-stack',10011);
+    getDataByFunUrl('bar-stack',10012);
+
     var systems=[
         {"id":10002,"type":"pie","name":"转生"},
         {"id":10003,"type":"pie","name":"图鉴"},
@@ -220,13 +233,13 @@ function getServerData() {
         {"id":10008,"type":"pie","name":"功勋"},
         {"id":10009,"type":"pie","name":"阅历"},
         {"id":10010,"type":"pie","name":"切割"},
-        {"id":10012,"type":"pie","name":"镶嵌"},
+        // {"id":10012,"type":"pie","name":"镶嵌"},
         {"id":10013,"type":"pie","name":"战功"},
         // {"id":10014,"type":"pie","name":"历练"},
         {"id":10015,"type":"pie","name":"披风"},
         {"id":10016,"type":"pie","name":"坐骑"}
     ];
-    getDataByFunUrl('bar-stack',10011);
+
     for (var i=0;i<systems.length;i++)
     {
         getDataByFunUrl(systems[i].type,systems[i].id);

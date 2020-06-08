@@ -78,7 +78,38 @@ class FunctionController extends BaseController
         }
     }
 
-
+    /**
+     * 镶嵌
+     * @param $data
+     * @param $type
+     */
+    private function returnXiangQianBarStackData($data,$type)
+    {
+        $result=[];
+        $result['yAxis']=["攻击","生命","物防","魔防"];
+        $result['info']=[];
+        $result['total']=$data['total'];
+        $maxLv=12;
+        for ($i=0;$i<count($result['yAxis']);$i++)
+        {
+            $result['legend']=[];
+            $result['info'][$i]=[];
+            for ($j=0;$j<$maxLv;$j++)//等级
+            {
+                $result['legend'][$j]=($j+1)."级";
+                $result['info'][$i][$j]=0;
+            }
+        }
+        for ($i=0;$i<count($data['data']);$i++)
+        {
+            $info=$data['data'][$i];
+            $subtype=$info['subtype']-1;
+            $lv=$info['oldlv']-1;
+            $num=$info['num'];
+            $result['info'][$subtype][$lv]=$num;//round($num/$data['total']*100,2);
+        }
+        exit(json_encode($result));
+    }
     /**
      * 堆叠条形图数据
      * @param $data
@@ -89,7 +120,7 @@ class FunctionController extends BaseController
         $result['yAxis']=["武器","头盔","衣服","项链","护腕左","护腕右","戒指1","戒指2","腰带","靴子"];
         $result['info']=[];
         $result['total']=$data['total'];
-        $maxLv=14;
+        $maxLv=12;
         for ($i=0;$i<10;$i++)//部位
         {
             $result['legend']=[];
@@ -172,12 +203,16 @@ class FunctionController extends BaseController
         $queryBody=$model->getAttributes();
         if($this->initApiUrl($model->gameId,$model->distributorId,$model->serverId,$queryBody))
         {
+//            exit($this->apiUrl);
             $jsonData=$this->getJsonData();
             $data= json_decode($jsonData,true);
             switch ($model->type)
             {
                 case 10011:
                     $this->returnBarStackData($data,$model->type);
+                    break;
+                case 10012:
+                    $this->returnXiangQianBarStackData($data,$model->type);
                     break;
                 default:
                     $this->returnPieData($data,$model->type);

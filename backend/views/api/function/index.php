@@ -23,7 +23,9 @@ $this->registerJsFile('@web/js/common.js');
 $this->registerJsFile('@web/js/api/dropdown_menu.js',['depends'=>'yii\web\YiiAsset']);
 $this->registerJsFile('@web/js/api/fun.js',['depends'=>'yii\web\YiiAsset']);
 $this->registerJs("
-//showDistribution()
+$(function () {
+  $('[data-toggle=\"tooltip\"]').tooltip()
+})
 ");
 ?>
 <div class="panel panel-default">
@@ -33,9 +35,17 @@ $this->registerJs("
 </div>
 <div class="panel panel-default">
     <div class="panel-heading">
-        <label id="qianghuaTotal">强化分布</label>
+        <label>强化分布</label><label id="10011_Total"></label><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="强化统计规则:各强化等级占总人数百分比"></span>
     </div>
     <div class="panel-body" id="10011">
+
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <label>镶嵌分布</label><label id="10012_Total">镶嵌分布</label><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="镶嵌统计规则:每种类型宝石每个等级拥有数量"></span>
+    </div>
+    <div class="panel-body" id="10012">
 
     </div>
 </div>
