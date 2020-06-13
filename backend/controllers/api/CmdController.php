@@ -48,6 +48,7 @@ class CmdController extends Controller
         $permissionModel=new MyTabPermission();
         $games=$permissionModel->allowAccessGame();
 
+
         if ($mailModel->validate()) {
             $mailModel->execu();
             $msg=$mailModel->result;

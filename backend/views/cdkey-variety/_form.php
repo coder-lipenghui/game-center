@@ -12,6 +12,8 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
+    <?= $form->field($model, 'gameId')->textInput() ?>
+
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'items')->textInput(['maxlength' => true]) ?>
@@ -19,7 +21,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'once')->textInput() ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', '确 认'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

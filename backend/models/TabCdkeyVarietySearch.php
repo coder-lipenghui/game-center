@@ -17,7 +17,7 @@ class TabCdkeyVarietySearch extends TabCdkeyVariety
     public function rules()
     {
         return [
-            [['id', 'once'], 'integer'],
+            [['id', 'gameId', 'once'], 'integer'],
             [['name', 'items'], 'safe'],
         ];
     }
@@ -59,6 +59,7 @@ class TabCdkeyVarietySearch extends TabCdkeyVariety
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'gameId' => $this->gameId,
             'once' => $this->once,
         ]);
 

@@ -14,7 +14,44 @@ $this->title = "激活码导出";
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '激活码管理'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+$this->registerJsFile('@web/js/cdk.js',['depends'=>'yii\web\YiiAsset']);
+$this->registerJs("
+    $('#exportNum').focusout(function(){
+        changeHref();
+    });
+");
 ?>
+<div class="modal fade" id="export" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h5 class="modal-title" id="myModalLabel">激活码导出</h5>
+            </div>
+            <input class="hidden" id="exportGameId"/>
+            <input class="hidden" id="exportDistributorId"/>
+            <input class="hidden" id="exportVarietyId"/>
+            <input class="hidden" id="exportSurplus"/>
+            <input class="hidden" id="exportUrl"/>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>导出数量:</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input value="" size="20" id="exportNum"/>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+<!--                <button type="button" class="btn btn-primary" onclick="exportCdkey()">确认</button>-->
+                <a class="btn btn-success" id="exportBtn" href="">确认</a>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="tab-cdkey-view">
     <div class="panel panel-default">
         <?php $form = ActiveForm::begin(); ?>
@@ -74,6 +111,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     ],
                     [
+                        'attribute'=>'surplus',
+                        'label'=>'剩余可用',
+                        'value'=>function($data)
+                        {
+                            return ($data['surplus']/10000)."万";
+                        }
+                    ],
+                    [
                         'attribute'=>'total',
                         'label'=>'激活码数量',
                         'value'=>function($data)
@@ -98,7 +143,22 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'aria-label' => Yii::t('yii', '导出激活码'),
                                     'data-pjax' => '0',
                                 ];
-                                return Html::a('<span class="glyphicon glyphicon-export"></span>', $url, $options);
+                                $options=[];
+                                if ($model['surplus']>0)
+                                {
+                                    $options=[
+                                        'class'=>'btn btn-success btn-sm',
+                                        'data-toggle'=>"modal",
+                                        'data-target'=>"#export",
+                                        'onclick'=>"doExport('$url',".$model['gameId'].",".$model['distributorId'].",".$model['varietyId'].",".$model['surplus'].")"
+                                    ];
+                                }else{
+                                    $options=[
+                                        'class'=>'btn btn-success btn-sm',
+                                        'disabled'=>'disabled'
+                                    ];
+                                }
+                                return Html::button("导出",$options);
                             },
                         ]
                     ],

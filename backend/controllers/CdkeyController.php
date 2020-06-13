@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\ExportCDKEYModel;
 use backend\models\MyCdkeySearch;
+use backend\models\TabCdkeyExport;
 use backend\models\TabCdkeyVariety;
 use Yii;
 use backend\models\TabCdkey;
@@ -172,45 +173,11 @@ class CdkeyController extends Controller
             'model' => $model,
         ]);
     }
-    public function actionExport($varietyId,$total,$gameId,$distributorId)
+    public function actionExport($varietyId,$total,$gameId,$distributorId,$num)
     {
-        ini_set('max_execution_time',0); //设置程序的执行时间,0为无上限
         ExportCDKEYModel::TabSuffix($gameId,$distributorId);
         $model = new ExportCDKEYModel();
-
-        $title="激活码";
-
-        $objPHPExcel = new \PHPExcel();
-        $objWriter = new \PHPExcel_Writer_Excel5($objPHPExcel);
-        $variety=TabCdkeyVariety::find()->where(['id'=>$varietyId])->one();
-        $objPHPExcel->getActiveSheet()->setCellValue('A1',  $title."类型:".$variety->name." 共[$total]个");
-
-        $data=$model->getCdkeys($varietyId);
-
-        $step=0;
-        //遍历数据
-        foreach ($data as $key => $value) {
-            if($step==1000){ //每次写入1000条数据清除内存
-                $step=0;
-                ob_flush();//清除内存
-                flush();
-            }
-            $i=$key+2;
-            $objPHPExcel->getActiveSheet()->setCellValue('A'.$i,  $value['cdkey']);
-        }
-        //下载这个表格，在浏览器输出
-        $file_name = $title."_".$variety->getAttribute('name');
-        header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
-        header("Content-Type:application/force-download");
-        header("Content-Type:application/vnd.ms-execl");
-        header("Content-Type:application/octet-stream");
-        header("Content-Type:application/download");;
-        header('Content-Disposition:attachment;filename='.$file_name.'.xls');
-        header("Content-Transfer-Encoding:binary");
-        $objWriter->save('php://output');
-        die();
+        $model->downloadExcel($gameId,$distributorId,$varietyId,$num);
     }
     /**
      * Deletes an existing TabCdkey model.

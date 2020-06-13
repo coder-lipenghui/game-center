@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use backend\models\TabCdkeyVariety;
 use backend\models\TabCdkeyVarietySearch;
+use backend\models\MyTabPermission;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,10 +36,14 @@ class CdkeyVarietyController extends Controller
      */
     public function actionIndex()
     {
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
+
         $searchModel = new TabCdkeyVarietySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'games'=>$games,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

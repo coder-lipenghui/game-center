@@ -47,7 +47,7 @@ class ActivateCdkey extends TabCdkeyRecord
                 $distribution=TabDistribution::findOne(['id'=>$this->distributionId]);
 //                if($distribution){
                 //玩家检测
-                $player=TabPlayers::find()->where(['account'=>$this->account])->one();
+               $player=TabPlayers::find()->where(['account'=>$this->account])->one();
                 if ($player)
                 {
                     //激活码检测
