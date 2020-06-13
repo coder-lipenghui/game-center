@@ -113,18 +113,18 @@ $this->registerJs("
                     [
                         'attribute'=>'surplus',
                         'label'=>'剩余可用',
-                        'value'=>function($data)
-                        {
-                            return ($data['surplus']/10000)."万";
-                        }
+//                        'value'=>function($data)
+//                        {
+//                            return ($data['surplus']/10000)."万";
+//                        }
                     ],
                     [
                         'attribute'=>'total',
                         'label'=>'激活码数量',
-                        'value'=>function($data)
-                        {
-                            return ($data['total']/10000)."万";
-                        }
+//                        'value'=>function($data)
+//                        {
+//                            return ($data['total']/10000)."万";
+//                        }
                     ],
 //                    'gameId',
 //                    'distributorId',

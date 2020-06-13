@@ -32,8 +32,6 @@ class ExportCDKEYModel extends AutoCDKEYModel
             ->groupBy(['varietyId'])
             ->asArray();
         $data=$query->all();
-        //获取导出日志中的最后一次的导出ID
-        //计算剩余数量
         for ($i=0;$i<count($data);$i++)
         {
             $lastId=$this->getLastExportId(self::$gameId,self::$distributorId,$data[$i]['varietyId']);
@@ -70,7 +68,7 @@ class ExportCDKEYModel extends AutoCDKEYModel
     public function getCdkeys($varietyId,$lastId,$num)
     {
         $query=self::find()->select(['id','cdkey'])
-            ->where(['varietyId'=>$varietyId,'used'=>0])
+            ->where(['varietyId'=>$varietyId])
             ->andWhere(['>','id',$lastId])
             ->limit($num)->asArray();
         $data=$query->all();
@@ -95,7 +93,6 @@ class ExportCDKEYModel extends AutoCDKEYModel
      */
     public function downloadExcel($gameId,$distributorId,$varietyId,$num)
     {
-//        if ($this->load())
         ini_set('max_execution_time',0); //设置程序的执行时间,0为无上限
 
         $variety=TabCdkeyVariety::find()->where(['id'=>$varietyId,'gameId'=>$gameId])->one();
