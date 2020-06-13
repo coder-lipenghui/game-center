@@ -36,7 +36,7 @@ class ExportCDKEYModel extends AutoCDKEYModel
         //计算剩余数量
         for ($i=0;$i<count($data);$i++)
         {
-            $lastId=$this->getLastExportId(self::$gameId,$data[$i]['varietyId']);
+            $lastId=$this->getLastExportId(self::$gameId,self::$distributorId,$data[$i]['varietyId']);
             $surplusQuery=self::find()->where(['varietyId'=>$data[$i]['varietyId']])->andWhere(['>','id',$lastId]);
             $surplus=$surplusQuery->count();
             $data[$i]['gameId']=self::$gameId;
@@ -52,10 +52,9 @@ class ExportCDKEYModel extends AutoCDKEYModel
      * @param $varietyId 激活码类型
      * @return int|mixed
      */
-    public function getLastExportId($gameId,$varietyId)
+    public function getLastExportId($gameId,$distributorId,$varietyId)
     {
-        $lastQuery=TabCdkeyExport::find()->where(['varietyId'=>$varietyId,'gameId'=>$gameId])->orderBy('id DESC');//->limit(1);
-//        exit($lastQuery->createCommand()->getRawSql());
+        $lastQuery=TabCdkeyExport::find()->where(['varietyId'=>$varietyId,'gameId'=>$gameId,'distributorId'=>$distributorId])->orderBy('id DESC');
         $last=$lastQuery->limit(1)->one();
         if (!empty($last))
         {
@@ -101,7 +100,7 @@ class ExportCDKEYModel extends AutoCDKEYModel
 
         $variety=TabCdkeyVariety::find()->where(['id'=>$varietyId,'gameId'=>$gameId])->one();
 
-        $lastId=$this->getLastExportId($gameId,$varietyId);
+        $lastId=$this->getLastExportId($gameId,$distributorId,$varietyId);
 
         $data=$this->getCdkeys($varietyId,$lastId,$num);
 
