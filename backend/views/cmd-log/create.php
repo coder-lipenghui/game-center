@@ -20,7 +20,7 @@ $cmdInfo=\backend\models\TabCmd::find()->select(['id','shortName','comment'])->a
             <div class="row">
                 <?php $form = ActiveForm::begin(); ?>
                 <div class="col-md-1"><?=$form->field($model,'gameId')->dropDownList(
-                        array_merge(['0'=>'选择游戏'],$games),
+                        $games,
                         [
                             "class"=>"selectpicker form-control col-xs-2",
                             "data-width"=>"fit",
