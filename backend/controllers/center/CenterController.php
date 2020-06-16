@@ -497,6 +497,7 @@ class CenterController extends Controller
     {
         return null;
     }
+
     /**
      * 前往游戏服务器验证用户信息
      * @param uid 用户ID
@@ -511,103 +512,99 @@ class CenterController extends Controller
         $enterModle=new EnterGame();
         $request=\Yii::$app->request;
         $enterModle->load(['EnterGame'=>$request->queryParams]);
-        if ($enterModle->validate())
-        {
-            $cache=\Yii::$app->cache;
-            $token=$cache->get($request->get('token'));
-            if ($token)
-            {
-                $gameId=$token['gameId'];
-                $account=$token['account'];
-                $distributionId=$token['distributionId'];
-                $loginTime=time();
-//                $loginKey="";//游戏服务器侧配置的key
-                $game=TabGames::find()->where(['id'=>$gameId])->one();
-                if($game)
-                {
-                    $player=TabPlayers::find()->where(['account'=>$account,'gameId'=>$gameId])->one();
-                    if ($player)
-                    {
-                        $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$enterModle->serverId])->one();
-                        if ($server)
-                        {
-//                            if (!empty($server->mergeId))
-//                            {
-//                                $mergeId=$server->mergeId;
-//                                $server=TabServers::find()->where(['id'=>$mergeId]);
-//                                if (empty($server))
-//                                {
-//                                    return ['code'=>-14,'msg'=>'未找到主区信息'];
-//                                }
-//                            }
-                            $sign      = md5($account . $loginTime . $game->loginKey);
-                            $requestBody=[
-                                'uname'     => $account,
-                                'channelId' => $distributionId,
-                                'deviceId'  => $enterModle->deviceId,
-                                'time'      => $loginTime,
-                                'sign'      => $sign,
-                                'isAdult'   => '1',
-                                'serverid'  => $server->id,
-                                'onlineip'  => $this->getClientIP(), //getIP(),
-                            ];
-                            $url="http://".$server->url."/app/cklogin.php?".http_build_query($requestBody);
-                            $curl=new CurlHttpClient();
-                            $resultJson=$curl->fetchUrl($url);
-                            $result=json_decode($resultJson,true);
-                            $msg="";
-                            $code=$result['error_code'];
-                            switch ($code)
-                            {
-                                case 1:
-                                    $msg=$result['ticket'];
-                                    break;
-                                case -1:
-                                    $msg="参数不正确";
-                                    break;
-                                case -2:
-                                    $msg="登录会话过期";
-                                    break;
-                                case -3:
-                                    $msg="sign验证失败";
-                                    break;
-                                case -4:
-                                    $msg="数据库连接失败";
-                                    break;
-                                case -5:
-                                    $msg="记录玩家登录数据出错";
-                                    break;
-                                case -6:
-                                    $msg="玩家登录数据更新失败";
-                                    break;
-                                case -7:
-                                    $msg="防沉迷数据库连接失败";
-                                    break;
-                                case -8:
-                                    $msg="玩家数据记录失败";
-                                    break;
-                                default:
-                                    $msg="登录出现位置异常";
+        if (!$enterModle->validate())return ['code'=>-13,'msg'=>'参数错误','data'=>$enterModle->getErrors()];
 
-                            }
-                            return ['code'=>$code,'msg'=>$msg];
-                        }else{
-                            return ['code'=>-9,'msg'=>'无效区服'];
-                        }
-                    }else{
-                        return ['code'=>-10,'msg'=>'无效玩家'];
-                    }
-                }else{
-                    return ['code'=>-11,'msg'=>'登录会话过期'];
-                }
-            }else{
-                return ['code'=>-12,'msg'=>'登录会话过期'];
-            }
-        }else{
-            return ['code'=>-13,'msg'=>'参数错误','data'=>$enterModle->getErrors()];
-        }
+        $cache=\Yii::$app->cache;
+        $token=$cache->get($request->get('token'));
+        if (empty($token))return ['code'=>-12,'msg'=>'登录会话过期'];
+
+        $gameId=$token['gameId'];
+        $account=$token['account'];
+        $distributionId=$token['distributionId'];
+
+        $game=TabGames::find()->where(['id'=>$gameId])->one();
+        if(empty($game))return ['code'=>-11,'msg'=>'未知游戏'];
+
+        $player=TabPlayers::find()->where(['account'=>$account,'gameId'=>$gameId])->one();
+        if (empty($player))return ['code'=>-10,'msg'=>'无效玩家'];
+
+        $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$enterModle->serverId])->one();
+        if (empty($server))return ['code'=>-9,'msg'=>'无效区服'];
+
+
+        $loginTime=time();
+        $sign      = md5($account . $loginTime . $game->loginKey);
+        $getBody=[
+            'sku'=>$game->sku,
+            'serverId'=>$server->id,
+            'db'=>2
+        ];
+        $postBody=[
+            'uname'     => $account,
+            'channelId' => $distributionId,
+            'deviceId'  => $enterModle->deviceId,
+            'time'      => $loginTime,
+            'sign'      => $sign,
+            'isAdult'   => '1',
+            'serverid'  => $server->id,
+            'onlineip'  => $this->getClientIP(), //getIP(),
+        ];
+
+        return $this->notifyLogin($server->url,$getBody,$postBody);
     }
 
+    protected function notifyLogin($url,$get,$post)
+    {
+        $curl=new CurlHttpClient();
+        $resultJson=[];
+        $msg="";
+        if (false) //新的登录接口地址
+        {
+            $url="http://".$url."/login?".http_build_query($get);
+            $resultJson=$curl->sendPostData($url,$post);
+            exit($resultJson);
+        }else{
+            $url="http://".$url."/app/cklogin.php?".http_build_query($get);
+            $resultJson=$curl->fetchUrl($url);
+        }
+        $result=json_decode($resultJson,true);
+
+        $code=$result['error_code'];
+        switch ($code)
+        {
+            case 1:
+                $msg=$result['ticket'];
+                break;
+            case -1:
+                $msg="参数不正确";
+                break;
+            case -2:
+                $msg="登录会话过期";
+                break;
+            case -3:
+                $msg="sign验证失败";
+                break;
+            case -4:
+                $msg="数据库连接失败";
+                break;
+            case -5:
+                $msg="记录玩家登录数据出错";
+                break;
+            case -6:
+                $msg="玩家登录数据更新失败";
+                break;
+            case -7:
+                $msg="防沉迷数据库连接失败";
+                break;
+            case -8:
+                $msg="玩家数据记录失败";
+                break;
+            default:
+                $msg="登录出现未知异常";
+
+        }
+        return ['code'=>$code,'msg'=>$msg];
+    }
     /**
      * 获取游戏更新接口
      * @return array
