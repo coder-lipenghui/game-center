@@ -558,13 +558,13 @@ class CenterController extends Controller
         $curl=new CurlHttpClient();
         $resultJson=[];
         $msg="";
-        if (false) //新的登录接口地址
+        if (true) //新的登录接口地址
         {
             $url="http://".$url."/login?".http_build_query($get);
             $resultJson=$curl->sendPostData($url,$post);
             exit($resultJson);
         }else{
-            $url="http://".$url."/app/cklogin.php?".http_build_query($get);
+            $url="http://".$url."/app/cklogin.php?".http_build_query($post);
             $resultJson=$curl->fetchUrl($url);
         }
         $result=json_decode($resultJson,true);
