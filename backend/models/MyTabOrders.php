@@ -415,14 +415,14 @@ class MyTabOrders extends TabOrders
                     $resultJson=[];
                     $curl = new CurlHttpClient();
                     $url="http://" . $server->url;
-                    if (false)//新后台的发货接口
+                    if (true)//新后台的发货接口
                     {
                         $getBody=[
                             'sku'=>$game->sku,
                             'serverId'=>$server->id,
                             'db'=>$requestBody['type']==1?2:1 //脚本类型的需要走octgame,常规类型走ocenter
                         ];
-                        $url = $url. "/payment?" . http_build_query($getBody);
+                        $url = $url. "/api/payment?" . http_build_query($getBody);
                         $resultJson =$curl->sendPostData($url,$requestBody);
                     }else{
                         $url = $url. "/app/ckcharge.php?" . http_build_query($requestBody);

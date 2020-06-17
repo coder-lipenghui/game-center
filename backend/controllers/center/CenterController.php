@@ -536,7 +536,7 @@ class CenterController extends Controller
         $sign      = md5($account . $loginTime . $game->loginKey);
         $getBody=[
             'sku'=>$game->sku,
-            'serverId'=>$server->id,
+            'serverId'=>$server->index,
             'db'=>2
         ];
         $postBody=[
@@ -547,6 +547,7 @@ class CenterController extends Controller
             'sign'      => $sign,
             'isAdult'   => '1',
             'serverid'  => $server->id,
+            'serverIndex'=>$server->index,
             'onlineip'  => $this->getClientIP(), //getIP(),
         ];
 
@@ -560,7 +561,7 @@ class CenterController extends Controller
         $msg="";
         if (true) //新的登录接口地址
         {
-            $url="http://".$url."/login?".http_build_query($get);
+            $url="http://".$url."/api/login?".http_build_query($get);
             $resultJson=$curl->sendPostData($url,$post);
             exit($resultJson);
         }else{
