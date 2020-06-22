@@ -108,7 +108,7 @@ class CenterController extends Controller
             $game=TabGames::findOne(['sku'=>$loginModel->sku]);
             if ($game===null)
             {
-                $this->send(CenterController::$ERROR_GAME_NOT_FOUND,\Yii::t('app',"未知游戏"));
+                $this->send(CenterController::$ERROR_GAME_NOT_FOUND,\Yii::t('app',"unknown game"));
             }
             //登录权限检测
             $this->checkLoginPremission($requestData,$game);
@@ -116,7 +116,7 @@ class CenterController extends Controller
             $distribution=MyTabDistribution::find()->where(['id'=>$loginModel->distributionId,'gameId'=>$game->id])->one();
             if ($distribution===null)
             {
-                $this->send(CenterController::$ERROR_DISTRIBUTOR_NOT_FOUND,\Yii::t('app',"分销渠道不存在"));
+                $this->send(CenterController::$ERROR_DISTRIBUTOR_NOT_FOUND,\Yii::t('app',"unknown distribution"));
             }
             $cache=\Yii::$app->cache;
             $ip=$this->getClientIP();
@@ -127,12 +127,12 @@ class CenterController extends Controller
                 $user=$this->loginValidate($requestData,$distribution);
                 if (empty($user) || $user===null)
                 {
-                    $this->send(CenterController::$ERROR_USER_VALIDATE_FAILED,\Yii::t('app',"用户验证失败"));
+                    $this->send(CenterController::$ERROR_USER_VALIDATE_FAILED,\Yii::t('app',"validate fail"));
                 }
                 $player=$this->savePlayer($user,$requestData,$distribution);
                 if($player===null)
                 {
-                    $this->send(CenterController::$ERROR_USER_SAVE_FAILED,\Yii::t('app',"用户信息存储失败"));
+                    $this->send(CenterController::$ERROR_USER_SAVE_FAILED,\Yii::t('app',"save user info fail"));
                 }
                 $cache->set($tokenKey,
                     [
@@ -158,7 +158,7 @@ class CenterController extends Controller
             $data['anncInfo']=$this->getNotice($game,$distribution);
 
         }else{
-            $this->send(CenterController::$ERROR_PARAMS,\Yii::t('app',"参数错误"),$loginModel->getErrors());
+            $this->send(CenterController::$ERROR_PARAMS,\Yii::t('app',"param error"),'param error');
         }
         $this->send(1,'success',$data);
     }
@@ -531,6 +531,11 @@ class CenterController extends Controller
         $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$enterModle->serverId])->one();
         if (empty($server))return ['code'=>-9,'msg'=>'无效区服'];
 
+        if (!empty($server->mergeId))
+        {
+            $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$server->mergeId])->one();
+            if (empty($server))return ['code'=>-9,'msg'=>'无效区服'];
+        }
 
         $loginTime=time();
         $sign      = md5($account . $loginTime . $game->loginKey);
@@ -563,7 +568,6 @@ class CenterController extends Controller
         {
             $url="http://".$url."/api/login?".http_build_query($get);
             $resultJson=$curl->sendPostData($url,$post);
-            exit($resultJson);
         }else{
             $url="http://".$url."/app/cklogin.php?".http_build_query($post);
             $resultJson=$curl->fetchUrl($url);
@@ -604,7 +608,7 @@ class CenterController extends Controller
                 $msg="登录出现未知异常";
 
         }
-        return ['code'=>$code,'msg'=>$msg];
+        return ['code'=>$code."",'msg'=>$msg];
     }
     /**
      * 获取游戏更新接口
