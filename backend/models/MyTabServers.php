@@ -33,6 +33,15 @@ class MyTabServers extends TabServers
             ->andWhere($filter)
             ->asArray();
         $servers=$query->all();
+        if (empty($servers))
+        {
+            $tmpQuery=TabServers::find()
+                ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
+                ->where(['>=','openDateTime',date('Y-m-d H:i:s',time())])
+                ->asArray()
+                ->limit(1);
+            $servers=$tmpQuery->all();
+        }
         //处理合区数据
         $mainServers=[];//100个区合到一个区的时候，减少查询次数
         for ($i=0;$i<count($servers);$i++)
@@ -73,7 +82,13 @@ class MyTabServers extends TabServers
     }
     public static function getServersByGameId($gameId)
     {
-        return self::find()->where(['gameId'=>$gameId])->asArray()->all();
+        return self::find()
+            ->where([
+                'gameId'=>$gameId,
+                'mergeId'=>null,
+            ])
+            ->groupBy(['url'])
+            ->asArray()->all();
     }
     public static function todayOpen()
     {

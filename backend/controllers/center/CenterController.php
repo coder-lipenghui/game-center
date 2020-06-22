@@ -555,8 +555,12 @@ class CenterController extends Controller
             'serverIndex'=>$server->index,
             'onlineip'  => $this->getClientIP(), //getIP(),
         ];
-
-        return $this->notifyLogin($server->url,$getBody,$postBody);
+        if (strtotime($server->openDateTime)>time())
+        {
+            return ['code'=>'-1','msg'=>'openTime:'.$server->openDateTime];
+        }else{
+            return $this->notifyLogin($server->url,$getBody,$postBody);
+        }
     }
 
     protected function notifyLogin($url,$get,$post)
