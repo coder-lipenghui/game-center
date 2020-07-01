@@ -142,19 +142,12 @@ class MyTabPermission extends TabPermission
     }
     public function allowAccessServer($gameId,$distributorId)
     {
-        $distribution=TabPermission::find()->select(['distributionId'])->where(['uid'=>Yii::$app->user->id,'gameId'=>$gameId,'distributorId'=>$distributorId])->asArray()->all();
-        if ($distribution)
+        $have=TabPermission::find()->select(['distributorId'])->where(['uid'=>Yii::$app->user->id,'gameId'=>$gameId,'distributorId'=>$distributorId])->count();
+        if (!empty($have) && $have>0)
         {
-            $where=['or'];
-            $i = 0;
-            foreach($distribution as $v){
-                $where[] = new Expression("FIND_IN_SET(:field_$i, distributions)",[":field_$i"=>$v['distributionId']]);
-                $i++;
-            }
             $query=TabServers::find()
                 ->select(['name','id'])
-                ->where(['gameId'=>$gameId])
-                ->andWhere($where)
+                ->where(['gameId'=>$gameId,'distributorId'=>$distributorId])
                 ->asArray();
             $data=$query->all();
             return $data;
