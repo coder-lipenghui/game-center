@@ -34,9 +34,11 @@ use backend\models\TabOrders;
 use backend\models\TabOrdersDebug;
 use backend\models\TabPlayers;
 use backend\models\TabServers;
+use backend\models\TabWhitelist;
 use common\helps\CurlHttpClient;
 use common\helps\LoggerHelper;
 use yii\base\Exception;
+use yii\caching\Cache;
 use yii\web\Controller;
 /**
  * 渠道登录、充值相关
@@ -156,7 +158,6 @@ class CenterController extends Controller
             }
             $data['serverInfo']=$this->getServers($game,$distribution,$data['player']['uid'],$ip);
             $data['anncInfo']=$this->getNotice($game,$distribution);
-
         }else{
             $this->send(CenterController::$ERROR_PARAMS,\Yii::t('app',"param error"),'param error');
         }
@@ -474,16 +475,26 @@ class CenterController extends Controller
         $result=[];
 
         $request=\Yii::$app->request;
-        if ($request->get("sku"))
+        $sku=$request->get("sku");
+        if ($sku)
         {
-            $game=TabGames::find()
-                ->select(['copyright_number','copyright_author','copyright_press','copyright_isbn'])
-                ->where(['sku'=>$request->get('sku')])
-                ->asArray()
-                ->one();
-            if ($game!=null && count($game)>0)
+            $cache=\Yii::$app->cache;
+            $key='copyright_'.$request->get('sku');
+            $copyrightInfo=null;//$cache->get($key);
+            if ($copyrightInfo)
             {
-                return $game;
+                return $copyrightInfo;
+            }else{
+                $copyrightInfo=TabGames::find()
+                    ->select(['copyright_number','copyright_author','copyright_press','copyright_isbn'])
+                    ->where(['sku'=>$sku])
+                    ->asArray()
+                    ->one();
+                if ($copyrightInfo!=null && count($copyrightInfo)>0)
+                {
+                    $cache->set($key,$copyrightInfo,600);
+                    return $copyrightInfo;
+                }
             }
         }
         return $result;
@@ -507,7 +518,6 @@ class CenterController extends Controller
      */
     public function actionNotifyLogin()
     {
-        //TODO 账号、IP需要做白名单检测：测试服、进入
         \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
         $enterModle=new EnterGame();
         $request=\Yii::$app->request;
@@ -521,6 +531,7 @@ class CenterController extends Controller
         $gameId=$token['gameId'];
         $account=$token['account'];
         $distributionId=$token['distributionId'];
+        $distributionUserId=$token['distributionUserId'];
 
         $game=TabGames::find()->where(['id'=>$gameId])->one();
         if(empty($game))return ['code'=>-11,'msg'=>'未知游戏'];
@@ -536,7 +547,18 @@ class CenterController extends Controller
             $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$server->mergeId])->one();
             if (empty($server))return ['code'=>-9,'msg'=>'无效区服'];
         }
-
+        $isWhite=false;
+        $ip=$this->getClientIP();
+        if (!empty($distributionUserId))
+        {
+            $whiteQuery=TabWhitelist::find();
+            $whiteQuery->where(['or',"ip='$ip'","distributionUserId='$distributionUserId'"]);
+            $list=$whiteQuery->all();
+            if (!empty($list))
+            {
+                $isWhite=true;
+            }
+        }
         $loginTime=time();
         $sign      = md5($account . $loginTime . $game->loginKey);
         $getBody=[
@@ -553,9 +575,9 @@ class CenterController extends Controller
             'isAdult'   => '1',
             'serverid'  => $server->id,
             'serverIndex'=>$server->index,
-            'onlineip'  => $this->getClientIP(), //getIP(),
+            'onlineip'  => $ip, //getIP(),
         ];
-        if (strtotime($server->openDateTime)>time())
+        if (strtotime($server->openDateTime)>time() && !$isWhite)
         {
             return ['code'=>'-1','msg'=>'openTime:'.$server->openDateTime];
         }else{
