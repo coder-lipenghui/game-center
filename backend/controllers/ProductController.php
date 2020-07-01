@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\MyTabPermission;
 use Yii;
 use backend\models\TabProduct;
 use backend\models\TabProductSearch;
@@ -38,7 +39,11 @@ class ProductController extends Controller
         $searchModel = new TabProductSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
+
         return $this->render('index', [
+            'games'=>$games,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -66,11 +71,15 @@ class ProductController extends Controller
     {
         $model = new TabProduct();
 
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
+            'games'=>$games,
             'model' => $model,
         ]);
     }

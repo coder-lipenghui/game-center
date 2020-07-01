@@ -2,9 +2,11 @@
 
 namespace backend\models;
 
+use foo\bar;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\TabProduct;
+use yii\helpers\ArrayHelper;
 
 /**
  * TabProductSearch represents the model behind the search form of `backend\models\TabProduct`.
@@ -17,6 +19,7 @@ class TabProductSearch extends TabProduct
     public function rules()
     {
         return [
+            [['gameId'],'required'],
             [['id', 'gameId', 'type', 'productId', 'productPrice', 'enable'], 'integer'],
             [['productName', 'productScript'], 'safe'],
         ];
@@ -52,23 +55,36 @@ class TabProductSearch extends TabProduct
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+             $query->where('0=1');
             return $dataProvider;
         }
-
+        $targetGame=$this->gameId;
+        if (empty($this->gameId))
+        {
+            $permissionModel=new MyTabPermission();
+            $games=$permissionModel->allowAccessGame();
+            $targetGame=[];
+            foreach ($games as $k=>$v)
+            {
+                $targetGame[]=$k;
+            }
+        }
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'gameId' => $this->gameId,
-            'type' => $this->type,
+            'gameId' => $targetGame,//$this->gameId,
             'productId' => $this->productId,
             'productPrice' => $this->productPrice,
             'enable' => $this->enable,
         ]);
+        if ($this->type>0)
+        {
+            $query->andFilterWhere(['type' => $this->type]);
+        }
 
+//        exit($query->createCommand()->getRawSql());
         $query->andFilterWhere(['like', 'productName', $this->productName])
             ->andFilterWhere(['like', 'productScript', $this->productScript]);
-
         return $dataProvider;
     }
 }

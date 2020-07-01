@@ -12,19 +12,19 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'gameId')->textInput() ?>
+    <?= $form->field($model, 'gameId')->dropDownList($games) ?>
 
-    <?= $form->field($model, 'type')->textInput() ?>
+    <?= $form->field($model, 'type')->dropDownList([0=>'类型',1=>'普通',2=>'脚本']) ?>
 
-    <?= $form->field($model, 'productId')->textInput() ?>
+    <?= $form->field($model, 'productId')->textInput(['placeholder'=>'计费ID']) ?>
 
-    <?= $form->field($model, 'productName')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'productName')->textInput(['maxlength' => true,'placeholder'=>'计费名称']) ?>
 
-    <?= $form->field($model, 'productPrice')->textInput() ?>
+    <?= $form->field($model, 'productPrice')->textInput(['placeholder'=>'单位:分']) ?>
 
-    <?= $form->field($model, 'productScript')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'productScript')->textInput(['maxlength' => true,'placeholder'=>'脚本触发ID,脚本类型必填,否则无法到账']) ?>
 
-    <?= $form->field($model, 'enable')->textInput() ?>
+    <?= $form->field($model, 'enable')->dropDownList([0=>'禁用',1=>'启用']) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
