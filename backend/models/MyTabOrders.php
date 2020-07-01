@@ -228,7 +228,6 @@ class MyTabOrders extends TabOrders
                 (SELECT gameId,distributorId,count(*) as number,FROM_UNIXTIME(payTime,'%Y-%m-%d') as time FROM tab_orders WHERE distributorId =$distributor and gameId=$gameId and payStatus='1' AND FROM_UNIXTIME(payTime,'%Y-%m-%d')>='$start' and FROM_UNIXTIME(payTime,'%Y-%m-%d')<='$end' GROUP BY distributorId,FROM_UNIXTIME(payTime,'%Y-%m-%d')) as t2 
                 ON t1.time=t2.time 
                 ORDER BY t1.time";
-                //exit($sql);
                 $query=\Yii::$app->db->createCommand($sql);
                 $data=$query->queryAll();
                 $result[$distributor.""]=$data;
@@ -419,7 +418,7 @@ class MyTabOrders extends TabOrders
                     {
                         $getBody=[
                             'sku'=>$game->sku,
-                            'serverId'=>$server->id,
+                            'serverId'=>$server->index,
                             'db'=>$requestBody['type']==1?2:1 //脚本类型的需要走octgame,常规类型走ocenter
                         ];
                         $url = $url. "/api/payment?" . http_build_query($getBody);
