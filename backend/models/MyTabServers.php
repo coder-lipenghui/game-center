@@ -11,8 +11,8 @@ use yii\db\Expression;
 
 class MyTabServers extends TabServers
 {
-    public static function searchGameServers($gameId,$distributoin,$distributionUserId,$ip){
-
+    public static function searchGameServers($gameId,$distributoin,$distributionUserId,$ip)
+    {
         self::openServer($gameId,$distributoin->distributorId);
         $filter=[];
         if (!empty($distributionUserId))
@@ -27,11 +27,28 @@ class MyTabServers extends TabServers
                 $filter=[];
             }
         }
+        $mingleServerId=0;
+        if (!empty($distributoin->mingleServerId))
+        {
+            $mingleServerId=$distributoin->mingleServerId;
+        }
+        if (!empty($distributoin->mingleDistributionId))
+        {
+            $tmp=TabDistribution::find()->where(['id'=>$distributoin->mingleDistributionId])->one();
+            if (!empty($tmp))
+            {
+                $distributoin=$tmp;
+            }
+        }
         $query=TabServers::find()
             ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
             ->where(['gameId'=>$gameId,'distributorId'=>$distributoin->distributorId])
             ->andWhere($filter)
             ->asArray();
+        if ($mingleServerId>0)
+        {
+            $query->andWhere(['>=','index',$mingleServerId]);
+        }
         $servers=$query->all();
         if (empty($servers))
         {
@@ -46,6 +63,8 @@ class MyTabServers extends TabServers
         $mainServers=[];//100个区合到一个区的时候，减少查询次数
         for ($i=0;$i<count($servers);$i++)
         {
+            $servers[$i]['index']=($servers[$i]['index']-$mingleServerId+1)."";
+            $servers[$i]['name']=$servers[$i]['index']."区";
             if (!empty($servers[$i]['mergeId']))
             {
                 $mergeId=$servers[$i]['mergeId'];
@@ -63,6 +82,7 @@ class MyTabServers extends TabServers
                 if (!empty($server))
                 {
                     $servers[$i]['socket']=$server->url.":".$server->netPort;
+
                     unset($servers[$i]['mergeId']);
                 }
             }
