@@ -40,18 +40,30 @@ class MyTabUpdateScript extends TabUpdateScriptLog
                     $curl=new CurlHttpClient();
                     $resultJson=$curl->sendPostData($url,$post,null,600);
                     $result=json_decode($resultJson,true);
-                    $code=$result['code'];
-                    $msg=$result['msg'];
-                    $this->logTime=time();
-                    $this->status=$code;
-                    $this->info=$msg;
-                    $this->operator=\Yii::$app->user->id;
-                    $this->save();
-                    if ($code==1)
+                    if (!empty($result) && $result['code'])
                     {
-                        return json_encode(['id'=>$this->serverId,'name'=>$server->name,'code'=>1,'msg'=>'success']);
+                        $code=$result['code'];
+                        $msg=$result['msg'];
+                        $this->logTime=time();
+                        $this->status=$code;
+                        $this->info=$msg;
+                        $this->operator=\Yii::$app->user->id;
+                        $this->save();
+                        if ($code==1)
+                        {
+                            return json_encode(['id'=>$this->serverId,'name'=>$server->name,'code'=>1,'msg'=>'success']);
+                        }else{
+                            return json_encode(['id'=>$this->serverId,'name'=>$server->name,'code'=>$code,'msg'=>$msg]);
+                        }
                     }else{
-                        return json_encode(['id'=>$this->serverId,'name'=>$server->name,'code'=>$code,'msg'=>$msg]);
+                        $code=-1;
+                        $msg='更新异常';
+                        $this->logTime=time();
+                        $this->status=-1;
+                        $this->info=$resultJson;
+                        $this->operator=\Yii::$app->user->id;
+                        $this->save();
+                        return json_encode(['id'=>$this->serverId,'name'=>$server->name,'code'=>1,'msg'=>$resultJson]);
                     }
                 }
             }else{
