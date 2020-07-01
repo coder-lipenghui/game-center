@@ -12,6 +12,8 @@ use Yii;
  * @property string $platform 设备:android、ios
  * @property int $distributorId 分销商ID
  * @property int $parentDT 父级代理,该字段有值则代表该渠道为二级分销商
+ * @property int $mingleDistributionId 与某个渠道混服
+ * @property int $mingleServerId 从多少区开始混服
  * @property string $centerLoginKey 中控登录KEY
  * @property string $centerPaymentKey 中控获取订单KEY
  * @property string $appID 分销商分配的游戏ID
@@ -25,8 +27,6 @@ use Yii;
  * @property int $enabled 该分销渠道是否启用
  * @property int $isDebug 是否已经上线
  * @property string $api 登录、充值验证接口
- *
- * @property TabGameAssets[] $tabGameAssets
  */
 class TabDistribution extends \yii\db\ActiveRecord
 {
@@ -45,7 +45,7 @@ class TabDistribution extends \yii\db\ActiveRecord
     {
         return [
             [['gameId', 'distributorId', 'enabled'], 'required'],
-            [['gameId', 'distributorId', 'parentDT', 'support', 'ratio', 'rebate', 'enabled', 'isDebug'], 'integer'],
+            [['gameId', 'distributorId', 'parentDT', 'mingleDistributionId', 'mingleServerId', 'support', 'ratio', 'rebate', 'enabled', 'isDebug'], 'integer'],
             [['platform'], 'string', 'max' => 50],
             [['centerLoginKey', 'centerPaymentKey'], 'string', 'max' => 32],
             [['appID', 'appKey', 'appLoginKey', 'appPaymentKey', 'appPublicKey'], 'string', 'max' => 255],
@@ -58,28 +58,29 @@ class TabDistribution extends \yii\db\ActiveRecord
      */
     public function attributeLabels()
     {
-        return[
-            'id' => Yii::t('app', '分销ID'),
-           'gameId' => Yii::t('app', '游戏名称'),
-           'platform' => Yii::t('app', '设备平台'),
-           'distributorId' => Yii::t('app', '所属分销商'),
-           'parentDT' => Yii::t('app', '父级分销商'),
-           'centerLoginKey' => Yii::t('app', '我方登录KEY'),
-           'centerPaymentKey' => Yii::t('app', '我方订单KEY'),
-           'appID' => Yii::t('app', '分销APPID'),
-           'appKey' => Yii::t('app', '分销APPKEY'),
-           'appLoginKey' => Yii::t('app', '分销登录KEY'),
-           'appPaymentKey' => Yii::t('app', '分销充值KEY'),
-           'appPublicKey' => Yii::t('app', '分销充值KEY2'),
-           'ratio'=>Yii::t('app','充值比例'),
-           'rebate'=>Yii::t('app','好友返利比例'),
-           'support'=>Yii::t('app','扶持金额'),
-           'enabled' => Yii::t('app', '是否可用'),
-           'isDebug' => Yii::t('app', '正在调试'),
-           'api' => Yii::t('app', 'SDK名'),
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'gameId' => Yii::t('app', 'Game ID'),
+            'platform' => Yii::t('app', 'Platform'),
+            'distributorId' => Yii::t('app', 'Distributor ID'),
+            'parentDT' => Yii::t('app', 'Parent Dt'),
+            'mingleDistributionId' => Yii::t('app', 'Mingle Distribution ID'),
+            'mingleServerId' => Yii::t('app', 'Mingle Server ID'),
+            'centerLoginKey' => Yii::t('app', 'Center Login Key'),
+            'centerPaymentKey' => Yii::t('app', 'Center Payment Key'),
+            'appID' => Yii::t('app', 'App ID'),
+            'appKey' => Yii::t('app', 'App Key'),
+            'appLoginKey' => Yii::t('app', 'App Login Key'),
+            'appPaymentKey' => Yii::t('app', 'App Payment Key'),
+            'appPublicKey' => Yii::t('app', 'App Public Key'),
+            'support' => Yii::t('app', 'Support'),
+            'ratio' => Yii::t('app', 'Ratio'),
+            'rebate' => Yii::t('app', 'Rebate'),
+            'enabled' => Yii::t('app', 'Enabled'),
+            'isDebug' => Yii::t('app', 'Is Debug'),
+            'api' => Yii::t('app', 'Api'),
         ];
     }
-
     /**
      * @return \yii\db\ActiveQuery
      */
