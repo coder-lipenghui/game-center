@@ -81,14 +81,13 @@ class DoufangController extends CenterController
         }
         return null;
     }
-
     /**
      * 获取sign
      * @param $key string
      * @param $body array
      * @return string
      */
-    private function getSign($key,$body)
+    protected function getSign($key,$body)
     {
         ksort($body);
         $temp=array();
