@@ -26,6 +26,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'createTime')->textInput() ?>
 
+    <?= $form->field($model, 'mingleGameId')->textInput() ?>
+
     <?= $form->field($model, 'copyright_number')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'copyright_isbn')->textInput(['maxlength' => true]) ?>

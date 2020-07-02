@@ -27,6 +27,14 @@ class MyGameUpdate extends TabGameUpdate
         if ($this->validate())
         {
             $game=TabGames::find()->where(['sku'=>$this->sku])->one();
+            if ($game->mingleGameId)
+            {
+                $tmp=TabGames::find()->where(['id'=>$game->mingleGameId])->one();
+                if (!empty($tmp))
+                {
+                    $game=$tmp;
+                }
+            }
             if ($game)
             {
                 $cdn=TabCdn::find()->where(['gameId'=>$game->id])->one();

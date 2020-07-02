@@ -29,6 +29,14 @@ class MyGameAssets extends TabGameAssets
             $game=TabGames::find()->where(['sku'=>$this->sku])->one();
             if ($game)
             {
+                if ($game->mingleGameId)
+                {
+                    $tmp=TabGames::find()->where(['id'=>$game->mingleGameId])->one();
+                    if (!empty($tmp))
+                    {
+                        $game=$tmp;
+                    }
+                }
                 $cdn=TabCdn::find()->where(['gameId'=>$game->id])->one();
                 if ($cdn)
                 {

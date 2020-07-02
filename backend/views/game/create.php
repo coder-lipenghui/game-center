@@ -70,6 +70,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <div class="panel-heading">
+                <span>游戏互通模式<small>A游戏与B游戏为同一个游戏只是名称不同,B游戏选择与A互通。互通后热更新及分包资源下载均走A游戏的连接</small></span>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <?= $form->field($model, 'mingleGameId')->textInput(['maxlength' => true,'placeholder'=>'需要互通的游戏ID']) ?>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-heading">
                 <span>版号相关</span>
             </div>
             <div class="panel-body">
