@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'gameId')->textInput() ?>
 
-    <?= $form->field($model, 'distributions')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'distributor')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
@@ -51,7 +51,7 @@ use yii\widgets\ActiveForm;
             'maxView'=>4,       //最大选择范围（年）
             'minView'=>0,       //最小选择范围（年）
         ]
-    ])->label(false); ?>
+    ])?>
 
     <?= $form->field($model, 'createTime')->widget(DateTimePicker::classname(), [
 
@@ -67,7 +67,7 @@ use yii\widgets\ActiveForm;
             'maxView'=>4,       //最大选择范围（年）
             'minView'=>0,       //最小选择范围（年）
         ]
-    ])->label(false);?>
+    ])?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

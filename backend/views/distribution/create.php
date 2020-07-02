@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             "data-width"=>"fit",
                             "title"=>"选择游戏"
                         ]
-                    ) ?>
+                    )->label('游戏') ?>
                 </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'distributorId')->dropDownList(
@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             "data-width"=>"fit",
                             "title"=>"选择分销商"
                         ]
-                    ) ?>
+                    )->label('分销商') ?>
                 </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'parentDT')->dropDownList(
@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             "title"=>"选择分销商"
                         ]
 
-                    ) ?>
+                    )->label('分销渠道') ?>
                 </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'platform')->dropDownList(
@@ -68,10 +68,10 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <?= $form->field($model, 'centerLoginKey')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'centerLoginKey')->textInput(['maxlength' => true,'value'=>'KOSD6PXtEkb0fRj@Ce7evfltKCMo568S'])->label('API登录KEY') ?>
                 </div>
                 <div class="col-md-2">
-                    <?= $form->field($model, 'centerPaymentKey')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'centerPaymentKey')->textInput(['maxlength' => true,'value'=>'MkH3!9f*KW1BguWS6cOEzn1EPq%TRA'])->label('API支付KEY') ?>
                 </div>
             </div>
             <div class="row">
@@ -90,6 +90,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-md-2">
                     <?= $form->field($model, 'ratio')->textInput(['maxlength' => true,'value'=>100]) ?>
 
+                </div>
+            </div>
+        </div>
+        <div class="panel-heading">
+            混服模式(可选)
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <?= $form->field($model, 'mingleDistributionId')->textInput() ?>
+                </div>
+                <div class="col-md-3">
+                    <?= $form->field($model, 'mingleServerId')->textInput()?>
                 </div>
             </div>
         </div>
@@ -125,7 +138,10 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-2">
-                    <?= $form->field($model, 'api')->textInput(['maxlength' => true,'placeholder'=>'区分同一家分销商可能存在多个SDK的情况，只做展示']) ?>
+                    <?= $form->field($model, 'api')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-10">
+                    区分同一家分销商可能存在多个SDK的情况，只做展示用
                 </div>
             </div>
         </div>
