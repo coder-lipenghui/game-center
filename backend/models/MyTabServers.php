@@ -63,8 +63,11 @@ class MyTabServers extends TabServers
         $mainServers=[];//100个区合到一个区的时候，减少查询次数
         for ($i=0;$i<count($servers);$i++)
         {
-            $servers[$i]['index']=($servers[$i]['index']-$mingleServerId+1)."";
-            $servers[$i]['name']=$servers[$i]['index']."区";
+            if ($mingleServerId>0)
+            {
+                $servers[$i]['index']=($servers[$i]['index']-$mingleServerId+1)."";
+                $servers[$i]['name']=$servers[$i]['index']."区";
+            }
             if (!empty($servers[$i]['mergeId']))
             {
                 $mergeId=$servers[$i]['mergeId'];
