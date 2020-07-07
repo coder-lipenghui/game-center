@@ -57,8 +57,11 @@ class ProductController extends Controller
      */
     public function actionView($id)
     {
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'games'=>$games
         ]);
     }
 
@@ -95,12 +98,16 @@ class ProductController extends Controller
     {
         $model = $this->findModel($id);
 
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'games'=>$games
         ]);
     }
 

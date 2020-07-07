@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
        <div class="panel-body">
            <?= $this->render('_form', [
            'model' => $model,
+               'games'=>$games
            ]) ?>
        </div>
    </div>
