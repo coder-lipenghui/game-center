@@ -8,6 +8,7 @@
 
 namespace backend\models;
 use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 
 class MyTabServers extends TabServers
 {
@@ -27,6 +28,13 @@ class MyTabServers extends TabServers
                 $filter=[];
             }
         }
+        #区服冠名信息
+        $serverNames=TabServerNaming::find()->select(['serverId','naming'])->where(['gameId'=>$gameId,'distributorId'=>$distributoin->distributorId])->asArray()->all();
+        if (!empty($serverNames))
+        {
+            $serverNames=ArrayHelper::index($serverNames,'serverId');
+        }
+
         $mingleServerId=0;
         if (!empty($distributoin->mingleServerId))
         {
@@ -49,6 +57,7 @@ class MyTabServers extends TabServers
         {
             $query->andWhere(['>=','index',$mingleServerId]);
         }
+
         $servers=$query->all();
         if (empty($servers))
         {
@@ -67,6 +76,10 @@ class MyTabServers extends TabServers
             {
                 $servers[$i]['index']=($servers[$i]['index']-$mingleServerId+1)."";
                 $servers[$i]['name']=$servers[$i]['index']."区";
+            }
+            if ($serverNames && !empty($serverNames[$servers[$i]['id']]))
+            {
+                $servers[$i]['name']=$serverNames[$servers[$i]['id']]['naming'];
             }
             if (!empty($servers[$i]['mergeId']))
             {
