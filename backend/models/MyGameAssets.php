@@ -29,15 +29,19 @@ class MyGameAssets extends TabGameAssets
             $game=TabGames::find()->where(['sku'=>$this->sku])->one();
             if ($game)
             {
-                if ($game->mingleGameId)
+                $cdn=TabCdn::find()->where(['gameId'=>$game->id])->one();
+                if (empty($cdn))
                 {
-                    $tmp=TabGames::find()->where(['id'=>$game->mingleGameId])->one();
-                    if (!empty($tmp))
+                    if ($game->mingleGameId)
                     {
-                        $game=$tmp;
+                        $tmp=TabGames::find()->where(['id'=>$game->mingleGameId])->one();
+                        if (!empty($tmp))
+                        {
+                            $game=$tmp;
+                            $cdn=TabCdn::find()->where(['gameId'=>$game->id])->one();
+                        }
                     }
                 }
-                $cdn=TabCdn::find()->where(['gameId'=>$game->id])->one();
                 if ($cdn)
                 {
                     //检测渠道差异更新
