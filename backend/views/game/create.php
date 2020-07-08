@@ -9,6 +9,11 @@ use kartik\datetime\DateTimePicker;
 $this->title = Yii::t('app', '新增游戏');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '游戏管理'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->registerJs("
+$(function () {
+  $('[data-toggle=\"tooltip\"]').tooltip()
+})
+");
 ?>
 <div class="tab-games-create">
     <?php
@@ -70,12 +75,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <div class="panel-heading">
-                <span>游戏互通模式<small>A游戏与B游戏为同一个游戏只是名称不同,B游戏选择与A互通。互通后热更新及分包资源下载均走A游戏的连接</small></span>
+                <span>游戏互通模式<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-html="true" data-placement="right" title="A游戏与B游戏为同一个游戏只是名称不同,B游戏选择与A互通。互通后热更新及分包资源下载均走A游戏的连接"></span></span>
             </div>
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-md-2">
-                        <?= $form->field($model, 'mingleGameId')->textInput(['maxlength' => true,'placeholder'=>'需要互通的游戏ID']) ?>
+                    <div class="col-md-3">
+                        <?= $form->field($model, 'mingleGameId')->textInput(['maxlength' => true,'placeholder'=>'需要互通的游戏ID,无互通留空'])->label(false) ?>
                     </div>
                 </div>
             </div>
