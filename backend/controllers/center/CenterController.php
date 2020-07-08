@@ -191,7 +191,7 @@ class CenterController extends Controller
         $notice="";
         if (empty($notices))//默认构建一条公告
         {
-            $notice="欢迎|||亲爱的玩家您好，欢迎来到《".$game->name."》。如果您在游戏内遇到问题，请先联系我们的客服 我们将尽快为您解决问题。";
+            $notice="欢迎|||亲爱的玩家您好,如果您在游戏内遇到问题，请先联系我们的客服 我们将尽快为您解决问题。";
         }else {
             $temp=[];
             for ($i = 0; $i < count($notices); $i++){
