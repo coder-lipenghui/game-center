@@ -20,6 +20,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'parentDT')->textInput() ?>
 
+    <?= $form->field($model, 'mingleDistributionId')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'mingleServerId')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'centerLoginKey')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'centerPaymentKey')->textInput(['maxlength' => true]) ?>

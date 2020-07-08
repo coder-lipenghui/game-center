@@ -96,6 +96,19 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
             </div>
         </div>
         <div class="panel-heading">
+            <b>渠道互通</b>&nbsp;<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-html="true" data-placement="right" title="1.A、B为同一个游戏的渠道<br/>2.B与A互通后区服信息则与A相同<br/>3.可选择从多少区开始互通:B选择从A的2区开始互通，则A的2区在B渠道会显示为1区"></span>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <?= $form->field($model, 'mingleDistributionId')->textInput(['placeholder'=>'非互通模式留空'])->label("混服渠道ID") ?>
+                </div>
+                <div class="col-md-3">
+                    <?= $form->field($model, 'mingleServerId')->textInput(['placeholder'=>'非互通模式留空'])->label("混服起始区")?>
+                </div>
+            </div>
+        </div>
+        <div class="panel-heading">
             包信息：
         </div>
         <div class="panel-body">

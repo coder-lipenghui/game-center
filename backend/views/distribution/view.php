@@ -66,6 +66,8 @@ manifestPlaceholders=[<br/>
             'platform',
             'distributorId',
             'parentDT',
+            'mingleDistributionId',
+            'mingleServerId',
             'centerLoginKey',
             'centerPaymentKey',
             'packageName',
