@@ -96,6 +96,7 @@ $('#paramModal').on('show.bs.modal', function (event) {
                     ],
                     [
                         'attribute'=>'distributorId',
+                        'label'=>'分销商',
                         'format'=>'html',
                         'value'=>function($model){
                             $platform="未知";
@@ -159,6 +160,7 @@ $('#paramModal').on('show.bs.modal', function (event) {
                     ],
                     [
                         'attribute'=>'rebate',
+                        'label'=>'好友返利',
                         'value'=>function($model){
                             if($model->rebate<=0)
                             {

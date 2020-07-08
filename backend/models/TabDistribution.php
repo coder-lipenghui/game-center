@@ -27,6 +27,9 @@ use Yii;
  * @property int $enabled 该分销渠道是否启用
  * @property int $isDebug 是否已经上线
  * @property string $api 登录、充值验证接口
+ * @property int $versionCode 版本ID
+ * @property string $versionName 版本Name
+ * @property string $packageName 包ID
  */
 class TabDistribution extends \yii\db\ActiveRecord
 {
@@ -45,10 +48,10 @@ class TabDistribution extends \yii\db\ActiveRecord
     {
         return [
             [['gameId', 'distributorId', 'enabled'], 'required'],
-            [['gameId', 'distributorId', 'parentDT', 'mingleDistributionId', 'mingleServerId', 'support', 'ratio', 'rebate', 'enabled', 'isDebug'], 'integer'],
+            [['gameId', 'distributorId', 'parentDT', 'mingleDistributionId', 'mingleServerId', 'support', 'ratio', 'rebate', 'enabled', 'isDebug', 'versionCode'], 'integer'],
             [['platform'], 'string', 'max' => 50],
             [['centerLoginKey', 'centerPaymentKey'], 'string', 'max' => 32],
-            [['appID', 'appKey', 'appLoginKey', 'appPaymentKey', 'appPublicKey'], 'string', 'max' => 255],
+            [['appID', 'appKey', 'appLoginKey', 'appPaymentKey', 'appPublicKey', 'versionName', 'packageName'], 'string', 'max' => 255],
             [['api'], 'string', 'max' => 100],
         ];
     }
@@ -79,6 +82,9 @@ class TabDistribution extends \yii\db\ActiveRecord
             'enabled' => Yii::t('app', 'Enabled'),
             'isDebug' => Yii::t('app', 'Is Debug'),
             'api' => Yii::t('app', 'Api'),
+            'versionCode' => Yii::t('app', 'Version Code'),
+            'versionName' => Yii::t('app', 'Version Name'),
+            'packageName' => Yii::t('app', 'Package Name'),
         ];
     }
     /**

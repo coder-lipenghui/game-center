@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                             "data-width"=>"fit",
                             "title"=>"选择分销商"
                         ]
-                    ) ?>
+                    )->label("分销商") ?>
                 </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'parentDT')->dropDownList(
@@ -53,7 +53,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                             "title"=>"选择分销商"
                         ]
 
-                    ) ?>
+                    )->label("父级分销商") ?>
                 </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'platform')->dropDownList(
@@ -65,7 +65,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                             "data-width"=>"fit",
                             "title"=>"设备平台"
                         ]
-                    ) ?>
+                    )->label("平台") ?>
                 </div>
             </div>
             <div class="row">
@@ -96,6 +96,23 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
             </div>
         </div>
         <div class="panel-heading">
+            包信息：
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <?= $form->field($model, 'packageName')->textInput(['maxlength' => true,'placeholder'=>'例:com.xxdweb.demo'])->label("应用ID(ApplicationID)") ?>
+                </div>
+                <div class="col-md-2">
+                    <?= $form->field($model, 'versionCode')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-2">
+                    <?= $form->field($model, 'versionName')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+
+        </div>
+        <div class="panel-heading">
             分销渠道参数：
         </div>
         <div class="panel-body">
@@ -122,7 +139,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
             </div>
         </div>
         <div class="panel-heading">
-            其他：
+            其他：其他：(中控controller id用于安卓打包时的channel，例:<b>quick</b>,则login url信息为:center.xxdweb.com/center/<b>quick</b>/login)
         </div>
         <div class="panel-body">
             <div class="row">
