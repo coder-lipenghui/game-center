@@ -22,10 +22,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="panel-body">
             <?php Pjax::begin(); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
+            <?php
+//                echo $this->render('_search', ['model' => $searchModel]);
+            ?>
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
                 'columns' => ['id',
                     [
                         'attribute'=>'gameId',
@@ -33,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     ['attribute'=>'distributorId','label'=>'分销商','value'=>'distributor.name'],
                     'name',
-                    'index',
+                    ['attribute'=>'index','label'=>'区Index'],
                     'status',
                     'url:url',
 //                    'netPort',
@@ -41,8 +43,8 @@ $this->params['breadcrumbs'][] = $this->title;
 //                    'contentPort',
 //                    'smallDbPort',
 //                    'bigDbPort',
-                    'mergeId',
-                    'openDateTime',
+                    ['attribute'=>'mergeId','label'=>'合区至','value'=>function($model){if (empty($model->mergeId)) return "未合区";}],
+                    ['attribute'=>'openDateTime','label'=>'开区时间'],
                     ['class' => 'yii\grid\ActionColumn'],
                 ],
             ]); ?>

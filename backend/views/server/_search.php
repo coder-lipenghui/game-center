@@ -17,41 +17,49 @@ use yii\widgets\ActiveForm;
             'data-pjax' => 1
         ],
     ]); ?>
+    <div class="row">
+        <div class="col-md-2">
+            <?= $form->field($model, 'gameId')->label(false) ?>
+        </div>
+        <div class="col-md-2">
+            <?= $form->field($model, 'distributorId')->label(false) ?>
+        </div>
+        <div class="col-md-2">
+            <?= $form->field($model, 'name')->label(false) ?>
+        </div>
+        <div class="col-md-2">
+            <?= $form->field($model, 'index')->label(false) ?>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
+                <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-outline-secondary']) ?>
+            </div>
+        </div>
+        <?php // echo $form->field($model, 'id')->label(false) ?>
+        <?php // echo $form->field($model, 'status') ?>
 
-    <?= $form->field($model, 'id') ?>
+        <?php // echo $form->field($model, 'url') ?>
 
-    <?= $form->field($model, 'gameId') ?>
+        <?php // echo $form->field($model, 'netPort') ?>
 
-    <?= $form->field($model, 'distributionId') ?>
+        <?php // echo $form->field($model, 'masterPort') ?>
 
-    <?= $form->field($model, 'name') ?>
+        <?php // echo $form->field($model, 'contentPort') ?>
 
-    <?= $form->field($model, 'index') ?>
+        <?php // echo $form->field($model, 'smallDbPort') ?>
 
-    <?php // echo $form->field($model, 'status') ?>
+        <?php // echo $form->field($model, 'bigDbPort') ?>
 
-    <?php // echo $form->field($model, 'url') ?>
+        <?php // echo $form->field($model, 'mergeId') ?>
 
-    <?php // echo $form->field($model, 'netPort') ?>
+        <?php // echo $form->field($model, 'openDateTime') ?>
 
-    <?php // echo $form->field($model, 'masterPort') ?>
-
-    <?php // echo $form->field($model, 'contentPort') ?>
-
-    <?php // echo $form->field($model, 'smallDbPort') ?>
-
-    <?php // echo $form->field($model, 'bigDbPort') ?>
-
-    <?php // echo $form->field($model, 'mergeId') ?>
-
-    <?php // echo $form->field($model, 'openDateTime') ?>
-
-    <?php // echo $form->field($model, 'createTime') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-outline-secondary']) ?>
+        <?php // echo $form->field($model, 'createTime') ?>
     </div>
+
+
+
 
     <?php ActiveForm::end(); ?>
 
