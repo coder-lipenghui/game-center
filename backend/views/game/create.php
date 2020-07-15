@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\datetime\DateTimePicker;
+use backend\models\TabGameVersion;
+use yii\helpers\ArrayHelper;
 /* @var $this yii\web\View */
 /* @var $model backend\models\TabGames */
 
@@ -32,8 +34,8 @@ $(function () {
                 <div class="col-md-1">
                     <?= $form->field($model, 'sku')->textInput(['maxlength' => true,'placeholder'=>'例:CJZC']) ?>
                 </div>
-                <div class="col-md-1">
-                    <?= $form->field($model, 'logo')->textInput(['maxlength' => true]) ?>
+                <div class="col-md-2">
+                    <?= $form->field($model, 'versionId')->dropDownList(ArrayHelper::map(TabGameVersion::find()->asArray()->all(),"id","name")) ?>
                 </div>
 
             </div>

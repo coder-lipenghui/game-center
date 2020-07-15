@@ -34,6 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'logo',
             'info:ntext',
             'sku',
+            'versionId',
             'loginKey',
             'mingleGameId',
             'paymentKey',

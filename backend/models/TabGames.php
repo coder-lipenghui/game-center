@@ -12,6 +12,7 @@ use Yii;
  * @property string $logo 游戏LOGO
  * @property string $info 游戏描述信息
  * @property string $sku
+ * @property int $versionId 游戏版本
  * @property string $loginKey 登录验证KEY
  * @property string $paymentKey 发货验证KEY
  * @property string $createTime 入库时间
@@ -39,8 +40,8 @@ class TabGames extends \yii\db\ActiveRecord
         return [
             [['name', 'sku', 'createTime'], 'required'],
             [['info'], 'string'],
+            [['versionId', 'mingleGameId'], 'integer'],
             [['createTime'], 'safe'],
-            [['mingleGameId'], 'integer'],
             [['name', 'sku'], 'string', 'max' => 45],
             [['logo'], 'string', 'max' => 200],
             [['loginKey', 'paymentKey'], 'string', 'max' => 64],
@@ -60,6 +61,7 @@ class TabGames extends \yii\db\ActiveRecord
             'logo' => Yii::t('app', 'Logo'),
             'info' => Yii::t('app', 'Info'),
             'sku' => Yii::t('app', 'Sku'),
+            'versionId' => Yii::t('app', 'Version ID'),
             'loginKey' => Yii::t('app', 'Login Key'),
             'paymentKey' => Yii::t('app', 'Payment Key'),
             'createTime' => Yii::t('app', 'Create Time'),
@@ -107,5 +109,10 @@ class TabGames extends \yii\db\ActiveRecord
     public function getTabServers()
     {
         return $this->hasMany(TabServers::className(), ['gameId' => 'id']);
+    }
+
+    public function getVersion()
+    {
+        return $this->hasOne(TabGameVersion::className(),['id'=>'versionId']);
     }
 }

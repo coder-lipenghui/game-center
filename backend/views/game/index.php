@@ -88,7 +88,8 @@ $('#paramModal').on('show.bs.modal', function (event) {
 //                        }
 //                    }],
                     'sku',
-                    ['attribute'=>'createTime','value'=>function($model){return date('Y-m-d',strtotime($model->createTime));}],
+//                    ['attribute'=>'createTime','value'=>function($model){return date('Y-m-d',strtotime($model->createTime));}],
+                    ['attribute'=>'versionId','label'=>'隶属版本','value'=>'version.name'],
                     [
                         'label'=>'版号信息',
                         'class' => 'common\components\ActionColumn',

@@ -20,6 +20,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'sku')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'versionId')->textInput() ?>
+
     <?= $form->field($model, 'loginKey')->textInput() ?>
 
     <?= $form->field($model, 'paymentKey')->textInput() ?>
