@@ -2,15 +2,14 @@
 
 namespace backend\models;
 
-use backend\models\TabCdkeyVariety;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use yii\helpers\ArrayHelper;
+use backend\models\TabGameVersion;
 
 /**
- * TabCdkeyVarietySearch represents the model behind the search form of `backend\models\TabCdkeyVariety`.
+ * TabGameVersionSearch represents the model behind the search form of `backend\models\TabGameVersion`.
  */
-class TabCdkeyVarietySearch extends TabCdkeyVariety
+class TabGameVersionSearch extends TabGameVersion
 {
     /**
      * {@inheritdoc}
@@ -18,8 +17,8 @@ class TabCdkeyVarietySearch extends TabCdkeyVariety
     public function rules()
     {
         return [
-            [['id', 'gameId', 'once'], 'integer'],
-            [['name', 'items'], 'safe'],
+            [['id'], 'integer'],
+            [['name', 'comment'], 'safe'],
         ];
     }
 
@@ -41,7 +40,7 @@ class TabCdkeyVarietySearch extends TabCdkeyVariety
      */
     public function search($params)
     {
-        $query = TabCdkeyVariety::find();
+        $query = TabGameVersion::find();
 
         // add conditions that should always apply here
 
@@ -60,30 +59,11 @@ class TabCdkeyVarietySearch extends TabCdkeyVariety
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'gameId' => $this->gameId,
-            'once' => $this->once,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'items', $this->items]);
+            ->andFilterWhere(['like', 'comment', $this->comment]);
 
         return $dataProvider;
-    }
-    public function searchByGameId($params)
-    {
-        $query = TabCdkeyVariety::find();
-
-        if (empty($params['gameId']))
-        {
-            return ['code'=>'-1','msg'=>'参数不正确'];
-        }
-
-
-        // grid filtering conditions
-        $data=$query->select(['id','name'])->where([
-            'gameId' => $params['gameId'],
-        ])->asArray()->all();
-
-        return $data;
     }
 }

@@ -56,8 +56,8 @@ class TabGameScript extends \yii\db\ActiveRecord
             'logTime' => Yii::t('app', 'Log Time'),
         ];
     }
-    public function getGame()
+    public function getVersion()
     {
-        return $this->hasOne(TabGames::className(), ['id' => 'gameId']);
+        return $this->hasOne(TabGameVersion::className(), ['id' => 'gameId']);
     }
 }

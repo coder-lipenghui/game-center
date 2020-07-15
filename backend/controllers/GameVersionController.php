@@ -2,25 +2,17 @@
 
 namespace backend\controllers;
 
-use backend\models\MyTabGameScript;
-use backend\models\MyTabPermission;
-use backend\models\MyTabServers;
-use backend\models\ops\MyTabUpdateScript;
-use backend\models\TabGames;
-use backend\models\TabGameVersion;
 use Yii;
-use backend\models\TabGameScript;
-use backend\models\TabGameScriptSearch;
-use yii\data\ActiveDataProvider;
-use yii\helpers\ArrayHelper;
+use backend\models\TabGameVersion;
+use backend\models\TabGameVersionSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * GameScriptController implements the CRUD actions for TabGameScript model.
+ * GameVersionController implements the CRUD actions for TabGameVersion model.
  */
-class GameScriptController extends Controller
+class GameVersionController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -38,72 +30,53 @@ class GameScriptController extends Controller
     }
 
     /**
-     * Lists all TabGameScript models.
+     * Lists all TabGameVersion models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new TabGameScriptSearch();
+        $searchModel = new TabGameVersionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        $permissionModel=new MyTabPermission();
-        $games=$permissionModel->allowAccessGame();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'games'=>$games
         ]);
     }
 
     /**
-     * Displays a single TabGameScript model.
+     * Displays a single TabGameVersion model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        $model=$this->findModel($id);
-        $gameQuery=TabGames::find()->select(['id'])->where(['versionId'=>$model->gameId])->asArray();
-        $games=$gameQuery->all();
-        $servers = MyTabServers::getServersByGameId(ArrayHelper::getColumn($games,'id'));
-        $servers=ArrayHelper::map($servers,"index","id","name");
         return $this->render('view', [
-            'model' => $model,
-            'servers'=>$servers,
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new TabGameScript model.
+     * Creates a new TabGameVersion model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $permissionModel=new MyTabPermission();
-        $games=$permissionModel->allowAccessGame();
-        $versions=TabGameVersion::find()->asArray()->all();
-        $versions=ArrayHelper::map($versions,'id','name');
-        $model = new MyTabGameScript();
-        if($model->uploadZip())
-        {
+        $model = new TabGameVersion();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
+
         return $this->render('create', [
             'model' => $model,
-            'games'=>$games,
-            'versions'=>$versions,
         ]);
     }
-    public function actionUpdateScript()
-    {
-        $model=new MyTabUpdateScript();
-        return $model->doUpdate();
-    }
+
     /**
-     * Updates an existing TabGameScript model.
+     * Updates an existing TabGameVersion model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -123,7 +96,7 @@ class GameScriptController extends Controller
     }
 
     /**
-     * Deletes an existing TabGameScript model.
+     * Deletes an existing TabGameVersion model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -137,15 +110,15 @@ class GameScriptController extends Controller
     }
 
     /**
-     * Finds the TabGameScript model based on its primary key value.
+     * Finds the TabGameVersion model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TabGameScript the loaded model
+     * @return TabGameVersion the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TabGameScript::findOne($id)) !== null) {
+        if (($model = TabGameVersion::findOne($id)) !== null) {
             return $model;
         }
 

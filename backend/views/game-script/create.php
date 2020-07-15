@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-4">
-                    <?= $form->field($model, 'gameId')->dropDownList($games) ?>
+                    <?= $form->field($model, 'gameId')->dropDownList($versions) ?>
                 </div>
             </div>
             <div class="row">

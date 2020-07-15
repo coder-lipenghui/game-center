@@ -118,13 +118,20 @@ class MyTabServers extends TabServers
     }
     public static function getServersByGameId($gameId)
     {
-        return self::find()
+        $query=self::find()
+            ->select([
+                "name"=>"tab_games.name",
+                "serverName"=>"tab_servers.name",
+                "id"=>"tab_servers.id",
+                "index"=>"tab_servers.index"
+            ])
             ->where([
                 'gameId'=>$gameId,
                 'mergeId'=>null,
-            ])
+            ])->join("LEFT JOIN","tab_games","tab_games.id=tab_servers.gameId")
             ->groupBy(['url'])
-            ->asArray()->all();
+            ->asArray();
+        return $query->all();
     }
     public static function todayOpen()
     {

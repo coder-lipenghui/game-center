@@ -1,4 +1,16 @@
-function selectAll(page) {
+function selecteAll() {
+    var selected=$("#selectedAll").is(':checked')
+    if (selected)
+    {
+        $("input.server_input").attr('checked',true);
+        $("input.game_input").attr('checked',true);
+    }else {
+        $("input.server_input").attr('checked',false);
+        $("input.game_input").attr('checked',false);
+    }
+}
+
+function selectOneGame(page) {
     var selected=$("#page_selecte_"+page).is(':checked')
     if (selected)
     {
@@ -7,7 +19,8 @@ function selectAll(page) {
         $(".page_checkbox_" + page).attr('checked',false)
     }
 }
-function updateSomeServer() {
+
+function updateSomeServer(updateAll) {
     var gameId=$("#gameId").val();
     var fileName=$("#fileName").val();
     $("#updateInfo").empty();
@@ -16,7 +29,7 @@ function updateSomeServer() {
     {
         var server=servers[i];
         var serverId=$(server).attr('value');
-        if ($(server).is(':checked'))
+        if ($(server).is(':checked') || updateAll)
         {
             $.ajax({
                 url:"../../game-script/update-script",
@@ -36,7 +49,7 @@ function updateSomeServer() {
                         $("#server_label_"+data.id).removeClass("label-danger");
                         $("#server_label_"+data.id).addClass("label-success");
                     }
-                    $("#updateInfo").append("<label class='"+style+"'>["+data.id+":"+data.name+"]:"+data.msg+"</label>");
+                    $("#updateInfo").append("<label class='"+style+"'>["+data.game+"]["+data.name+"]:</label>"+data.msg+"<br/>");
                 },
                 error:function (msg) {
                    // console.log("请求出现一场:"+msg)
@@ -46,9 +59,10 @@ function updateSomeServer() {
 
     }
 }
-function upateAllServer() {
-    
+
+function updateAllServer() {
+    // updateSomeServer(true)
 }
 function watch(target) {
-    console.log($(target).is(':checked'));
+    // console.log($(target).is(':checked'));
 }

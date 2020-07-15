@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                ['class' => 'yii\grid\SerialColumn'],
                 ['label'=>'游戏名称',
                     'attribute'=>'gameId',
-                    'value'=>'game.name',
+                    'value'=>'version.name',
                 ],
                 'fileName',
                 'fileSize',
