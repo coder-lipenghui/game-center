@@ -157,17 +157,19 @@ class TabSupportCreate extends TabSupport
     }
     private function deliver($support)
     {
-        $requestBody=[
-            'channelId'=>$support->distributorId,
-            'paytouser'=>$support->roleAccount,
-            'paynum'=>time(),//TODO 生成一个唯一值，防止同时发放
-            'payscript' =>'',
-            'paygold'=>$support->number,
-            'paymoney'=>$support->number/100,
-            'flags'=>1,// 1：充值发放 其他：非充值发放
-            'paytime'=>time(),
-            'serverid'=>$support->serverId,
-            'type'=>1
+        $requestBody = [
+            'channelId' => $support->distributorId,
+            'paytouser' => $support->roleAccount,
+            'roleid' => $support->roleId,
+            'paynum' => time(),
+            'payscript' => '',
+            'paygold' => $support->number,
+            'paymoney' => $support->number/100,
+            'flags' => 1,// 1：充值发放 其他：非充值发放
+            'paytime' => time(),
+            'serverid' => $support->serverId,
+            'type' => 1,
+            'port'=>''
         ];
         $game=TabGames::find()->where(['id'=>$support->gameId])->one();
         if($game)
@@ -176,11 +178,24 @@ class TabSupportCreate extends TabSupport
             if ($server)
             {
                 $paymentKey=$game->paymentKey;
-
-                $requestBody['flag'] = md5($requestBody['type'].$requestBody['payscript'].$requestBody['paynum'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
-                $url="http://".$server->url."/app/ckcharge.php?".http_build_query($requestBody);
+                $requestBody['port']=$server->masterPort;
+                $requestBody['flag'] = md5($requestBody['type'] . $requestBody['payscript'] . $requestBody['paynum'] . $requestBody['roleid'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
+                $url="http://".$server->url;
                 $curl=new CurlHttpClient();
-                $resultJson=$curl->fetchUrl($url);
+                $resultJson="";
+                if (true)//新后台的发货接口
+                {
+                    $getBody=[
+                        'sku'=>$game->sku,
+                        'serverId'=>$server->index,
+                        'db'=>$requestBody['type']==1?2:1 //脚本类型的需要走octgame,常规类型走ocenter
+                    ];
+                    $url = $url. "/api/payment?" . http_build_query($getBody);
+                    $resultJson =$curl->sendPostData($url,$requestBody);
+                }else{
+                    $url = $url. "/app/ckcharge.php?" . http_build_query($requestBody);
+                    $resultJson = $curl->fetchUrl($url);
+                }
                 $result=json_decode($resultJson,true);
                 $msg="";
                 $code=$result['code'];
