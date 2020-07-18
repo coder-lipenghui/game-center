@@ -145,6 +145,13 @@ class MyTabPermission extends TabPermission
         $have=TabPermission::find()->select(['distributorId'])->where(['uid'=>Yii::$app->user->id,'gameId'=>$gameId,'distributorId'=>$distributorId])->count();
         if (!empty($have) && $have>0)
         {
+            $tmpQuery=TabDistribution::find()->where(['gameId'=>$gameId,'distributorId'=>$distributorId])->andWhere([">",'mingleDistributionId',0]);
+            $mingleDistributionId=$tmpQuery->one();
+            if (!empty($mingleDistributionId))
+            {
+                $tmp=TabDistribution::find()->where(['id'=>$mingleDistributionId->mingleDistributionId])->one();
+                $distributorId=$tmp->distributorId;
+            }
             $query=TabServers::find()
                 ->select(['name','id'])
                 ->where(['gameId'=>$gameId,'distributorId'=>$distributorId])
