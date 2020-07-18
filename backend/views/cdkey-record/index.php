@@ -40,9 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute'=>'serverId',
-                    'value'=>function($model){
-                        return $model->server->name.'('.$model->serverId.')';
-                    }
+//                    'value'=>function($model){
+//                        return $model->server->name.'('.$model->serverId.')';
+//                    }
                 ],
                 //'roleId',
                 'roleName',

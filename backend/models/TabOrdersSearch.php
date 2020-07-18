@@ -80,7 +80,7 @@ class TabOrdersSearch extends TabOrders
             ->andFilterWhere(['like', 'payStatus', $this->payStatus])
             ->andFilterWhere(['like', 'payMode', $this->payMode])
             ->andFilterWhere(['like', 'delivered', $this->delivered]);
-
+//        $query->orderBy('payStatus DESC');
         return $dataProvider;
     }
 }

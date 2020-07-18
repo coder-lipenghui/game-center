@@ -83,4 +83,12 @@ class TabOrders extends \yii\db\ActiveRecord
             'delivered' => Yii::t('app', 'Delivered'),
         ];
     }
+    public function getGame()
+    {
+        return $this->hasOne(TabGames::className(),['id'=>'gameId']);
+    }
+    public function getServer()
+    {
+        return $this->hasOne(TabServers::className(),['id'=>'gameServerId']);
+    }
 }
