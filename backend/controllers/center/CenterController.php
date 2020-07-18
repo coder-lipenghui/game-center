@@ -33,6 +33,7 @@ use backend\models\TabGames;
 use backend\models\TabOrders;
 use backend\models\TabOrdersDebug;
 use backend\models\TabPlayers;
+use backend\models\TabProduct;
 use backend\models\TabServers;
 use backend\models\TabWhitelist;
 use common\helps\CurlHttpClient;
@@ -435,7 +436,12 @@ class CenterController extends Controller
                 }
                 if ($order!=null)
                 {
-//                    $product=TabProduct::find()->where(['id'=>$order->productId])
+                    $product=TabProduct::find()->where(['productId'=>$order->productId,'gameId'=>$order->gameId])->one();
+                    $productName=$order->productName;
+                    if (!empty($product))
+                    {
+                        $productName=$product->productName;
+                    }
                     $distributionOrder=$this->getOrderFromDistribution($requestData,$distribution,$order);
 
                     $result['code']=1;
@@ -443,7 +449,7 @@ class CenterController extends Controller
                     $result['data']=[
                         'orderId'=>$order->orderId,
                         'distributionOrderId'=>$distributionOrderId,
-                        'productName'=>$order->productName,
+                        'productName'=>$productName,
                         'productPrice'=>$order->payAmount,
                     ];
                     if ($distributionOrder!=null)
@@ -563,6 +569,7 @@ class CenterController extends Controller
         $sign      = md5($account . $loginTime . $game->loginKey);
         $getBody=[
             'sku'=>$game->sku,
+            'did'=>$server->distributorId,
             'serverId'=>$server->index,
             'db'=>2
         ];

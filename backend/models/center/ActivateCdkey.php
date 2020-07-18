@@ -47,93 +47,101 @@ class ActivateCdkey extends TabCdkeyRecord
                 $distribution=TabDistribution::findOne(['id'=>$this->distributionId]);
 //                if($distribution){
                 //玩家检测
-               $player=TabPlayers::find()->where(['account'=>$this->account])->one();
+                $player=TabPlayers::find()->where(['account'=>$this->account])->one();
                 if ($player)
                 {
                     //激活码检测
+//                    exit("distributorID:".$distribution->distributorId);
                     $cdkeyModel=new AutoCDKEYModel();
                     $cdkeyModel::TabSuffix($game->id,$distribution->distributorId);
                     $query=$cdkeyModel::find();
                     $query->where(['cdkey'=>$this->cdkey]);
                     $cdkey=$cdkeyModel::find()->where(['cdkey'=>$this->cdkey])->one();
+
                     if ($cdkey)
                     {
-                        //激活码类型限制：角色只能使用一次
-                        $variety=TabCdkeyVariety::findOne(['id'=>$cdkey->varietyId]);
-                        if ($variety->once===1)
+                        $used=self::find()->where(['cdkey'=>$this->cdkey,'varietyId'=>$cdkey->varietyId])->one();
+                        if (!empty($used))
                         {
-                            $used=$this::find()->where(['varietyId'=>$cdkey->varietyId,'roleId'=>$this->roleId])->one();
-                            if($used)
+                            return ['code'=>-6,'msg'=>'该激活码已使用'];
+                        }
+                        //激活码类型限制：角色只能使用一次
+                        $variety=TabCdkeyVariety::find()->where(['id'=>$cdkey->varietyId])->one();
+                        if (!empty($variety->once))
+                        {
+                            $once=$this::find()->where(['varietyId'=>$cdkey->varietyId,'roleId'=>$this->roleId])->one();
+                            if($once)
                             {
                                 return ['code'=>-1,'msg'=>'该类型激活码只能使用一次'];
                             }
                         }
-                        if (!$cdkey->used)
-                        {
-                            //记录使用信息
-                            $this->setAttribute('gameId',$game->id);
-                            $this->setAttribute('logTime',time());
-                            $this->varietyId=$cdkey->varietyId;
-                            if ($this->save())
-                            {
-                                //发货
-                                $server=TabServers::findOne(['id'=>$this->serverId]);
-                                $curl=new CurlHttpClient();
-                                $sign=md5($this->roleId.$this->roleName.$this->cdkey.$variety->items.$variety->name.$game->paymentKey);
-                                $body=[
-                                    'roleId'=>$this->roleId,
-                                    'roleName'=>$this->roleName,
-                                    'cdkey'=>$this->cdkey,
-                                    'variety'=>$variety->name,
-                                    'item'=>$variety->items,
-                                    'port'=>$server->masterPort,
-                                    'sign'=>$sign
-                                ];
-                                $get=[
-                                    'sku'=>$game->sku,
-                                    'serverId'=>$server->index,
-                                    'db'=>1
-                                ];
-                                $json=null;
-                                if (true)//新接口
-                                {
-                                    $url='http://'.$server->url.'/api/cdkey?'.http_build_query($get);
-                                    $json=$curl->sendPostData($url,$body);
-                                }else{
-                                    $url='http://'.$server->url.'/app/ckgift.php?';
-                                    $json=$curl->fetchUrl($url.http_build_query($body));
-                                }
-
-                                if ($curl->getHttpResponseCode()==200)
-                                {
-                                    $result=json_decode($json,true);
-                                    $code=$result['code'];
-                                    if ($code==1)
-                                    {
-                                        //激活码状态更改
-                                        $cdkey->setAttribute('used',1);
-                                        if($cdkey->save())
-                                        {
-                                            return ['code'=>1,'msg'=>'激活成功,请打开背包查看'];
-                                        }else{
-                                            return ['code'=>-7,'msg'=>'激活码状态更新失败'];
-                                        }
-                                    }else{
-                                        //-1：参数错误 -2：连接失败 -3：数据库选取失败 -4：数据写入失败 -5：sign验证失败
-                                        \Yii::error($body,'order');
-                                        return ['code'=>-10,'msg'=>"激活失败[$code]"];
-                                    }
-                                }else{
-                                    \Yii::error($url.http_build_query($body),'cdkey');
-                                    return ['code'=>-9,'msg'=>'激活出现异常'];
-                                }
-                            }else{
-                                return ['code'=>-8,'msg'=>'激活码激活失败'];
-                            }
-
-                        }else{
+                        if (!empty($cdkey->used) || $cdkey->used==1) {
                             return ['code'=>-6,'msg'=>'该激活码已使用'];
                         }
+                        //记录使用信息
+                        $this->setAttribute('gameId',$game->id);
+                        $this->setAttribute('logTime',time());
+                        $this->varietyId=$cdkey->varietyId;
+                        if ($this->save())
+                        {
+                            //发货
+                            $server=TabServers::findOne(['id'=>$this->serverId]);
+                            $curl=new CurlHttpClient();
+                            $sign=md5($this->roleId.$this->roleName.$this->cdkey.$variety->items.$variety->name.$game->paymentKey);
+                            $body=[
+                                'roleId'=>$this->roleId,
+                                'roleName'=>$this->roleName,
+                                'cdkey'=>$this->cdkey,
+                                'variety'=>$variety->name,
+                                'item'=>$variety->items,
+                                'port'=>$server->masterPort,
+                                'sign'=>$sign
+                            ];
+                            $get=[
+                                'sku'=>$game->sku,
+                                'did'=>$server->distributorId,
+                                'serverId'=>$server->index,
+                                'db'=>1
+                            ];
+                            $json=null;
+                            $url='';
+                            if (true)//新接口
+                            {
+                                $url='http://'.$server->url.'/api/cdkey?'.http_build_query($get);
+                                $json=$curl->sendPostData($url,$body);
+                            }else{
+                                $url='http://'.$server->url.'/app/ckgift.php?';
+                                $json=$curl->fetchUrl($url.http_build_query($body));
+                            }
+
+                            if ($curl->getHttpResponseCode()==200)
+                            {
+                                $result=json_decode($json,true);
+                                $code=$result['code'];
+                                if ($code==1)
+                                {
+                                    //激活码状态更改
+                                    $cdkey->setAttribute('used',1);
+                                    if($cdkey->save())
+                                    {
+                                        return ['code'=>1,'msg'=>'激活成功,请打开背包查看'];
+                                    }else{
+                                        return ['code'=>-7,'msg'=>'激活码状态更新失败'];
+                                    }
+                                }else{
+                                    //-1：参数错误 -2：连接失败 -3：数据库选取失败 -4：数据写入失败 -5：sign验证失败
+                                    \Yii::error($body,'order');
+                                    return ['code'=>-10,'msg'=>"激活失败[$code]"];
+                                }
+                            }else{
+                                \Yii::error($url.http_build_query($body),'cdkey');
+                                return ['code'=>-9,'msg'=>'激活出现异常'];
+                            }
+                        }else{
+                            return ['code'=>-8,'msg'=>'激活码激活失败'];
+                        }
+
+
                     }else{
                         return ['code'=>-5,'msg'=>'激活码不存在'];
                     }

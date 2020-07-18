@@ -41,11 +41,11 @@ class BaseController extends Controller
      * 获取游戏服务器的API接口地址
      *
      * @param $gid 游戏ID
-     * @param $pid 平台ID
+     * @param $did 平台ID
      * @param $sid 区服ID
      * @return string 服务器的真实url地址
      */
-    protected function initApiUrl($gid,$pid,$sid,$params)
+    protected function initApiUrl($gid,$did,$sid,$params)
     {
         $game=TabGames::find()->where(['id'=>$gid])->one();
         if ($game)
@@ -55,10 +55,11 @@ class BaseController extends Controller
             {
                 $defaultParam=[
                     'sku'=>$game->sku,
+                    'did'=>$did,
                     'serverId'=>$server->index,
                     'db'=>$this->apiDb];
                 $params=array_merge($params,$defaultParam);
-                if (false)
+                if (false)//本地测试
                 {
                     $this->apiUrl="http://gameapi.com:8888/";
                 }else{
