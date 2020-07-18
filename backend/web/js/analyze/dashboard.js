@@ -33,18 +33,41 @@ function showGamesNav() {
         }
     });
 }
-function  getDashboardInfo(gameId,gameName) {
-    $("#currGameName").text(gameName);
-    $("#currGameId").val(gameId);
+function  getDashboardInfo() {
+    // $("#currGameName").text(gameName);
+    // $("#currGameId").val(gameId);
     $.ajax({
         type: 'get',
         data: {
-            'gameId':gameId
+            'gameId':1
         },
         dataType: "json",
         url:"../dashboard/get-dashboard-info",
         async: true,
         success: function(data) {
+            for(var i=0;i<data.length;i++)
+            {
+                var td='<tr>'+
+                    '<td>'+data[i].gameName+'</td>'+
+                    '<td>'+data[i].todayRegUser+'</td>'+
+                    '<td>'+data[i].todayLoginUser+'</td>'+
+                    '<td>'+data[i].todayRevenue+'</td>'+
+                    '<td>'+data[i].todayPayingUser+'</td>'+
+                    '<td>'+data[i].todayRevenue/data[i].todayTodayLoginUser+'</td>'+
+                    '</tr>'
+
+                $("#dashboard").append(td);
+
+                var td2='<tr>'+
+                    '<td>'+data[i].gameName+'</td>'+
+                    '<td>'+data[i].totalUser+'</td>'+
+                    '<td>'+data[i].totalPayingUser+'</td>'+
+                    '<td>'+data[i].totalRevenue+'</td>'+
+                    '<td>'+((data[i].totalPayingUser/data[i].totalUser)*100).toFixed(2)+'%</td>'+
+                    '</tr>';
+                $("#total").append(td2);
+            }
+            /*
             for (var key in data)
             {
                 $("#"+key).text(data[key]);
@@ -74,7 +97,7 @@ function  getDashboardInfo(gameId,gameName) {
                 $("#todayArppu").text((data['todayRevenue']/data['todayPayingUser']).toFixed(2));
             }else{
                 $("#todayArppu").text("0");
-            }
+            }*/
         },
         error:function (data) {
             alert("获取数据失败");

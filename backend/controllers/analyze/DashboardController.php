@@ -3,6 +3,7 @@ namespace backend\controllers\analyze;
 
 use backend\models\analyze\ModelDashBoard;
 use backend\models\MyTabOrders;
+use backend\models\MyTabPermission;
 use backend\models\MyTabPlayers;
 use yii\web\Controller;
 use yii\web\Response;
@@ -20,62 +21,93 @@ class DashboardController extends Controller
     {
         $request=\Yii::$app->request;
         $gameId=$request->get('gameId');
-        $result=[
-            'totalRevenue'=>0,
-            'totalUser'=>0,
-            'totalDevice'=>0,
-            'totalPayingUser'=>0,
-            'totalArpu'=>0,
-            'totalArppu'=>0,
 
-            'last7dayLoginUser'=>0,
-            'last30dayLoginUser'=>0,
-
-            'todayRevenue'=>0,
-//            'todayArpu'=>0,
-//            'todayArppu'=>0,
-            'todayLoginUser'=>0,
-            'todayRegDevice'=>0,
-            'todayRegUser'=>0,
-            'todayPayingUser'=>0,
-
-            'yesterdayRevenue'=>0,
-            'yesterdayArpu'=>0,
-            'yesterdayArppu'=>0,
-            'yesterdayTodayLoginUser'=>0,
-            'yesterdayTodayRegDevice'=>0,
-            'yesterdayTodayRegUser'=>0,
-        ];
-        if ($gameId)
+        $games=MyTabPermission::getGames();
+        $data=[];
+        for ($i=0;$i<count($games);$i++)
         {
-            \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+            $gameId=$games[$i]['id'];
+            $gameName=$games[$i]['name'];
             $result=[
-                'totalRevenue'=>$this->actionTotalRevenue($gameId),
-                'totalUser'=>$this->actionTotalUser($gameId),
-                'totalDevice'=>$this->actionTotalDevice($gameId),
-                'totalPayingUser'=>$this->actionTotalPayingUser($gameId),
+                'gameId'=>$gameId,
+                'gameName'=>$gameName,
+                'totalRevenue'=>0,
+                'totalUser'=>0,
+                'totalDevice'=>0,
+                'totalPayingUser'=>0,
+                'totalArpu'=>0,
+                'totalArppu'=>0,
 
-                'last7dayLoginUser'=>$this->actionLast7dayLoginUserCount($gameId),
-                'last30dayLoginUser'=>$this->actionLast30dayLoginUserCount($gameId),
+                'last7dayLoginUser'=>0,
+                'last30dayLoginUser'=>0,
 
-                'todayRevenue'=>$this->actionTodayRevenue($gameId),
-//                'todayArpu'=>$this->actionTodayArpu($gameId),
-//                'todayArppu'=>$this->actionTodayArppu($gameId),
-                'todayLoginUser'=>$this->actionTodayLoginUser($gameId),
-                'todayRegDevice'=>$this->actionTodayRegDevice($gameId),
-                'todayRegUser'=>$this->actionTodayRegUser($gameId),
-                'todayPayingUser'=>$this->actionTodayPayingUser($gameId),
+                'todayRevenue'=>0,
+                'todayLoginUser'=>0,
+                'todayRegDevice'=>0,
+                'todayRegUser'=>0,
+                'todayPayingUser'=>0,
 
-                'yesterdayRevenue'=>$this->actionYesterdayRevenue($gameId),
-                //'yesterdayArpu'=>$this->actionYesterdayArpu($gameId),
-                //'yesterdayArppu'=>$this->actionYesterdayArppu($gameId),
-                'yesterdayLoginUser'=>$this->actionYesterdayLoginUser($gameId),
-                'yesterdayRegDevice'=>$this->actionYesterdayRegDevice($gameId),
-                'yesterdayRegUser'=>$this->actionYesterdayRegUser($gameId),
-
+                'yesterdayRevenue'=>0,
+                'yesterdayArpu'=>0,
+                'yesterdayArppu'=>0,
+                'yesterdayTodayLoginUser'=>0,
+                'yesterdayTodayRegDevice'=>0,
+                'yesterdayTodayRegUser'=>0,
             ];
+            if ($gameId)
+            {
+                \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+                $result=[
+                    'gameId'=>$gameId,
+                    'gameName'=>$gameName,
+                    'totalRevenue'=>$this->actionTotalRevenue($gameId),
+                    'totalUser'=>$this->actionTotalUser($gameId),
+                    'totalDevice'=>$this->actionTotalDevice($gameId),
+                    'totalPayingUser'=>$this->actionTotalPayingUser($gameId),
+
+                    'last7dayLoginUser'=>$this->actionLast7dayLoginUserCount($gameId),
+                    'last30dayLoginUser'=>$this->actionLast30dayLoginUserCount($gameId),
+
+                    'todayRevenue'=>$this->actionTodayRevenue($gameId),
+                    'todayLoginUser'=>$this->actionTodayLoginUser($gameId),
+                    'todayRegDevice'=>$this->actionTodayRegDevice($gameId),
+                    'todayRegUser'=>$this->actionTodayRegUser($gameId),
+                    'todayPayingUser'=>$this->actionTodayPayingUser($gameId),
+
+                    'yesterdayRevenue'=>$this->actionYesterdayRevenue($gameId),
+                    'yesterdayLoginUser'=>$this->actionYesterdayLoginUser($gameId),
+                    'yesterdayRegDevice'=>$this->actionYesterdayRegDevice($gameId),
+                    'yesterdayRegUser'=>$this->actionYesterdayRegUser($gameId),
+
+                ];
+                $data[]=$result;
+            }
         }
-        return $result;
+        $total=[
+            'gameId'=>0,
+            'gameName'=>'汇总',
+            'totalRevenue'=>array_sum(array_column($data,'totalRevenue')),
+            'totalUser'=>array_sum(array_column($data,'totalUser')),
+            'totalDevice'=>array_sum(array_column($data,'totalDevice')),
+            'totalPayingUser'=>array_sum(array_column($data,'totalPayingUser')),
+            'totalArpu'=>array_sum(array_column($data,'totalArpu')),
+            'totalArppu'=>array_sum(array_column($data,'totalArppu')),
+            'last7dayLoginUser'=>array_sum(array_column($data,'last7dayLoginUser')),
+            'last30dayLoginUser'=>array_sum(array_column($data,'last30dayLoginUser')),
+            'todayRevenue'=>array_sum(array_column($data,'todayRevenue')),
+            'todayLoginUser'=>array_sum(array_column($data,'todayLoginUser')),
+            'todayRegDevice'=>array_sum(array_column($data,'todayRegDevice')),
+            'todayRegUser'=>array_sum(array_column($data,'todayRegUser')),
+            'todayPayingUser'=>array_sum(array_column($data,'todayPayingUser')),
+            'yesterdayRevenue'=>array_sum(array_column($data,'yesterdayRevenue')),
+            'yesterdayArpu'=>array_sum(array_column($data,'yesterdayArpu')),
+            'yesterdayArppu'=>array_sum(array_column($data,'yesterdayArppu')),
+            'yesterdayTodayLoginUser'=>array_sum(array_column($data,'yesterdayTodayLoginUser')),
+            'yesterdayTodayRegDevice'=>array_sum(array_column($data,'yesterdayTodayRegDevice')),
+            'yesterdayTodayRegUser'=>array_sum(array_column($data,'yesterdayTodayRegUser'))
+        ];
+        $data[]=$total;
+        return $data;
     }
     //--------total
     public function actionTotalUser($gameId)

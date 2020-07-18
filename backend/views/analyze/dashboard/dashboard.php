@@ -5,7 +5,7 @@ use yii\widgets\menu;
 ?>
 <?php
 /* @var $this yii\web\View */
-$this->title = '数据概况';
+$this->title = '';
 $this->registerCss("
 .dtop-items-title {
     display: inline-block;
@@ -89,7 +89,7 @@ $this->registerCss("
 $this->registerJsFile("@web/js/echarts.min.js",['position'=>\yii\web\View::POS_HEAD]);
 $this->registerJsFile("@web/js/analyze/dashboard.js",['position'=>\yii\web\View::POS_HEAD]);
 $this->registerJs("
-showGamesNav()
+getDashboardInfo()
 $(function () {
   $('[data-toggle=\"tooltip\"]').tooltip()
 })
@@ -99,9 +99,22 @@ $(function () {
 
 <div class="panel panel-default">
     <div class="panel-body">
-        <b>实时数据</b>
+        <b>今日数据</b>
         <hr>
-        <div class="row">
+        <table class="table table-striped">
+            <thead>
+                <td>游戏</td>
+                <td>今日注册</td>
+                <td>今日登录</td>
+                <td>付费额度</td>
+                <td>充值人数</td>
+                <td>ARPU</td>
+            </thead>
+            <tbody id="dashboard">
+
+            </tbody>
+        </table>
+        <div class="row hidden">
             <div class="col-md-2">
                 <div>
                     <p class="text-center"><span class="dtop-items-title newuser"/></p>
@@ -158,50 +171,18 @@ $(function () {
     <div class="panel-body">
         <label>数据概要</label>
         <hr/>
-        <div class="row">
-            <div class="col-sm-2">
-                <small>累计用户</small>
-                <h3 id="totalUser"></h3>
-            </div>
-            <div class="col-sm-2">
-                <small>累计设备</small>
-                <h3 id="totalDevice"></h3>
-            </div>
-            <div class="col-sm-2">
-                <small>过去7天活跃用户</small>
-                <h3 id="last7dayLoginUser"></h3>
-            </div>
-            <div class="col-sm-2">
-                <small>过去30天活跃用户</small>
-                <h3 id="last30dayLoginUser"></h3>
-            </div>
-            <div class="col-sm-2">
-                <small>-</small>
-                <h3>-</h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">
-                <small>累计付费用户</small>
-                <h3 id="totalPayingUser"></h3>
-            </div>
-            <div class="col-sm-2">
-                <small>累计付费金额</small>
-                <h3 id="totalRevenue"></h3>
-            </div>
-            <div class="col-sm-2">
-                <small>付费率</small>
-                <h3 id="payingUserProportion">-</h3>
-            </div>
-            <div class="col-sm-2">
-                <small>arpu</small>
-                <h3 id="totalArpu"></h3>
-            </div>
-            <div class="col-sm-2">
-                <small>arppu</small>
-                <h3 id="totalArppu"></h3>
-            </div>
-        </div>
+        <table class="table table-striped">
+            <thead>
+                <td>游戏</td>
+                <td>用户数</td>
+                <td>付费数</td>
+                <td>付费额(元)</td>
+                <td>付费率</td>
+            </thead>
+            <tbody id="total">
+
+            </tbody>
+        </table>
     </div>
 </div>
 <div class="panel panel-default">
