@@ -7,6 +7,8 @@ use backend\models\TabGames;
 use backend\models\TabDistributor;
 use yii\grid\GridView;
 use yii\helpers\Url;
+use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $model backend\models\TabCdkey */
 
@@ -14,6 +16,7 @@ $this->title = "激活码导出";
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '激活码管理'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+$this->registerJsFile('@web/js/common.js',['depends'=>'yii\web\YiiAsset']);
 $this->registerJsFile('@web/js/cdk.js',['depends'=>'yii\web\YiiAsset']);
 $this->registerJs("
     $('#exportNum').focusout(function(){
@@ -54,34 +57,37 @@ $this->registerJs("
 </div>
 <div class="tab-cdkey-view">
     <div class="panel panel-default">
+        <?php Pjax::begin(); ?>
         <?php $form = ActiveForm::begin(); ?>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-1">
                     <?= $form->field($model, 'gameId')->dropDownList(
-                        ArrayHelper::map(TabGames::find()->select(['id','name'])->all(),'id','name'),
+                        $games,
                         [
                             "class"=>"selectpicker form-control col-xs-2",
                             "data-width"=>"fit",
-                            "id"=>"dropDownListGame",
+                            "id"=>"cdkeyGames",
+                            "onchange"=>"handleGameChange()",
                             "title"=>"选择游戏"
                         ]
                     )->label(false) ?>
                 </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'distributorId')->dropDownList(
-                        ArrayHelper::map(TabDistributor::find()->select(['id','name'])->all(),'id','name'),
+                        [],
                         [
                             "class"=>"selectpicker form-control col-xs-2",
                             "data-width"=>"fit",
-                            "id"=>"dropDownListDistributor",
+                            "id"=>"cdkeyDistributors",
+                            "onchange"=>"hnadleDistributorsChange(\"#dropDownListCDKEYVariety\")",
                             "title"=>"分销商"
                         ]
                     )->label(false) ?>
                 </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'varietyId')->dropDownList(
-                        ArrayHelper::map(\backend\models\TabCdkeyVariety::find()->select(['id','name'])->all(),'id','name'),
+                        [],
                         [
                             "class"=>"selectpicker form-control col-xs-2",
                             "data-width"=>"fit",
@@ -164,6 +170,7 @@ $this->registerJs("
                     ],
                 ],
             ]); ?>
+            <?php Pjax::end(); ?>
         </div>
     </div>
 

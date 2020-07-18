@@ -62,6 +62,12 @@ class CdkeyVarietyController extends Controller
         ]);
     }
 
+    public function actionList($gameId)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $model=new TabCdkeyVarietySearch();
+        return $model->searchByGameId(Yii::$app->request->queryParams);
+    }
     /**
      * Creates a new TabCdkeyVariety model.
      * If creation is successful, the browser will be redirected to the 'view' page.

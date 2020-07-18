@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\ExportCDKEYModel;
 use backend\models\MyCdkeySearch;
+use backend\models\MyTabPermission;
 use backend\models\TabCdkeyExport;
 use backend\models\TabCdkeyVariety;
 use Yii;
@@ -95,6 +96,10 @@ class CdkeyController extends Controller
         $model=new ExportCDKEYModel();
         $request=Yii::$app->request;
         $dataProvider=new ArrayDataProvider();
+
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
+
 //        $msg=json_encode($request->bodyParams);
         if ($model->load($request->bodyParams))
         {
@@ -107,8 +112,8 @@ class CdkeyController extends Controller
             }
         }
         return $this->render('view', [
+            'games'=>$games,
             'model'=>$model,
-//            'msg'=>$msg,
             'dataProvider'=>$dataProvider
         ]);
     }
