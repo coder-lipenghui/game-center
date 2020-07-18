@@ -16,17 +16,17 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-4">
-                    <?= $form->field($model, 'gameId')->dropDownList($versions) ?>
+                    <?= $form->field($model, 'gameId')->dropDownList($versions)->label("游戏版本") ?>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    <?= $form->field($model, 'comment')->textarea(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'comment')->textarea(['maxlength' => true])->label("更新内容") ?>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    <?= $form->field($model, 'file')->fileInput() ?>
+                    <?= $form->field($model, 'file')->fileInput()->label("脚本文件(7z)") ?>
                 </div>
             </div>
             <div class="form-group">

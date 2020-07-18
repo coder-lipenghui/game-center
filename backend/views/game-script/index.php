@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //            'filterModel' => $searchModel,
             'columns' => [
 //                ['class' => 'yii\grid\SerialColumn'],
-                ['label'=>'游戏名称',
+                ['label'=>'游戏版本',
                     'attribute'=>'gameId',
                     'value'=>'version.name',
                 ],
