@@ -187,7 +187,7 @@ class TabSupportCreate extends TabSupport
                 {
                     $getBody=[
                         'sku'=>$game->sku,
-                        'dis'=>$server->distributorId,
+                        'did'=>$server->distributorId,
                         'serverId'=>$server->index,
                         'db'=>$requestBody['type']==1?2:1 //脚本类型的需要走octgame,常规类型走ocenter
                     ];
