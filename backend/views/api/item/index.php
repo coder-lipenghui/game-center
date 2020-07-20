@@ -63,7 +63,8 @@ $this->registerJsFile('@web/js/api/itemSearch.js',['depends'=>'yii\web\YiiAsset'
                         }
                     ],
                     ['attribute'=>'mIdentID','label'=>'物品唯一ID'],
-                    ['attribute'=>'mCreateTime','label'=>'创建时间'],
+//                    ['attribute'=>'mCreateTime','label'=>'创建时间'],
+                    'mCreateTime:datetime'
                 ],
             ]); ?>
     <?php Pjax::end(); ?>

@@ -9,6 +9,7 @@
 namespace backend\controllers\api;
 
 use backend\models\api\ItemRecord;
+use common\helps\ItemDefHelper;
 use yii\data\ArrayDataProvider;
 use backend\models\MyTabPermission;
 use yii\helpers\ArrayHelper;
@@ -43,6 +44,14 @@ class ItemController extends BaseController
             {
                 $page=$request->get('page');
             }
+            if (!empty($searchModel->itemName))
+            {
+                $itemId=ItemDefHelper::getIdByName($searchModel->gameId,$searchModel->itemName);
+                if ($searchModel->itemId=="")
+                {
+                    $searchModel->itemId=$itemId;
+                }
+            }
             $queryBody=$searchModel->getAttributes();
             $queryBody['page']=$page;
             if ($searchModel->type==2)
@@ -53,6 +62,7 @@ class ItemController extends BaseController
             {
                 $jsonData=$this->getJsonData();
                 $arrayData=json_decode($jsonData,true);
+
                 for ($i=0;$i<count($arrayData['items']);$i++)
                 {
                     $arrayData['items'][$i]['gameId']=$searchModel->gameId;

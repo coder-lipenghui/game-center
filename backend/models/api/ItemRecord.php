@@ -25,7 +25,7 @@ class ItemRecord extends BaseApiModel
     public $logtime;
     public $seedname;
     public $playername;
-    public $src;
+    public $src="";
     public $mTypeID;
     public $mPosition;
     public $mDuraMax;

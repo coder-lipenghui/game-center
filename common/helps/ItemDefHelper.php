@@ -7,6 +7,7 @@
  */
 
 namespace common\helps;
+use backend\models\TabGames;
 use backend\models\TabItemdefDzy;
 use Yii;
 
@@ -42,10 +43,16 @@ class ItemDefHelper
     public static function getIdByName($gameId,$name)
     {
         $db=Yii::$app->get('db_log');
-        $sql="select * from tab_itemdef_$gameId where 'name'=$name limit 1";
-        $itemdef=$db->createCommand($sql)->queryOne();
+
         $id=null;
         try{
+            $game=TabGames::find()->where(['id'=>$gameId])->one();
+            if (!empty($game) && !empty($game->mingleGameId))
+            {
+                $gameId=$game->mingleGameId;
+            }
+            $sql="select * from tab_itemdef_$gameId where `name`='$name' limit 1";
+            $itemdef=$db->createCommand($sql)->queryOne();
            $id=$itemdef['id'];
         }catch (\Exception $e)
         {
