@@ -177,6 +177,14 @@ class TabSupportCreate extends TabSupport
             $server=TabServers::find()->where(['id'=>$support->serverId])->one();
             if ($server)
             {
+                if (!empty($server->mergeId))
+                {
+                    $tmp=TabServers::find()->where(['id'=>$server->mergeId])->one();
+                    if (!empty($tmp))
+                    {
+                        $server=$tmp;
+                    }
+                }
                 $paymentKey=$game->paymentKey;
                 $requestBody['port']=$server->masterPort;
                 $requestBody['flag'] = md5($requestBody['type'] . $requestBody['payscript'] . $requestBody['paynum'] . $requestBody['roleid'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
