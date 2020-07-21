@@ -51,6 +51,10 @@ class BaseController extends Controller
         if ($game)
         {
             $server=TabServers::find()->where(['id'=>$sid])->one();
+            if (!empty($server) && !empty($server->mergeId))
+            {
+                $server=TabServers::find()->where(['id'=>$server->mergeId])->one();
+            }
             if($server)
             {
                 $defaultParam=[
