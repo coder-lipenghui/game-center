@@ -381,6 +381,14 @@ class MyTabOrders extends TabOrders
                     LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $server->getFirstError());
                     return false;
                 }
+                if (!empty($server->mergeId))
+                {
+                    $tmp=TabServers::find()->where(['id'=>$server->mergeId])->one();
+                    if (!empty($tmp))
+                    {
+                        $server=$tmp;
+                    }
+                }
                 $distribution = TabDistribution::find()->where(['id' => $order->distributionId])->one();
                 if ($distribution === null) {
                     $msg = "渠道不存在";

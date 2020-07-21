@@ -51,7 +51,6 @@ class ActivateCdkey extends TabCdkeyRecord
                 if ($player)
                 {
                     //激活码检测
-//                    exit("distributorID:".$distribution->distributorId);
                     $cdkeyModel=new AutoCDKEYModel();
                     $cdkeyModel::TabSuffix($game->id,$distribution->distributorId);
                     $query=$cdkeyModel::find();
@@ -86,6 +85,14 @@ class ActivateCdkey extends TabCdkeyRecord
                         {
                             //发货
                             $server=TabServers::findOne(['id'=>$this->serverId]);
+                            if (!empty($server->mergeId))
+                            {
+                                $tmp=TabServers::find()->where(['id'=>$server->mergeId])->one();
+                                if (!empty($tmp))
+                                {
+                                    $server=$tmp;
+                                }
+                            }
                             $curl=new CurlHttpClient();
                             $sign=md5($this->roleId.$this->roleName.$this->cdkey.$variety->items.$variety->name.$game->paymentKey);
                             $body=[
