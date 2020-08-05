@@ -63,8 +63,14 @@ class CreateOrder extends TabOrders
             if ($player!=null)
             {
                 //获取计费点信息
-                $productQuery=TabProduct::find()->where(['productId'=>$this->productId]);//'productName'=>$this->productName
+                $productQuery=TabProduct::find()->where(['productId'=>$this->productId,'gameId'=>$game->id]);
                 $product=$productQuery->one();
+                if (empty($product) && !empty($game->mingleGameId))
+                {
+                    $productQuery=TabProduct::find()->where(['productId'=>$this->productId,'gameId'=>$game->mingleGameId]);
+                    $product=$productQuery->one();
+                }
+
                 if (!empty($product))
                 {
                     //生成订单号
@@ -78,7 +84,7 @@ class CreateOrder extends TabOrders
                         $this->orderId=$orderId;
                         $this->gameAccount=$this->account;
                         $this->payAmount=$this->money;
-                        $this->productId=$product->id;
+                        $this->productId=$product->productId;
                         $this->productName=$product->productName;
                         if ($this->save())
                         {

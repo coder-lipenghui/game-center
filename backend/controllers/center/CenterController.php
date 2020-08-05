@@ -436,12 +436,6 @@ class CenterController extends Controller
                 }
                 if ($order!=null)
                 {
-                    $product=TabProduct::find()->where(['productId'=>$order->productId,'gameId'=>$order->gameId])->one();
-                    $productName=$order->productName;
-                    if (!empty($product))
-                    {
-                        $productName=$product->productName;
-                    }
                     $distributionOrder=$this->getOrderFromDistribution($requestData,$distribution,$order);
 
                     $result['code']=1;
@@ -449,7 +443,7 @@ class CenterController extends Controller
                     $result['data']=[
                         'orderId'=>$order->orderId,
                         'distributionOrderId'=>$distributionOrderId,
-                        'productName'=>$productName,
+                        'productName'=>$order->productName,
                         'productPrice'=>$order->payAmount,
                     ];
                     if ($distributionOrder!=null)

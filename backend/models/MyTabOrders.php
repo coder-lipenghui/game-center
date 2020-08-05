@@ -70,8 +70,29 @@ class MyTabOrders extends TabOrders
                 "FROM_UNIXTIME(payTime,'%Y-%m-%d')"=>date('Y-m-d'),
                 'payStatus'=>'1',
             ])->groupBy('gameAccount');
-
-            return $query->count();
+            $total=$query->count();
+            return $total;
+        }
+        return 0;
+    }
+    /**
+     * 昨日付费玩家数量
+     * @return int
+     */
+    public static function getYesterdayPayingUser($gameId)
+    {
+        $distributions=self::getDistribution($gameId);
+        if ($distributions)
+        {
+            $tmp=date('Y-m-d');
+            $query=TabOrders::find();
+            $query->where([
+                'distributionId'=>$distributions,
+                "FROM_UNIXTIME(payTime,'%Y-%m-%d')"=>date('Y-m-d',strtotime("$tmp -1 day")),
+                'payStatus'=>'1',
+            ])->groupBy('gameAccount');
+            $total=$query->count();
+            return $total;
         }
         return 0;
     }
@@ -101,15 +122,13 @@ class MyTabOrders extends TabOrders
     public static function getYesterdayRevenue($gameId)
     {
         //TODO 需要根据用户权限进行各项统计
-        $cond=['between','payTime',strtotime(date('Y-m-d')." 00:00:00")-86400000,strtotime(date('Y-m-d')."23:59:59")-86400000];
+        $cond=['between','payTime',strtotime(date('Y-m-d')." 00:00:00")-86400,strtotime(date('Y-m-d')."23:59:59")-86400];
 
         $query=TabOrders::find()
             ->where($cond)
-            ->andWhere(['=','payStatus','1'])
-            ->select(['payAmount'])->asArray();
-
+            ->andWhere(['gameId'=>$gameId])
+            ->andWhere(['=','payStatus','1']);
         $totalYesterday=$query->sum('payAmount');
-
         $totalYesterday=$totalYesterday?$totalYesterday/100:0;
 
         return $totalYesterday;
@@ -395,11 +414,20 @@ class MyTabOrders extends TabOrders
                     LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $distribution->getFirstError());
                     return false;
                 }
-                $product = TabProduct::find()->where(['id' => $order->productId])->one();
-                if (empty($product)) {
-                    $msg = "计费信息不存在";
-                    LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, '');
+                $game = TabGames::find()->where(['id' => $server->gameId])->one();
+                if(empty($game))
+                {
+                    $msg = "游戏不存在";
+                    LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $game->getFirstError());
                     return false;
+                }
+                //获取计费点信息
+                $productQuery=TabProduct::find()->where(['productId'=>$order->productId,'gameId'=>$game->id]);
+                $product=$productQuery->one();
+                if (empty($product) && !empty($game->mingleGameId))
+                {
+                    $productQuery=TabProduct::find()->where(['productId'=>$order->productId,'gameId'=>$game->mingleGameId]);
+                    $product=$productQuery->one();
                 }
                 $requestBody = [
                     'channelId' => $distribution->id,
@@ -415,67 +443,62 @@ class MyTabOrders extends TabOrders
                     'type' => $product->type,
                     'port'=>$server->masterPort
                 ];
-                $game = TabGames::find()->where(['id' => $server->gameId])->one();
-                if ($game) {
-                    $paymentKey = $game->paymentKey;
-                    $requestBody['flag'] = md5($requestBody['type'] . $requestBody['payscript'] . $requestBody['paynum'] . $requestBody['roleid'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
-                    $resultJson=[];
-                    $curl = new CurlHttpClient();
-                    $url="http://" . $server->url;
-                    if (true)//新后台的发货接口
-                    {
-                        $getBody=[
-                            'sku'=>$game->sku,
-                            'did'=>$distribution->distributorId,
-                            'serverId'=>$server->index,
-                            'db'=>$requestBody['type']==1?2:1 //脚本类型的需要走octgame,常规类型走ocenter
-                        ];
-                        $url = $url. "/api/payment?" . http_build_query($getBody);
-                        $resultJson =$curl->sendPostData($url,$requestBody);
-                    }else{
-                        $url = $url. "/app/ckcharge.php?" . http_build_query($requestBody);
-                        $resultJson = $curl->fetchUrl($url);
-                    }
-                    $result = json_decode($resultJson, true);
-                    $msg = "";
-                    switch ($result['code']) {
-                        case 1:  //发货成功
-                        case -5: //订单重复
-                            $order->delivered = '1';//发货状态：0：未发货 1：已发货
-                            if (!$order->save()) {
-                                $msg = "更新订单发货状态失败";
-                                LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $order->getErrors());
-                                return false;
-                            }
-                            return true;
-                            break;
-                        case -1: //防沉迷数据库连接失败
-                            $msg = "防沉迷数据库连接失败";
-                            break;
-                        case -2: //账号未找到
-                            $msg = "[" . $requestBody['paytouser'] . "]账号未找到";
-                            break;
-                        case -3: //IP限制，暂时废弃
-                            $msg = "IP限制";
-                            break;
-                        case -4: //sign验证出错
-                            $msg = "sign验证出错";
-                            break;
-                        case -6: //超时，暂时废弃
-                            $msg = "超时";
-                            break;
-                        case -8: //发货参数不全
-                            $msg = "发货参数不全";
-                            break;
-                        case -9: //发货数与金额比例不正确，服务器侧写死了【paymoney*100=paygold】
-                            $msg = "发货数与金额比例不正确";
-                            break;
-                    }
-                    LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $resultJson);
-                } else {
-                    $msg = "游戏不存在";
-                    LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $game->getFirstError());
+                $paymentKey = $game->paymentKey;
+                $requestBody['flag'] = md5($requestBody['type'] . $requestBody['payscript'] . $requestBody['paynum'] . $requestBody['roleid'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
+                $resultJson=[];
+                $curl = new CurlHttpClient();
+                $url="http://" . $server->url;
+                if (true)//新后台的发货接口
+                {
+                    $getBody=[
+                        'sku'=>$game->sku,
+                        'did'=>$distribution->distributorId,
+                        'serverId'=>$server->index,
+                        'db'=>$requestBody['type']==1?2:1 //脚本类型的需要走octgame,常规类型走ocenter
+                    ];
+                    $url = $url. "/api/payment?" . http_build_query($getBody);
+                    $resultJson =$curl->sendPostData($url,$requestBody);
+                }else{
+                    $url = $url. "/app/ckcharge.php?" . http_build_query($requestBody);
+                    $resultJson = $curl->fetchUrl($url);
                 }
+                $result = json_decode($resultJson, true);
+                $msg = "";
+                switch ($result['code']) {
+                    case 1:  //发货成功
+                    case -5: //订单重复
+                        $order->delivered = '1';//发货状态：0：未发货 1：已发货
+                        if (!$order->save()) {
+                            $msg = "更新订单发货状态失败";
+                            LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $order->getErrors());
+                            return false;
+                        }
+                        return true;
+                        break;
+                    case -1: //防沉迷数据库连接失败
+                        $msg = "防沉迷数据库连接失败";
+                        break;
+                    case -2: //账号未找到
+                        $msg = "[" . $requestBody['paytouser'] . "]账号未找到";
+                        break;
+                    case -3: //IP限制，暂时废弃
+                        $msg = "IP限制";
+                        break;
+                    case -4: //sign验证出错
+                        $msg = "sign验证出错";
+                        break;
+                    case -6: //超时，暂时废弃
+                        $msg = "超时";
+                        break;
+                    case -8: //发货参数不全
+                        $msg = "发货参数不全";
+                        break;
+                    case -9: //发货数与金额比例不正确，服务器侧写死了【paymoney*100=paygold】
+                        $msg = "发货数与金额比例不正确";
+                        break;
+                }
+                LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $resultJson);
+
             } else {
                 $msg = "订单未支付成功";
                 LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $order->getFirstError());
