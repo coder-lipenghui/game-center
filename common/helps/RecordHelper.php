@@ -10,6 +10,7 @@ namespace common\helps;
 
 
 use backend\models\TabActionType;
+use backend\models\TabGames;
 use Yii;
 
 class RecordHelper
@@ -17,14 +18,15 @@ class RecordHelper
     public static function getNameById($gameId,$id)
     {
         $cache=\Yii::$app->cache;
-        $key="src_".$gameId."_".$id;
         $name=null;
+        $versoin=TabGames::find()->select(['versionId'])->where(['id'=>$gameId])->one();
+        $key="src_".$gameId."_".$id;
         if($cache->get($key))
         {
             $name=$cache->get($key);
         }else{
             $db=Yii::$app->get('db_log');
-            $sql="select * from tab_src_$gameId where actionId=$id limit 1";
+            $sql="select * from tab_src_$versoin->versionId where actionId=$id limit 1";
             $record=$db->createCommand($sql)->queryOne();
             try{
                 $name=$record['actionName'];
