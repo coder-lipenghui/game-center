@@ -56,6 +56,6 @@ class TabProduct extends \yii\db\ActiveRecord
     }
     public function getGame()
     {
-        return $this->hasOne(TabGames::className(),['id'=>'gameId']);
+        return $this->hasOne(TabGameVersion::className(),['id'=>'gameId']);
     }
 }

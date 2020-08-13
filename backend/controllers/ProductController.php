@@ -3,9 +3,11 @@
 namespace backend\controllers;
 
 use backend\models\MyTabPermission;
+use backend\models\TabGameVersion;
 use Yii;
 use backend\models\TabProduct;
 use backend\models\TabProductSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -39,11 +41,12 @@ class ProductController extends Controller
         $searchModel = new TabProductSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $permissionModel=new MyTabPermission();
-        $games=$permissionModel->allowAccessGame();
+//        $permissionModel=new MyTabPermission();
+        $versions=TabGameVersion::find()->asArray()->all();
+        $versions=ArrayHelper::map($versions,'id','name');
 
         return $this->render('index', [
-            'games'=>$games,
+            'games'=>$versions,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -57,11 +60,11 @@ class ProductController extends Controller
      */
     public function actionView($id)
     {
-        $permissionModel=new MyTabPermission();
-        $games=$permissionModel->allowAccessGame();
+        $versions=TabGameVersion::find()->asArray()->all();
+        $versions=ArrayHelper::map($versions,'id','name');
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'games'=>$games
+            'games'=>$versions
         ]);
     }
 
@@ -74,15 +77,15 @@ class ProductController extends Controller
     {
         $model = new TabProduct();
 
-        $permissionModel=new MyTabPermission();
-        $games=$permissionModel->allowAccessGame();
+        $versions=TabGameVersion::find()->asArray()->all();
+        $versions=ArrayHelper::map($versions,'id','name');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
-            'games'=>$games,
+            'games'=>$versions,
             'model' => $model,
         ]);
     }
@@ -98,8 +101,8 @@ class ProductController extends Controller
     {
         $model = $this->findModel($id);
 
-        $permissionModel=new MyTabPermission();
-        $games=$permissionModel->allowAccessGame();
+        $versions=TabGameVersion::find()->asArray()->all();
+        $versions=ArrayHelper::map($versions,'id','name');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -107,7 +110,7 @@ class ProductController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'games'=>$games
+            'games'=>$versions
         ]);
     }
 

@@ -63,13 +63,8 @@ class CreateOrder extends TabOrders
             if ($player!=null)
             {
                 //获取计费点信息
-                $productQuery=TabProduct::find()->where(['productId'=>$this->productId,'gameId'=>$game->id]);
+                $productQuery=TabProduct::find()->where(['productId'=>$this->productId,'gameId'=>$game->versionId]);
                 $product=$productQuery->one();
-                if (empty($product) && !empty($game->mingleGameId))
-                {
-                    $productQuery=TabProduct::find()->where(['productId'=>$this->productId,'gameId'=>$game->mingleGameId]);
-                    $product=$productQuery->one();
-                }
 
                 if (!empty($product))
                 {

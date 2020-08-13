@@ -109,12 +109,6 @@ class MyTabRebate extends TabOrdersRebate
                     LoggerHelper::RebateError($order->gameId, $order->distributionId, $msg, $distribution->getFirstError());
                     return false;
                 }
-//                $product = TabProduct::find()->where(['id' => $order->productId])->one();
-//                if (empty($product)) {
-//                    $msg = "计费信息不存在";
-//                    LoggerHelper::RebateError($order->gameId, $order->distributionId, $msg, $product->getFirstError());
-//                    return false;
-//                }
                 $requestBody = [
                     'channelId' => $distribution->id,
                     'paytouser' => $order->gameAccount,

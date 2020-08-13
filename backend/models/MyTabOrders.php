@@ -422,13 +422,9 @@ class MyTabOrders extends TabOrders
                     return false;
                 }
                 //获取计费点信息
-                $productQuery=TabProduct::find()->where(['productId'=>$order->productId,'gameId'=>$game->id]);
+                $productQuery=TabProduct::find()->where(['productId'=>$order->productId,'gameId'=>$game->versionId]);
                 $product=$productQuery->one();
-                if (empty($product) && !empty($game->mingleGameId))
-                {
-                    $productQuery=TabProduct::find()->where(['productId'=>$order->productId,'gameId'=>$game->mingleGameId]);
-                    $product=$productQuery->one();
-                }
+
                 $requestBody = [
                     'channelId' => $distribution->id,
                     'paytouser' => $order->gameAccount,

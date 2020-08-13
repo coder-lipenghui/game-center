@@ -13,6 +13,14 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-product-index">
     <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-md-2">
+                <?= Html::a(Yii::t('app', '新增计费点'), ['create'], ['class' => 'btn btn-success']) ?>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+
         <div class="panel panel-body">
                 <?php Pjax::begin(); ?>
             <div class="tab-product-search row">
@@ -33,23 +41,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
                 <?php ActiveForm::end(); ?>
-                <div class="col-md-2">
-                    <?= Html::a(Yii::t('app', '新增计费点'), ['create'], ['class' => 'btn btn-success']) ?>
-                </div>
             </div>
 
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
 //                'filterModel' => $searchModel,
                 'columns' => [
-                    'productId',
-                    ['attribute'=>'gameId','value'=>'game.name'],
+                    ['attribute'=>'productId','label'=>'商品ID'],
+                    ['attribute'=>'gameId','value'=>'game.name','label'=>'版本'],
                     ['attribute'=>'type','label'=>'类型','value'=>function($model){ return $model->type==1?"常规充值":"脚本触发";}],
 
-                    'productName',
+                    ['attribute'=>'productName','label'=>'商品名称'],
                     ['label'=>'单价','attribute'=>'productPrice','value'=>function($model){return ($model->productPrice/100)."元";}],
-                    'productScript',
-                    ['attribute'=>'enable','value'=>function($model){return $model->enable==1?"已启用":"未启用";}],
+                    ['attribute'=>'productScript','label'=>'触发脚本'],
+                    ['attribute'=>'enable','label'=>'状态','value'=>function($model){return $model->enable==1?"已启用":"未启用";}],
                 ['class' => 'yii\grid\ActionColumn'],
                 ],
             ]); ?>
