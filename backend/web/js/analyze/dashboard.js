@@ -1,41 +1,225 @@
-function showGamesNav() {
-    var async = arguments[1] ? arguments[1] : false;
-    $('#analyze_games').empty();
-
+function getOrderDistribution() {
+    var target=document.getElementById('orderDistribution')
     $.ajax({
-        type: 'post',
+        type: 'get',
         data: {},
         dataType: "json",
-        url:"../../permission/get-game",
+        url:"../dashboard/order-distribution",
         async: true,
         success: function(data) {
-            var element='';
-            var gameList='<ul class="dropdown-menu">';
-            var defaultGameId=0;
-            $.each(data, function(i) {
-                if (i==0)
-                {
-                    defaultGameId=data[i].id;
-                    element='<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-xs" id="currGameName">'+data[i].name+'</span><input type="hidden" id="currGameId"/></a>';
+            var myChart = echarts.init(target);
+            var posList = [
+                'left', 'right', 'top', 'bottom',
+                'inside',
+                'insideTop', 'insideLeft', 'insideRight', 'insideBottom',
+                'insideTopLeft', 'insideTopRight', 'insideBottomLeft', 'insideBottomRight'
+            ];
+            var app={};
+            app.configParameters = {
+                rotate: {
+                    min: -90,
+                    max: 90
+                },
+                align: {
+                    options: {
+                        left: 'left',
+                        center: 'center',
+                        right: 'right'
+                    }
+                },
+                verticalAlign: {
+                    options: {
+                        top: 'top',
+                        middle: 'middle',
+                        bottom: 'bottom'
+                    }
+                },
+                position: {
+                    options: echarts.util.reduce(posList, function (map, pos) {
+                        map[pos] = pos;
+                        return map;
+                    }, {})
+                },
+                distance: {
+                    min: 0,
+                    max: 100
                 }
-                gameList+='<li class="user-my-header" onclick="getDashboardInfo('+data[i].id+',\''+data[i].name+'\')">'+data[i].name+'</li>';
-            });
-            gameList+='</ul>';
-            $('#analyze_games').append(element);
-            $('#analyze_games').append(gameList);
-            if (defaultGameId>0)
-            {
-                getDashboardInfo(defaultGameId);
-            }
+            };
+
+            app.config = {
+                rotate: 90,
+                align: 'left',
+                verticalAlign: 'middle',
+                position: 'insideBottom',
+                distance: 15,
+                onChange: function () {
+                    var labelOption = {
+                        normal: {
+                            rotate: app.config.rotate,
+                            align: app.config.align,
+                            verticalAlign: app.config.verticalAlign,
+                            position: app.config.position,
+                            distance: app.config.distance
+                        }
+                    };
+                    myChart.setOption({
+                        series: [{
+                            label: labelOption
+                        }, {
+                            label: labelOption
+                        }, {
+                            label: labelOption
+                        }, {
+                            label: labelOption
+                        }]
+                    });
+                }
+            };
+
+
+            var labelOption = {
+                show: true,
+                position: app.config.position,
+                distance: app.config.distance,
+                align: app.config.align,
+                verticalAlign: app.config.verticalAlign,
+                rotate: app.config.rotate,
+                formatter: '{c}  {name|{a}}',
+                fontSize: 16,
+                rich: {
+                    name: {
+                        textBorderColor: '#fff'
+                    }
+                }
+            };
+            // for(var item in data['series'])
+            // {
+            //     item['label']=labelOption;
+            // }
+
+            // for (var i=0;i<data['series'].length;i++)
+            // {
+            //     data['series']['label']=labelOption;
+            // }
+            var option = {
+                // color: ['#003366', '#006699', '#4cabce', '#e5323e'],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                legend: {
+                    data: data['legend']
+                },
+                toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature: {
+                        mark: {show: true},
+                        dataView: {show: true, readOnly: false},
+                        magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        axisTick: {show: false},
+                        data: data['xAxis']
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: data['series']
+            };
+            myChart.setOption(option);
         },
-        error: function(data) {
-            alert('获取数据失败');
+        error:function (data) {
+
+        }
+    });
+
+}
+function revenuePie(target,data,series,title) {
+    var myChart = echarts.init(document.getElementById(target));
+    var option = {
+        title: {
+            text: title,
+            // subtext: 'title',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        legend: {
+            type: 'scroll',
+            orient: 'vertical',
+            left: 'left',
+            data: data
+        },
+        series: [
+            {
+                name: '收入(元)',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: series,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+    myChart.setOption(option);
+    myChart.resize();
+    window.addEventListener("resize",function(){
+        myChart.resize();
+    });
+}
+function getMonthlyRevenue() {
+    $.ajax({
+        type: 'get',
+        data: {
+            'date':null
+        },
+        dataType: "json",
+        url:"../dashboard/get-monthly-revenue",
+        async: true,
+        success: function(data) {
+            var pieData=[];
+            var pieSeries=[];
+            var pieTitle="";
+            for(var i=0;i<data.length;i++) {
+                if (i < data.length - 1) {
+                    pieData.push(data[i].gameName);
+                    pieSeries.push({
+                        name: data[i].gameName,
+                        value: data[i].revenue == 0 ? null : data[i].revenue
+                    });
+                }
+            }
+            pieTitle=data[data.length-1].revenue == 0?"无充值":data[data.length-1].revenue+"元";
+
+            revenuePie("monthlyPie",pieData,pieSeries,pieTitle);
+        },
+        error:{
+
         }
     });
 }
-function  getDashboardInfo() {
-    // $("#currGameName").text(gameName);
-    // $("#currGameId").val(gameId);
+function getDashboardInfo() {
     $.ajax({
         type: 'get',
         data: {
@@ -45,8 +229,16 @@ function  getDashboardInfo() {
         url:"../dashboard/get-dashboard-info",
         async: true,
         success: function(data) {
+            var pieData=[];
+            var pieSeries=[];
+            var pieTitle="";
             for(var i=0;i<data.length;i++)
             {
+                if (i<data.length-1)
+                {
+                    pieData.push(data[i].gameName);
+                    pieSeries.push({name:data[i].gameName,value:data[i].todayRevenue==0?null:data[i].todayRevenue});
+                }
                 var td='<tr>'+
                     '<td>'+data[i].gameName+'</td>'+
                     '<td>'+data[i].todayRegUser+'</td>'+
@@ -67,43 +259,40 @@ function  getDashboardInfo() {
                     '</tr>';
                 $("#total").append(td2);
             }
-            /*
-            for (var key in data)
+            if (data[data.length-1])
             {
-                $("#"+key).text(data[key]);
+                var total=data[data.length-1];
+                $("#todayRegUser").text(total.todayRegUser);
+                $("#todayLoginUser").text(total.todayLoginUser);
+                $("#todayRevenue").text(total.todayRevenue);
+                if (total.todayPayingUser==0)
+                {
+                    $("#todayArppu").text("0");
+                }else{
+                    $("#todayArppu").text((total.todayRevenue/total.todayPayingUser).toFixed(1));
+                }
+                if (total.todayLoginUser==0)
+                {
+                    $("#todayArpu").text("0");
+                }else{
+                    $("#todayArpu").text((total.todayRevenue/total.todayLoginUser).toFixed(1));
+                }
+                $("#yesterdayRevenue").text(total.yesterdayRevenue);
+                $("#todayPayingUser").text(total.todayPayingUser);
+                $("#yesterdayPayingUser").text(total.yesterdayPayingUser);
+                $("#yesterdayRegUser").text(total.yesterdayRegUser);
+                $("#yesterdayLoginUser").text(total.yesterdayLoginUser);
+
+                pieTitle=data[data.length-1].todayRevenue == 0?"无充值":data[data.length-1].todayRevenue+"元";
             }
-            if (data['totalPayingUser'] && data['totalPayingUser']>0)
-            {
-                $("#totalArppu").text((data['totalRevenue']/data['totalPayingUser']).toFixed(1));
-            }else{
-                $("#totalArppu").text('0');
-            }
-            if (data['totalUser'] && data['totalUser']>0)
-            {
-                $("#totalArpu").text((data['totalRevenue']/data['totalUser']).toFixed(1));
-                $("#payingUserProportion").text((data['totalPayingUser']/data['totalUser']*100).toFixed(1)+"%");
-            }else{
-                $("#totalArpu").text('0');
-                $("#payingUserProportion").text('0');
-            }
-            if (data['todayTodayLoginUser'] && data['todayTodayLoginUser']>0)
-            {
-                $("#todayArpu").text((data['todayRevenue']/data['todayTOdayLoginUser']).toFixed(2));
-            }else{
-                $("#todayArpu").text("0");
-            }
-            if (data['todayPayingUser'] && data['todayPayingUser']>0)
-            {
-                $("#todayArppu").text((data['todayRevenue']/data['todayPayingUser']).toFixed(2));
-            }else{
-                $("#todayArppu").text("0");
-            }*/
+            revenuePie('todayPie',pieData,pieSeries,pieTitle);
         },
         error:function (data) {
             alert("获取数据失败");
         }
     });
 }
+
 function last30dayInfo(type) {
     var gameId=$("#currGameId").val();
     switch (type) {

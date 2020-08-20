@@ -89,32 +89,34 @@ $this->registerCss("
 $this->registerJsFile("@web/js/echarts.min.js",['position'=>\yii\web\View::POS_HEAD]);
 $this->registerJsFile("@web/js/analyze/dashboard.js",['position'=>\yii\web\View::POS_HEAD]);
 $this->registerJs("
-getDashboardInfo()
+getDashboardInfo();
+getOrderDistribution();
+getMonthlyRevenue();
 $(function () {
   $('[data-toggle=\"tooltip\"]').tooltip()
 })
 ");
 
 ?>
-
 <div class="panel panel-default">
     <div class="panel-body">
-        <b>今日数据</b>
-        <hr>
-        <table class="table table-striped">
-            <thead>
-                <td>游戏</td>
-                <td>今日注册</td>
-                <td>今日登录</td>
-                <td>付费额度</td>
-                <td>充值人数</td>
-                <td>ARPU</td>
-            </thead>
-            <tbody id="dashboard">
-
-            </tbody>
-        </table>
-        <div class="row hidden">
+        <div class="row">
+            <div class="col-md-2">
+                <div>
+                    <p class="text-center"><span class="dtop-items-title allpay"/></p>
+                    <p class="text-center">付费额度<p/>
+                    <p class="text-center"><span class="label label-white">今日</span><span id="todayRevenue"></span></p>
+                    <p class="text-center"><span class="label label-white">昨日</span><span id="yesterdayRevenue"></span></p>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div>
+                    <p class="text-center"><span class="dtop-items-title newdevice"/></p>
+                    <p class="text-center">付费人数<p/>
+                    <p class="text-center"><span class="label label-white">今日</span><span id="todayPayingUser"></span></p>
+                    <p class="text-center"><span class="label label-white">昨日</span><span id="yesterdayPayingUser"></span></p>
+                </div>
+            </div>
             <div class="col-md-2">
                 <div>
                     <p class="text-center"><span class="dtop-items-title newuser"/></p>
@@ -125,27 +127,10 @@ $(function () {
             </div>
             <div class="col-md-2">
                 <div>
-                    <p class="text-center"><span class="dtop-items-title newdevice"/></p>
-                    <p class="text-center">新增设备<p/>
-                    <p class="text-center"><span class="label label-white">今日</span><span id="todayRegDevice"></span></p>
-                    <p class="text-center"><span class="label label-white">昨日</span><span id="yesterdayRegDevice"></span></p>
-                </div>
-
-            </div>
-            <div class="col-md-2">
-                <div>
                     <p class="text-center"><span class="dtop-items-title userlogin"/></p>
-                    <p class="text-center">活跃用户<p/>
+                    <p class="text-center">今日登录<p/>
                     <p class="text-center"><span class="label label-white">今日</span><span id="todayLoginUser"></span></p>
                     <p class="text-center"><span class="label label-white">昨日</span><span id="yesterdayLoginUser"> -</span></p>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div>
-                    <p class="text-center"><span class="dtop-items-title allpay"/></p>
-                    <p class="text-center">付费额度<p/>
-                    <p class="text-center"><span class="label label-white">今日</span><span id="todayRevenue"></span></p>
-                    <p class="text-center"><span class="label label-white">昨日</span><span id="yesterdayRevenue"></span></p>
                 </div>
             </div>
             <div class="col-md-2">
@@ -167,9 +152,61 @@ $(function () {
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel  panel-default">
+            <div class="panel-heading">
+                今日
+            </div>
+            <div class="panel-body">
+                <div id="todayPie" style="width: 600px;height:350px;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel  panel-default">
+            <div class="panel-heading">
+                月:
+            </div>
+            <div class="panel-body">
+                <div id="monthlyPie" style="width: 600px;height:350px;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default hidden">
+
+    <div class="panel-body">
+        <b>今日数据</b>
+        <hr>
+        <table class="table table-striped">
+            <thead>
+                <td>游戏</td>
+                <td>今日注册</td>
+                <td>今日登录</td>
+                <td>付费额度</td>
+                <td>充值人数</td>
+                <td>ARPU</td>
+            </thead>
+            <tbody id="dashboard">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">充值分布</div>
+    <div class="panel-body" id="orderDistribution" style="width: 1400px;height:500px;">
+
+    </div>
+</div>
 <div class="panel panel-default">
     <div class="panel-body">
-        <label>数据概要</label>
+        <label>累计数据</label>
         <hr/>
         <table class="table table-striped">
             <thead>
@@ -185,7 +222,7 @@ $(function () {
         </table>
     </div>
 </div>
-<div class="panel panel-default">
+<div class="panel panel-default hidden">
     <div class="panel-body">
         <b>最近30日数据趋势图</b>
         <hr/>

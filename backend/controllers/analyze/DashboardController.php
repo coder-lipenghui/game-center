@@ -2,6 +2,7 @@
 namespace backend\controllers\analyze;
 
 use backend\models\analyze\ModelDashBoard;
+use backend\models\analyze\ModelOrder;
 use backend\models\MyTabOrders;
 use backend\models\MyTabPermission;
 use backend\models\MyTabPlayers;
@@ -17,8 +18,16 @@ class DashboardController extends Controller
 
         ]);
     }
+    public function actionOrderDistribution()
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        $request=\Yii::$app->request;
+        $model=new ModelOrder();
+        return $model->orderDistribution();
+    }
     public function actionGetDashboardInfo()
     {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
         $request=\Yii::$app->request;
         $gameId=$request->get('gameId');
 
@@ -47,6 +56,7 @@ class DashboardController extends Controller
                 'todayRegUser'=>0,
                 'todayPayingUser'=>0,
 
+                'yesterdayPayingUser'=>0,
                 'yesterdayRevenue'=>0,
                 'yesterdayArpu'=>0,
                 'yesterdayArppu'=>0,
@@ -56,17 +66,16 @@ class DashboardController extends Controller
             ];
             if ($gameId)
             {
-                \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
                 $result=[
                     'gameId'=>$gameId,
                     'gameName'=>$gameName,
                     'totalRevenue'=>$this->actionTotalRevenue($gameId),
                     'totalUser'=>$this->actionTotalUser($gameId),
-                    'totalDevice'=>$this->actionTotalDevice($gameId),
+//                    'totalDevice'=>$this->actionTotalDevice($gameId),
                     'totalPayingUser'=>$this->actionTotalPayingUser($gameId),
 
-                    'last7dayLoginUser'=>$this->actionLast7dayLoginUserCount($gameId),
-                    'last30dayLoginUser'=>$this->actionLast30dayLoginUserCount($gameId),
+//                    'last7dayLoginUser'=>$this->actionLast7dayLoginUserCount($gameId),
+//                    'last30dayLoginUser'=>$this->actionLast30dayLoginUserCount($gameId),
 
                     'todayRevenue'=>$this->actionTodayRevenue($gameId),
                     'todayLoginUser'=>$this->actionTodayLoginUser($gameId),
@@ -74,9 +83,10 @@ class DashboardController extends Controller
                     'todayRegUser'=>$this->actionTodayRegUser($gameId),
                     'todayPayingUser'=>$this->actionTodayPayingUser($gameId),
 
+                    'yesterdayPayingUser'=>$this->actionYesterdayPayingUser($gameId),
                     'yesterdayRevenue'=>$this->actionYesterdayRevenue($gameId),
                     'yesterdayLoginUser'=>$this->actionYesterdayLoginUser($gameId),
-                    'yesterdayRegDevice'=>$this->actionYesterdayRegDevice($gameId),
+//                    'yesterdayRegDevice'=>$this->actionYesterdayRegDevice($gameId),
                     'yesterdayRegUser'=>$this->actionYesterdayRegUser($gameId),
 
                 ];
@@ -88,7 +98,7 @@ class DashboardController extends Controller
             'gameName'=>'汇总',
             'totalRevenue'=>array_sum(array_column($data,'totalRevenue')),
             'totalUser'=>array_sum(array_column($data,'totalUser')),
-            'totalDevice'=>array_sum(array_column($data,'totalDevice')),
+//            'totalDevice'=>array_sum(array_column($data,'totalDevice')),
             'totalPayingUser'=>array_sum(array_column($data,'totalPayingUser')),
             'totalArpu'=>array_sum(array_column($data,'totalArpu')),
             'totalArppu'=>array_sum(array_column($data,'totalArppu')),
@@ -99,12 +109,13 @@ class DashboardController extends Controller
             'todayRegDevice'=>array_sum(array_column($data,'todayRegDevice')),
             'todayRegUser'=>array_sum(array_column($data,'todayRegUser')),
             'todayPayingUser'=>array_sum(array_column($data,'todayPayingUser')),
+            'yesterdayPayingUser'=>array_sum(array_column($data,'yesterdayPayingUser')),
             'yesterdayRevenue'=>array_sum(array_column($data,'yesterdayRevenue')),
             'yesterdayArpu'=>array_sum(array_column($data,'yesterdayArpu')),
             'yesterdayArppu'=>array_sum(array_column($data,'yesterdayArppu')),
-            'yesterdayTodayLoginUser'=>array_sum(array_column($data,'yesterdayTodayLoginUser')),
-            'yesterdayTodayRegDevice'=>array_sum(array_column($data,'yesterdayTodayRegDevice')),
-            'yesterdayTodayRegUser'=>array_sum(array_column($data,'yesterdayTodayRegUser'))
+            'yesterdayLoginUser'=>array_sum(array_column($data,'yesterdayLoginUser')),
+//            'yesterdayTodayRegDevice'=>array_sum(array_column($data,'yesterdayTodayRegDevice')),
+            'yesterdayRegUser'=>array_sum(array_column($data,'yesterdayRegUser'))
         ];
         $data[]=$total;
         return $data;
@@ -113,6 +124,40 @@ class DashboardController extends Controller
     public function actionTotalUser($gameId)
     {
         return MyTabPlayers::getUserTotal($gameId);
+    }
+    public function actionGetMonthlyRevenue()
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        $request=\Yii::$app->request;
+        $month=!$request->get('date')?date('Y-m'):$request->get('date');
+        $games=MyTabPermission::getGames();
+        $data=[];
+        for ($i=0;$i<count($games);$i++)
+        {
+            $gameId=$games[$i]['id'];
+            $gameName=$games[$i]['name'];
+            $result=[
+                'gameId'=>$gameId,
+                'gameName'=>$gameName,
+                'revenue'=>0
+            ];
+            if ($gameId)
+            {
+                $result=[
+                    'gameId'=>$gameId,
+                    'gameName'=>$gameName,
+                    'revenue'=>$this->actionMonthlyRevenue($gameId,$month),
+                ];
+                $data[]=$result;
+            }
+        }
+        $total=[
+            'gameId'=>0,
+            'gameName'=>'汇总',
+            'revenue'=>array_sum(array_column($data,'revenue'))
+        ];
+        $data[]=$total;
+        return $data;
     }
     public function actionTotalDevice($gameId)
     {
@@ -132,6 +177,10 @@ class DashboardController extends Controller
     {
         $dashboard=new ModelDashBoard();
         return $dashboard->getTodayLoginUserNumber($gameId);
+    }
+    public function actionYesterdayPayingUser($gameId)
+    {
+        return MyTabOrders::getYesterdayPayingUser($gameId);
     }
     public function actionTodayPayingUser($gameId)
     {
@@ -166,14 +215,18 @@ class DashboardController extends Controller
 //        $dashboard=new ModelDashBoard();
 //        return $dashboard->getTodayArppu($gameId);
 //    }
-
+    public function actionMonthlyRevenue($gameId,$month)
+    {
+        return ModelOrder::monthlyRevenue($gameId,$month);
+    }
     public function actionYesterdayRevenue($gameId)
     {
         return MyTabOrders::getYesterdayRevenue($gameId);
     }
     public function actionYesterdayLoginUser($gameId)
     {
-        return MyTabPlayers::getYesterdayRegister($gameId);
+        $dashboard=new ModelDashBoard();
+        return $dashboard->getYesterdayLoginUserNumber($gameId);
     }
     public function actionYesterdayRegUser($gameId)
     {
