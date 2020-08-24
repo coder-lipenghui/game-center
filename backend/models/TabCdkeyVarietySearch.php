@@ -82,7 +82,10 @@ class TabCdkeyVarietySearch extends TabCdkeyVariety
         // grid filtering conditions
         $data=$query->select(['id','name'])->where([
             'gameId' => $params['gameId'],
-        ])->asArray()->all();
+        ])
+            ->orderBy('name')
+            ->asArray()
+            ->all();
 
         return $data;
     }

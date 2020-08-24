@@ -8,10 +8,11 @@ use Yii;
  * This is the model class for table "tab_cdkey_variety".
  *
  * @property int $id
- * @property int $gameId
+ * @property int $gameId 游戏ID
  * @property string $name 激活码名称
  * @property string $items 激活码对应的物品
  * @property int $once 只能使用1次 1:一次 0:可以重复
+ * @property int $type 激活码类型:通用激活码，普通激活码
  */
 class TabCdkeyVariety extends \yii\db\ActiveRecord
 {
@@ -30,7 +31,7 @@ class TabCdkeyVariety extends \yii\db\ActiveRecord
     {
         return [
             [['gameId', 'name', 'items'], 'required'],
-            [['gameId', 'once'], 'integer'],
+            [['gameId', 'once', 'type'], 'integer'],
             [['name', 'items'], 'string', 'max' => 100],
         ];
     }
@@ -46,6 +47,11 @@ class TabCdkeyVariety extends \yii\db\ActiveRecord
             'name' => Yii::t('app', 'Name'),
             'items' => Yii::t('app', 'Items'),
             'once' => Yii::t('app', 'Once'),
+            'type' => Yii::t('app', 'Type'),
         ];
+    }
+    public function getVersion()
+    {
+        return $this->hasOne(TabGameVersion::className(),['id'=>'gameId']);
     }
 }

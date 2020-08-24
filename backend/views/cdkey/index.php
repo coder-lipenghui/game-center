@@ -14,6 +14,11 @@ use backend\models\TabDistributor;
 
 $this->title = Yii::t('app', '激活码');
 $this->params['breadcrumbs'][] = $this->title;
+
+\yii\web\YiiAsset::register($this);
+$this->registerJsFile('@web/js/common.js',['depends'=>'yii\web\YiiAsset']);
+$this->registerJsFile('@web/js/cdk.js',['depends'=>'yii\web\YiiAsset']);
+
 ?>
 <?php
   if ($msg)

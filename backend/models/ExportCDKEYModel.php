@@ -105,10 +105,10 @@ class ExportCDKEYModel extends AutoCDKEYModel
         {
             return json_encode(['code'=>-1,'msg'=>'未找到激活信息']);
         }
-        $lastId=$data[count($data)-1]['id'];
-        $title="激活码";
-        if (true)
-        {
+
+        try{
+            $lastId=$data[count($data)-1]['id'];
+            $title="激活码";
             $objPHPExcel = new \PHPExcel();
             $objWriter = new \PHPExcel_Writer_Excel5($objPHPExcel);
             $objPHPExcel->getActiveSheet()->setCellValue('A1',  $title."类型:".$variety->name." 共[$num]个");
@@ -123,28 +123,30 @@ class ExportCDKEYModel extends AutoCDKEYModel
                 $i=$key+2;
                 $objPHPExcel->getActiveSheet()->setCellValue('A'.$i,  $value['cdkey']);
             }
-            //下载这个表格，在浏览器输出
-            $file_name = $title."_".$variety->getAttribute('name')."(".$num."个)";
+            //excel保存在本地，然后ajax下载
+            $file_name = $variety->getAttribute('name')."(".$num."个)".time();
             header("Pragma: public");
             header("Expires: 0");
 
             header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
-            header("Content-Type:application/force-download");
             header("Content-Type:application/vnd.ms-execl");
             header("Content-Type:application/octet-stream");
-            header("Content-Type:application/download");;
             header('Content-Disposition:attachment;filename='.$file_name.'.xls');
             header("Content-Transfer-Encoding:binary");
-            $objWriter->save('php://output');
-        }
+            $file_path='../web/uploads/'.$file_name.".xls";
+            $objWriter->save($file_path);
 
-        try{
+            $response = array(
+                'code' => 1,
+                'msg' => '/uploads/'.$file_name.".xls"
+            );
+
             $this->saveExportLog($gameId,$distributorId,$varietyId,$num,$lastId);
         }catch (Exception $exception)
         {
-
+            return json_encode(['code'=>-1,'msg'=>'生成激活码excel出现异常，请联系管理员']);
         }
-        die();
+        return json_encode($response);
     }
     public function saveExportLog($gameId,$distributorId,$varietyId,$num,$lastId)
     {

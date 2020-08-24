@@ -111,7 +111,13 @@ class PermissionController extends Controller
 
         return $this->redirect(['index']);
     }
-
+    public function actionGetGamesByVersion($versionId)
+    {
+        $request=Yii::$app->request;
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $model=new MyTabPermission();
+        return $model->getGamesByVersion($request->get('versionId'));
+    }
     /**
      * 获取拥有权限的游戏列表
      */

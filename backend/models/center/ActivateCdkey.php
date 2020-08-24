@@ -52,20 +52,28 @@ class ActivateCdkey extends TabCdkeyRecord
                 {
                     //激活码检测
                     $cdkeyModel=new AutoCDKEYModel();
-                    $cdkeyModel::TabSuffix($game->id,$distribution->distributorId);
-                    $query=$cdkeyModel::find();
-                    $query->where(['cdkey'=>$this->cdkey]);
-                    $cdkey=$cdkeyModel::find()->where(['cdkey'=>$this->cdkey])->one();
 
+                    //通用类型激活码检测
+                    $query=$cdkeyModel::find()->where(['cdkey'=>$this->cdkey,'gameId'=>$game->id]);
+//                    exit($query->createCommand()->getRawSql());
+                    $cdkey=$query->one();
+                    if (empty($cdkey))
+                    {
+                        //普通类型激活码
+                        $cdkeyModel::TabSuffix($game->id,$distribution->distributorId);
+                        $cdkey=$cdkeyModel::find()->where(['cdkey'=>$this->cdkey])->one();
+                    }
                     if ($cdkey)
                     {
+                        $variety=TabCdkeyVariety::find()->where(['id'=>$cdkey->varietyId])->one();
+                        $used=false;
+
+                        //激活码类型限制：角色只能使用一次
                         $used=self::find()->where(['cdkey'=>$this->cdkey,'varietyId'=>$cdkey->varietyId])->one();
-                        if (!empty($used))
+                        if (!empty($used) && $variety->type==1)
                         {
                             return ['code'=>-6,'msg'=>'该激活码已使用'];
                         }
-                        //激活码类型限制：角色只能使用一次
-                        $variety=TabCdkeyVariety::find()->where(['id'=>$cdkey->varietyId])->one();
                         if (!empty($variety->once))
                         {
                             $once=$this::find()->where(['varietyId'=>$cdkey->varietyId,'roleId'=>$this->roleId])->one();
@@ -74,7 +82,8 @@ class ActivateCdkey extends TabCdkeyRecord
                                 return ['code'=>-1,'msg'=>'该类型激活码只能使用一次'];
                             }
                         }
-                        if (!empty($cdkey->used) || $cdkey->used==1) {
+                        //普通类型激活码检测激活码使用状态
+                        if ($variety->type==1 && (!empty($cdkey->used) || $cdkey->used==1)) {
                             return ['code'=>-6,'msg'=>'该激活码已使用'];
                         }
                         //记录使用信息
@@ -94,11 +103,12 @@ class ActivateCdkey extends TabCdkeyRecord
                                 }
                             }
                             $curl=new CurlHttpClient();
-                            $sign=md5($this->roleId.$this->roleName.$this->cdkey.$variety->items.$variety->name.$game->paymentKey);
+                            $sign=md5($this->roleId.$this->roleName.$this->cdkey.$variety->items.$variety->name.$variety->type.$game->paymentKey);
                             $body=[
                                 'roleId'=>$this->roleId,
                                 'roleName'=>$this->roleName,
                                 'cdkey'=>$this->cdkey,
+                                'type'=>$variety->type,
                                 'variety'=>$variety->name,
                                 'item'=>$variety->items,
                                 'port'=>$server->masterPort,
@@ -111,16 +121,17 @@ class ActivateCdkey extends TabCdkeyRecord
                                 'db'=>1
                             ];
                             $json=null;
-                            $url='';
+                            $url=$server->url;
+//                            $url="gameapi.com:8888";
                             if (true)//新接口
                             {
-                                $url='http://'.$server->url.'/api/cdkey?'.http_build_query($get);
+                                $url='http://'.$url.'/api/cdkey?'.http_build_query($get);
+//                                $url='http://'.$url.'/cdkey?'.http_build_query($get);
                                 $json=$curl->sendPostData($url,$body);
                             }else{
-                                $url='http://'.$server->url.'/app/ckgift.php?';
+                                $url='http://'.$url.'/app/ckgift.php?';
                                 $json=$curl->fetchUrl($url.http_build_query($body));
                             }
-
                             if ($curl->getHttpResponseCode()==200)
                             {
                                 $result=json_decode($json,true);

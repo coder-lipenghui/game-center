@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\TabCdkeyVariety */
 
-$this->title = Yii::t('app', 'Create Tab Cdkey Variety');
+$this->title = Yii::t('app', '激活码种类');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tab Cdkey Varieties'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -15,6 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="panel-body">
             <?= $this->render('_form', [
             'model' => $model,
+                'versions'=>$versions
             ]) ?>
         </div>
     </div>

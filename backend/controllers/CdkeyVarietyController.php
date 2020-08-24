@@ -2,10 +2,12 @@
 
 namespace backend\controllers;
 
+use backend\models\TabGameVersion;
 use Yii;
 use backend\models\TabCdkeyVariety;
 use backend\models\TabCdkeyVarietySearch;
 use backend\models\MyTabPermission;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -76,16 +78,27 @@ class CdkeyVarietyController extends Controller
     public function actionCreate()
     {
         $model = new TabCdkeyVariety();
-
+        $versions=TabGameVersion::find()->select(['id','name'])->asArray()->all();
+        $versions=ArrayHelper::map($versions,'id','name');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
+            'versions'=>$versions,
             'model' => $model,
         ]);
     }
-
+    public function actionType($varietyId)
+    {
+        $variety=TabCdkeyVariety::find()->where(['id'=>$varietyId])->select('type')->one();
+        if (!empty($variety))
+        {
+            return $variety->type;
+        }else{
+            return 0;
+        }
+    }
     /**
      * Updates an existing TabCdkeyVariety model.
      * If update is successful, the browser will be redirected to the 'view' page.

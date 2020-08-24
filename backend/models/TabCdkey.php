@@ -54,7 +54,7 @@ class TabCdkey extends \yii\db\ActiveRecord
             'gameId' => Yii::t('app', '游戏'),
             'distributorId' => Yii::t('app', '分销商'),
             'distributionId' => Yii::t('app', '分销渠道'),
-            'varietyId' => Yii::t('app', '激活码类型'),
+            'varietyId' => Yii::t('app', '种类'),
             'cdkey' => Yii::t('app', 'Cdkey'),
             'used' => Yii::t('app', 'Used'),
             'createTime' => Yii::t('app', 'Create Time'),

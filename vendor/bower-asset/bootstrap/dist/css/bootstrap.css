@@ -1611,6 +1611,9 @@ pre code {
   margin-right: -15px;
   margin-left: -15px;
 }
+.row-margin-top {
+  margin-top: 15px;
+}
 .row-no-gutters {
   margin-right: 0;
   margin-left: 0;

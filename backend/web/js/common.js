@@ -33,7 +33,34 @@ function getGame(documentid, async,selectedId,url) {
         }
     });
 }
-
+/**
+ * 根据游戏ID获取分销渠道
+ * @param documentid
+ * @param async
+ * @param selectedId
+ * @param url
+ */
+function getGamesByVersion(documentId, versionId,url) {
+    $(documentId).empty();
+    $.ajax({
+        type: 'get',
+        data: {
+            versionId:versionId,
+        },
+        dataType: "json",
+        url: (url==null?"":url)+"../permission/get-games-by-version",
+        async: true,
+        success: function(data) {
+            $.each(data, function(i) {
+                $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentId);
+            });
+            $(documentId).selectpicker('refresh');
+        },
+        error: function(data) {
+            alert('获取数据失败');
+        }
+    });
+}
 /**
  * 根据游戏ID获取分销渠道
  * @param documentid

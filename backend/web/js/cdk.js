@@ -14,30 +14,157 @@ function changeHref() {
        $("#exportBtn").attr('href',url+"&num="+Math.min(exportNum,surplus));
     }
 }
-function handleGameChange() {
-    var gameId=$("#cdkeyGames").val();
-    getDistributor("#cdkeyDistributors",true,gameId,null,"../");
+function exportCdkey() {
+    var url=$("#exportUrl").val();
+    var exportNum=$("#exportNum").val();
+    var surplus=$("#exportSurplus").val();
+    console.log("url:"+url);
+    console.log("导出数量:"+exportNum);
+    console.log("剩余数量:"+surplus);
+    $.ajax({
+        type:'get',
+        data:{
+            num:Math.min(exportNum,surplus),
+        },
+        dataType: "json",
+        url:url,
+        async:true,
+        success:function (data) {
+
+            if (data.code==1)
+            {
+                console.log(data.msg);
+                document.location.href =(data.msg);
+            }else{
+                console.log("出现错误:"+data.code);
+            }
+        },
+        error:function (data) {
+            console.log("出现异常")
+        }
+    });
 }
-function hnadleDistributorsChange(documentid) {
-    var gameId=$("#cdkeyGames").val();
-    //var distributorId=$("#cdkeyDistributors").val();
-    $(documentid).empty();
+function handleVersionChange() {
+    var versionId=$("#dropDownListVersion").val();
+    console.log("version id:"+versionId);
+    getGamesByVersion("#dropDownListGame",versionId,"../");
+    handleGetCdkVariety("#dropDownListCDKEYVariety");
+}
+function handleGameChange() {
+    var gameId=$("#dropDownListGame").val();
+    getDistributor("#dropDownListDistributor",true,gameId,null,"../");
+}
+
+/**
+ * 获取激活码类型:普通、通用
+ */
+function handleVarietyChange() {
+    var varietyId=$("#dropDownListCDKEYVariety").val();
     $.ajax({
         type: 'get',
         data: {
-            gameId: gameId
+            varietyId: varietyId
+        },
+        url: "../cdkey-variety/type",
+        async: true,
+        success: function(data) {
+            console.log("data:"+data);
+            if (data==1)
+            {
+                $("#generateNum").empty();
+                $("#cdkeyInput").addClass("hidden");
+                $("#cdkey").val("自动生成");
+            }else{
+                $("#generateNum").val(1);
+                $("#cdkeyInput").removeClass("hidden");
+                $("#cdkey").val("");
+            }
+        },
+        error: function(data) {
+            $("#generateNum").empty();
+            $("#cdkeyInput").addClass("hidden");
+        }
+    });
+}
+
+/**
+ * 获取激活码种类
+ * @param documentId
+ */
+function handleGetCdkVariety(documentId) {
+    var versionId=$("#dropDownListVersion").val();
+    $(documentId).empty();
+    $.ajax({
+        type: 'get',
+        data: {
+            gameId: versionId
         },
         dataType: "json",
         url: "../cdkey-variety/list",
         async: true,
         success: function(data) {
             $.each(data, function(i) {
-                $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
+                $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentId);
             });
-            $(documentid).selectpicker('refresh');
+            $(documentId).selectpicker('refresh');
         },
         error: function(data) {
-            alert('获取数据失败');
+            // alert('获取数据失败');
+            console.log("获取数据失败");
         }
     });
 }
+function handleGenerate() {
+    var form=$("#cdkeyGenerate");
+    var formData = form.serialize();
+    $("#alertDiv").empty();
+    $.ajax({
+        type:'post',
+        data:formData,
+        url:'../cdkey/create',
+        async: true,
+        success: function(data) {
+            var alertCalss="alert-success";
+            if (data!="success")
+            {
+                alertCalss="alert-error";
+            }
+            var alert="<div class='alert alert-dismissible "+alertCalss+"' role='alert' id='generateAlter'>"+
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>"+
+                "<label class='text-error' id='generateMsg'>"+data+"</label>"+
+                "</div>";
+            $("#alertDiv").append(alert);
+        },
+        error: function(data) {
+            console.log("失败");
+            var alert="<div class='alert alert-dismissible alert-error' role='alert' id='generateAlter'>"+
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>"+
+                "<label class='text-error' id='generateMsg'>出现异常</label>"+
+            "</div>";
+            $("#alertDiv").append(alert);
+        }
+    });
+}
+// function hnadleDistributorsChange(documentid) {
+//     var gameId=$("#cdkeyGames").val();
+//     //var distributorId=$("#cdkeyDistributors").val();
+//     $(documentid).empty();
+//     $.ajax({
+//         type: 'get',
+//         data: {
+//             gameId: gameId
+//         },
+//         dataType: "json",
+//         url: "../cdkey-variety/list",
+//         async: true,
+//         success: function(data) {
+//             $.each(data, function(i) {
+//                 $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
+//             });
+//             $(documentid).selectpicker('refresh');
+//         },
+//         error: function(data) {
+//             alert('获取数据失败');
+//         }
+//     });
+// }

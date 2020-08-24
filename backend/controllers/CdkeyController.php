@@ -14,6 +14,7 @@ use backend\models\GenerateCDKEYModel;
 use backend\models\AutoCDKEYModel;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -127,36 +128,66 @@ class CdkeyController extends Controller
     {
         $model =new GenerateCDKEYModel();
         $request=Yii::$app->request;
+        $msg="";
         if ($model->load($request->post()))
         {
             if ($model->validate())
             {
-                AutoCDKEYModel::TabSuffix($model->gameId,$model->distributorId);//设定表后缀"游戏_分销商"进行操作
-
-                $myModel=new AutoCDKEYModel();
-
-                $db=Yii::$app->get('db_log');
-
-                $values=[];
-                for ($j=0;$j<$model->generateNum;$j++)
+                $variety=TabCdkeyVariety::find()->where(['id'=>$model->varietyId])->one();
+                //通用类型激活码只用生成一条
+                if ($variety->type==2)
                 {
-                    $values[]=[
-                        $model->gameId,
-                        $model->distributorId,
-                        $model->varietyId,
-                        AutoCDKEYModel::generateCDKEY(8),
-                        $model->createTime
-                    ];
+                    $have=TabCdkey::find()->where(['gameId'=>$model->gameId,'cdkey'=>$model->cdkey])->one();
+                    if (!empty($have))
+                    {
+                        $msg="该游戏已存在该通用激活码";
+                    }else{
+                        if($model->save())
+                        {
+                            $msg="success";
+                        }else{
+                            $msg=json_encode($model->getErrors());
+                        }
+                    }
+                }else{
+                    AutoCDKEYModel::TabSuffix($model->gameId,$model->distributorId);//设定表后缀"游戏_分销商"进行操作
+
+                    $myModel=new AutoCDKEYModel();
+
+                    $db=Yii::$app->get('db_log');
+
+                    $values=[];
+                    for ($j=0;$j<$model->generateNum;$j++)
+                    {
+                        $values[]=[
+                            $model->gameId,
+                            $model->distributorId,
+                            $model->varietyId,
+                            AutoCDKEYModel::generateCDKEY(8),
+                            $model->createTime
+                        ];
+                    }
+                    try{
+                        $cmd=$db->createCommand();
+                        $cmd->batchInsert($myModel::tableName(),['gameId','distributorId','varietyId','cdkey','createTime'],$values);
+                        $cmd->query();
+                        $msg="success";
+                    }catch (Exception $exception)
+                    {
+                        $msg="生成出现异常:".$exception->getMessage();
+                    }
                 }
-                $cmd=$db->createCommand();
-                $cmd->batchInsert($myModel::tableName(),['gameId','distributorId','varietyId','cdkey','createTime'],$values);
-                $cmd->query();
-                return $this->redirect(['view']);
             }
         }
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        if ($request->isAjax)
+        {
+            return $msg;
+        }else{
+            return $this->render('create', [
+                'model' => $model,
+                'msg'=>$msg,
+            ]);
+        }
     }
 
     /**
@@ -182,7 +213,7 @@ class CdkeyController extends Controller
     {
         ExportCDKEYModel::TabSuffix($gameId,$distributorId);
         $model = new ExportCDKEYModel();
-        $model->downloadExcel($gameId,$distributorId,$varietyId,$num);
+        return $model->downloadExcel($gameId,$distributorId,$varietyId,$num);
     }
     /**
      * Deletes an existing TabCdkey model.

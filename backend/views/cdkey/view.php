@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\TabGameVersion;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -49,41 +50,29 @@ $this->registerJs("
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-<!--                <button type="button" class="btn btn-primary" onclick="exportCdkey()">确认</button>-->
-                <a class="btn btn-success" id="exportBtn" href="">确认</a>
+                <button type="button" class="btn btn-primary" onclick="exportCdkey()">确认</button>
+<!--                <a class="btn btn-success" id="exportBtn" href="">确认</a>-->
             </div>
         </div>
     </div>
 </div>
 <div class="tab-cdkey-view">
     <div class="panel panel-default">
-        <?php Pjax::begin(); ?>
+
         <?php $form = ActiveForm::begin(); ?>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-1">
                     <?= $form->field($model, 'gameId')->dropDownList(
-                        $games,
+                        ArrayHelper::map(TabGameVersion::find()->select(['id','name'])->all(),'id','name'),
                         [
                             "class"=>"selectpicker form-control col-xs-2",
                             "data-width"=>"fit",
-                            "id"=>"cdkeyGames",
-                            "onchange"=>"handleGameChange()",
-                            "title"=>"选择游戏"
+                            "id"=>"dropDownListVersion",
+                            "title"=>"选择版本",
+                            "onchange"=>"handleVersionChange()",
                         ]
-                    )->label(false) ?>
-                </div>
-                <div class="col-md-1">
-                    <?= $form->field($model, 'distributorId')->dropDownList(
-                        [],
-                        [
-                            "class"=>"selectpicker form-control col-xs-2",
-                            "data-width"=>"fit",
-                            "id"=>"cdkeyDistributors",
-                            "onchange"=>"hnadleDistributorsChange(\"#dropDownListCDKEYVariety\")",
-                            "title"=>"分销商"
-                        ]
-                    )->label(false) ?>
+                    )->label("版本") ?>
                 </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'varietyId')->dropDownList(
@@ -92,9 +81,32 @@ $this->registerJs("
                             "class"=>"selectpicker form-control col-xs-2",
                             "data-width"=>"fit",
                             "id"=>"dropDownListCDKEYVariety",
-                            "title"=>"激活码种类"
+                            "title"=>"激活码分类"
                         ]
-                    )->label(false) ?>
+                    ) ?>
+                </div>
+                <div class="col-md-1">
+                    <?= $form->field($model, 'gameId')->dropDownList(
+                        [],
+                        [
+                            "class"=>"selectpicker form-control col-xs-2",
+                            "data-width"=>"fit",
+                            "id"=>"dropDownListGame",
+                            "title"=>"选择游戏",
+                            "onchange"=>"handleGameChange()"
+                        ]
+                    ) ?>
+                </div>
+                <div class="col-md-1">
+                    <?= $form->field($model, 'distributorId')->dropDownList(
+                        [],
+                        [
+                            "class"=>"selectpicker form-control col-xs-2",
+                            "data-width"=>"fit",
+                            "id"=>"dropDownListDistributor",
+                            "title"=>"分销商"
+                        ]
+                    ) ?>
                 </div>
                 <div class="col-md-1">
                     <?= Html::submitButton(Yii::t('app', '查询'), ['class' => 'btn btn-success']) ?>
@@ -103,6 +115,7 @@ $this->registerJs("
         </div>
         <?php ActiveForm::end(); ?>
         <div class="panel-body">
+            <?php Pjax::begin(); ?>
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
 //                'filterModel' => $searchModel,

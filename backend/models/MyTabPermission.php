@@ -35,6 +35,16 @@ class MyTabPermission extends TabPermission
         $data=$query->all();
         return $data;
     }
+    public function getGamesByVersion($versionId)
+    {
+        $query=TabPermission::find();
+        $query->select(['name','tab_games.id','tab_games.versionId'])
+            ->asArray()
+            ->join('LEFT JOIN','tab_games','tab_games.id=tab_permission.gameId')
+            ->where(['tab_permission.uid'=>Yii::$app->user->id,'tab_games.versionId'=>$versionId]);
+        $data=$query->all();
+        return $data;
+    }
     public  function allowAccessGame()
     {
         $query=TabPermission::find();

@@ -7,13 +7,13 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\TabCdkeyVarietySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tab Cdkey Varieties');
+$this->title = Yii::t('app', '激活码类型');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-cdkey-variety-index">
     <div class="panel panel-default">
         <div class="panel-body">
-            <?= Html::a(Yii::t('app', 'Create Tab Cdkey Variety'), ['create'], ['class' => 'btn btn-success']) ?>
+            <?= Html::a(Yii::t('app', '新增类型'), ['create'], ['class' => 'btn btn-success']) ?>
         </div>
     </div>
     <div class="panel panel-default">
@@ -25,14 +25,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
                 'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
+//                    ['class' => 'yii\grid\SerialColumn'],
 
-                    'id',
-                    'gameId',
+//                    'id',
+                    ['attribute'=>'gameId','value'=>'version.name','label'=>'所属版本'],
+                    ['attribute'=>'type','value'=>function($model){ return $model->type==1?"普通":"通用";},'label'=>'类型'],
                     'name',
                     'items',
                     'once',
-
                     ['class' => 'yii\grid\ActionColumn'],
                 ],
                 ]); ?>
