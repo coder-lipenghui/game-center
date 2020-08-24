@@ -109,13 +109,15 @@ class CdkeyVarietyController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $versions=TabGameVersion::find()->select(['id','name'])->asArray()->all();
+        $versions=ArrayHelper::map($versions,'id','name');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'versions'=>$versions
         ]);
     }
 

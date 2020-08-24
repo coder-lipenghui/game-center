@@ -17,7 +17,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
    <div class="panel panel-default">
        <div class="panel-body">
            <?= $this->render('_form', [
-           'model' => $model,
+                'model' => $model,
+                'versions'=>$versions
            ]) ?>
        </div>
    </div>

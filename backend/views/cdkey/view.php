@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use backend\models\TabGames;
 use backend\models\TabDistributor;
+use backend\models\TabCdkeyVariety;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
@@ -126,7 +127,13 @@ $this->registerJs("
                         'attribute'=>'varietyId',
                         'label'=>'礼包类型',
                         'value'=>function($data){
-                            return \backend\models\TabCdkeyVariety::findOne($data['varietyId'])->name;
+                            $variety=TabCdkeyVariety::findOne($data['varietyId']);
+                            if(!empty($variety))
+                            {
+                                return $variety->name;
+                            }else{
+                                return "未知名称(".$data['varietyId'].")";
+                            }
                         }
                     ],
                     [

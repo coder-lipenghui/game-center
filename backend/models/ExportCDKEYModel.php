@@ -95,8 +95,12 @@ class ExportCDKEYModel extends AutoCDKEYModel
     {
         ini_set('max_execution_time',0); //设置程序的执行时间,0为无上限
 
-        $variety=TabCdkeyVariety::find()->where(['id'=>$varietyId,'gameId'=>$gameId])->one();
+        $variety=TabCdkeyVariety::find()->where(['id'=>$varietyId])->one();
 
+        if (empty($variety))
+        {
+            return json_encode(['code'=>-1,'msg'=>'未找到激活码类型:'.$varietyId]);
+        }
         $lastId=$this->getLastExportId($gameId,$distributorId,$varietyId);
 
         $data=$this->getCdkeys($varietyId,$lastId,$num);
