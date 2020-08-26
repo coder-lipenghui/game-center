@@ -68,7 +68,8 @@ class GameScriptController extends Controller
         $gameQuery=TabGames::find()->select(['id'])->where(['versionId'=>$model->gameId])->asArray();
         $games=$gameQuery->all();
         $servers = MyTabServers::getServersByGameId(ArrayHelper::getColumn($games,'id'));
-        $servers=ArrayHelper::map($servers,"index","id","name");
+//        $servers=ArrayHelper::map($servers,"index","id","name");
+        $servers=ArrayHelper::index($servers,null,"name");
         return $this->render('view', [
             'model' => $model,
             'servers'=>$servers,

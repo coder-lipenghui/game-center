@@ -80,9 +80,9 @@ $('#myTabs a').click(function (e) {
                     $serverList.="<div class=\"col-lg-2\">
                         <div class=\"input-group\">
                               <span class=\"input-group-addon\">
-                                <input type=\"checkbox\" onclick='watch(this)' value='".$vv."' class='server_input page_checkbox_$k' id='server_".$vv."' aria-label=\"...\">
+                                <input type=\"checkbox\" onclick='watch(this)' value='".$vv['id']."' class='server_input page_checkbox_$k' id='server_".$vv['id']."' aria-label=\"...\">
                               </span >
-                            <input id='server_label_".$vv."' type = \"text\" class=\"form-control\" aria-label=\"$k\" value='".$kk."区' readonly=\"readonly\"/>
+                            <input id='server_label_".$vv['id']."' type = \"text\" class=\"form-control\" aria-label=\"$k\" value='".$vv['serverName']."' readonly=\"readonly\"/>
                         </div>
                     </div>
                     ";

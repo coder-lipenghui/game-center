@@ -69,6 +69,8 @@ class TabGameScriptSearch extends TabGameScript
         $query->andFilterWhere(['like', 'fileName', $this->fileName])
             ->andFilterWhere(['like', 'comment', $this->comment]);
 
+        $query->orderBy('id DESC');
+
         return $dataProvider;
     }
 }
