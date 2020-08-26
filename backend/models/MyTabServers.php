@@ -116,6 +116,12 @@ class MyTabServers extends TabServers
                 ['>=','openDateTime',date('Y-m-d H:i:s',time())],
             ]);
     }
+
+    /**
+     *
+     * @param $gameId
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public static function getServersByGameId($gameId)
     {
         $query=self::find()
@@ -123,7 +129,9 @@ class MyTabServers extends TabServers
                 "name"=>"tab_games.name",
                 "serverName"=>"tab_servers.name",
                 "id"=>"tab_servers.id",
-                "index"=>"tab_servers.index"
+                "index"=>"tab_servers.index",
+                "port"=>"tab_servers.netPort",
+                "url"=>"tab_servers.url",
             ])
             ->where([
                 'gameId'=>$gameId,

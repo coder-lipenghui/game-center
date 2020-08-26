@@ -2,9 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\MyTabPermission;
+use backend\models\MyTabServers;
+use backend\models\TabPermission;
 use Yii;
 use backend\models\TabChatControl;
 use backend\models\TabChatControlSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,12 +39,11 @@ class ChatController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new TabChatControlSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $games=MyTabPermission::getGames();
+        $servers = MyTabServers::getServersByGameId(ArrayHelper::getColumn($games,'id'));
+        $servers=ArrayHelper::index($servers,null,"name");
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'servers'=>$servers
         ]);
     }
 
