@@ -2,11 +2,50 @@
 
 namespace backend\controllers\center;
 
+use backend\models\TabDistributor;
+use backend\models\TabGames;
+use backend\models\TabServers;
 use common\helps\CurlHttpClient;
 
 class XyController extends CenterController
 {
-
+    public function actionServerList()
+    {
+        $gameId=13;
+        $distributorId=16;
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        $game=TabGames::find()->where(['id'=>$gameId])->one();
+        if ($game)
+        {
+            $distributor=TabDistributor::find()->where(['id'=>$distributorId])->one();
+            if ($distributor)
+            {
+                $servers=TabServers::find()
+                    ->select([
+                       'index','netPort','url','name','openDateTime','status'
+                    ])
+                    ->where(['gameId'=>$gameId,'distributorId'=>$distributorId])
+                    ->asArray()
+                    ->all();
+                $result=[];
+                for ($i=0;$i<count($servers);$i++)
+                {
+                    $result[$servers[$i]['index']]=[
+                        $servers[$i]['netPort'],
+                        $servers[$i]['url'],
+                        $servers[$i]['name'],
+                        $i==count($servers)-1?1:0,
+                        $servers[$i]['openDateTime'],
+                        $i==count($servers)-1?1:0,
+                        $i==count($servers)-1?1:0,
+                        $servers[$i]['status']==6?1:0,
+                    ];
+                }
+                return $result;
+            }
+        }
+        return [];
+    }
     public function loginValidate($request, $distribution)
     {
         //渠道登录验证地址
