@@ -12,16 +12,16 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'gameId')->textInput() ?>
+    <?= $form->field($model, 'gameId')->dropDownList($games)->label("游戏") ?>
 
-    <?= $form->field($model, 'ip')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'ip')->textInput(['maxlength' => true])->label("登录IP") ?>
 
-    <?= $form->field($model, 'distributionUserId')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'distributionUserId')->textInput(['maxlength' => true])->label("渠道账号") ?>
 
-    <?= $form->field($model, 'deviceId')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'deviceId')->textInput(['maxlength' => true])->label("设备ID") ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Yii::t('app', '新 增'), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

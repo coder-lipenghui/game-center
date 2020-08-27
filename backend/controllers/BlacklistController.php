@@ -2,9 +2,12 @@
 
 namespace backend\controllers;
 
+use backend\models\MyTabPermission;
+use backend\models\TabPermission;
 use Yii;
 use backend\models\TabBlacklist;
 use backend\models\TabBlacklistSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,10 +38,13 @@ class BlacklistController extends Controller
      */
     public function actionIndex()
     {
+        $games=MyTabPermission::getGames();
+
         $searchModel = new TabBlacklistSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'games'=>ArrayHelper::map($games,'id','name'),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -64,6 +70,7 @@ class BlacklistController extends Controller
      */
     public function actionCreate()
     {
+        $games=MyTabPermission::getGames();
         $model = new TabBlacklist();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -72,6 +79,7 @@ class BlacklistController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'games'=>ArrayHelper::map($games,'id','name')
         ]);
     }
 

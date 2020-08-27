@@ -7,31 +7,31 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\TabBlacklistSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tab Blacklists');
+$this->title = Yii::t('app', '黑名单');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-blacklist-index">
     <div class="panel panel-default">
         <div class="panel-body">
-            <?= Html::a(Yii::t('app', 'Create Tab Blacklist'), ['create'], ['class' => 'btn btn-success']) ?>
+            <?= Html::a(Yii::t('app', '新增黑名单'), ['create'], ['class' => 'btn btn-success']) ?>
         </div>
     </div>
     <div class="panel panel-default">
         <div class="panel panel-body">
                 <?php Pjax::begin(); ?>
-                                <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+                                <?php  echo $this->render('_search', ['model' => $searchModel,'games'=>$games]); ?>
             
                             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
+//                'filterModel' => $searchModel,
         'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
+//                ['class' => 'yii\grid\SerialColumn'],
 
-                            'id',
-            'gameId',
+//                            'id',
+            ['attribute'=>'gameId','label'=>'游戏'],
             'ip',
-            'distributionUserId',
-            'deviceId',
+            ['attribute'=>'distributionUserId','label'=>'渠道账号'],
+            ['attribute'=>'deviceId','label'=>'设备ID'],
 
                 ['class' => 'yii\grid\ActionColumn'],
                 ],
