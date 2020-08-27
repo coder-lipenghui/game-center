@@ -191,7 +191,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <p class="text-info">非充值类型:金钻/元宝通过邮件形式发放，不算充值积分</p>
                     <p class="text-info">充值类型：模拟充值发放,记录充值积分等，玩家可以领取常规充值奖励等</p>
-                    <p class="text-info">绑定元宝/金钻需要填写角色名，模拟充值类型的需要填写账号.</p>
+                    <p class="text-info">比例:1RMB=100金钻</p>
                 </div>
                 <table class="table table-condensed" style="table-layout: fixed;">
                     <tr>
@@ -199,7 +199,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         <td>
                             <div class="row">
                                 <div class="col-md-3"><?=$form->field($supportModel,'type')->dropDownList(
-                                        [0=>"非充值",1=>"充值"],
+                                        [0=>"非充值",1=>"充值",2=>"其他"],
                                         [
                                             "class"=>"selectpicker form-control col-xs-2",
                                             "data-width"=>"fit",
@@ -241,21 +241,34 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                             </div>
                         </td>
                     </tr>
+
                     <tr id="roleAccount">
                         <td>角色账号:</td>
                         <td><?= $form->field($supportModel,'roleAccount')->textInput(['id'=>'txtRoleAccount'])?></td>
                     </tr>
+                    <tr id="roleId">
+                        <td>角色ID:</td>
+                        <td><?= $form->field($supportModel,'roleId')->textInput(['id'=>'txtRoleId'])?></td>
+                    </tr>
                     <tr id="roleName">
                         <td>角色名称:</td>
-                        <td><?= $form->field($supportModel,'roleId')->textInput(['id'=>'txtRoleName'])?></td>
+                        <td><?= $form->field($supportModel,'roleName')->textInput(['id'=>'txtRoleName'])?></td>
                     </tr>
                     <tr>
                         <td>申请理由:</td>
                         <td><?= $form->field($supportModel,'reason')->textInput()?></td>
                     </tr>
-                    <tr>
+                    <tr id="products">
+                        <td>
+                            物品:
+                        </td>
+                        <td>
+                            <?= $form->field($supportModel,'productId')->dropDownList([],['id'=>'txtProducts'])?>
+                        </td>
+                    </tr>
+                    <tr id="number">
                         <td>申请数量:</td>
-                        <td><?= $form->field($supportModel,'number')->textInput()?></td>
+                        <td><?= $form->field($supportModel,'number')->textInput(['placeholder'=>'填写金钻数量。1RMB=100金钻','id'=>'txtNumber'])?></td>
                     </tr>
                 </table>
             </div>

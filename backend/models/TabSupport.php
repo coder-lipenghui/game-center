@@ -13,9 +13,11 @@ use Yii;
  * @property int $distributorId 分销商ID
  * @property int $serverId 区服ID
  * @property string $roleAccount 角色账号
- * @property string roleId 角色名称
+ * @property string roleId 角色ID
+ * @property string roleName 角色名称
  * @property string $reason 申请理由
  * @property int $type 元宝类型：0:常规 2:模拟充值
+ * @property int $productId 计费点ID
  * @property int $number 元宝数量
  * @property int $status 审核状态
  * @property int $deliver 交付状态
@@ -39,10 +41,10 @@ class TabSupport extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sponsor', 'gameId', 'distributorId', 'serverId', 'type', 'number', 'status', 'deliver', 'verifier'], 'integer'],
+            [['sponsor', 'gameId', 'distributorId', 'serverId', 'type', 'number', 'status', 'deliver', 'verifier','productId'], 'integer'],
             [['gameId', 'distributorId', 'serverId', 'roleAccount', 'reason', 'type', 'number'], 'required'],
             [['applyTime', 'consentTime'], 'safe'],
-            [['roleAccount', 'roleId', 'reason'], 'string', 'max' => 255],
+            [['roleAccount', 'roleId','roleName','reason'], 'string', 'max' => 255],
         ];
     }
 
@@ -93,5 +95,9 @@ class TabSupport extends \yii\db\ActiveRecord
     public function getVerifierUser()
     {
         return $this->hasOne(\common\models\User::className(),['id'=>'verifier']);
+    }
+    public function getProduct()
+    {
+        return $this->hasOne(TabProduct::className(),['id'=>'productId']);
     }
 }

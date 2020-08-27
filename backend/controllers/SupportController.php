@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use backend\models\MyTabPermission;
+use backend\models\TabGames;
+use backend\models\TabProduct;
 use backend\models\TabSupportCreate;
 use Yii;
 use backend\models\TabSupport;
@@ -94,7 +96,17 @@ class SupportController extends Controller
         }
         return ['code'=>-1,'msg'=>'申请失败','info'=>$model->getErrors(),'param'=>Yii::$app->request->queryParams];
     }
-
+    public function actionProduct($gameId)
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        $game=TabGames::find()->where(['id'=>$gameId])->one();
+        if (!empty($game))
+        {
+            $product=TabProduct::find()->select(['id','name'=>'productName'])->where(['gameId'=>$game->versionId,'type'=>2])->asArray()->all();
+            return $product;
+        }
+        return null;
+    }
     /**
      * Updates an existing TabSupport model.
      * If update is successful, the browser will be redirected to the 'view' page.

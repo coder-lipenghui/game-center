@@ -8,7 +8,34 @@ function changeGame(sender) {
     $("#supportGames").val($("#games").val());
     getDistributor("#platform",true,$("#games").val(),null,"../");
     getDistributor("#supportDistributors",true,$("#games").val(),null,"../");
-};
+    getProducts();
+}
+function getProducts() {
+    var gameId=$("#games").val();
+    var documentid="#txtProducts";
+    $.ajax({
+        type: 'get',
+        data: {
+            gameId:gameId
+        },
+        dataType: "json",
+        url: "../../support/product",
+        async: true,
+        success: function(data) {
+            if (data)
+            {
+                $.each(data, function(i) {
+                    $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
+                });
+            }else{
+                console.log("数据获取异常");
+            }
+        },
+        error: function(data) {
+            console.log("获取数据失败");
+        }
+    });
+}
 function changePt(sender) {
     var gid=$("#games").val();
     var pid=$("#platform").val();
@@ -90,12 +117,15 @@ function allowCharacter() {
 }
 function changeSupportType() {
     var type=$("#supportType").val();
-    if (type == 0) {
-        $("#roleName").removeClass("hidden");
-        $("#roleAccount").addClass("hidden");
+    if (type==2)
+    {
+        $("#products").removeClass("hidden");
+        $("#number").addClass("hidden");
+        $("#txtNumber").val(1);
     }else{
-        $("#roleAccount").removeClass("hidden");
-        $("#roleName").addClass("hidden");
+        $("#products").addClass("hidden");
+        $("#number").removeClass("hidden");
+        $("#txtNumber").val("");
     }
 }
 function getPlayerName() {
@@ -164,7 +194,7 @@ function showRoleInfo(sender) {
     // $(".roleWears").addClass("hidden");
     // $("#role_wears_"+seedId).removeClass("hidden");
 
-    //显示对应角色的舒心信息
+    //显示对应角色的信息
     var account=$("#role_attr_"+seedId+" .account").text();
     var seedName=$("#role_attr_"+seedId+" .seedname").text();
     var roleName=$("#role_attr_"+seedId+" .chrname").text();
@@ -172,7 +202,10 @@ function showRoleInfo(sender) {
     $("#role_attr_"+seedId).removeClass("hidden");
 
     $("#txtRoleAccount").val(account);
-    $("#txtRoleName").val(seedName);
+    $("#txtRoleId").val(seedName);
+    $("#txtRoleName").val(roleName);
+
+    console.log(account+" "+seedName+" "+roleName);
     $("#unvoiceRoleName").val(roleName);
     $("#allowLoginRoleName").val(roleName);
     $("#denyLoginRoleName").val(roleName);

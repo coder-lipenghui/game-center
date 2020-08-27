@@ -77,7 +77,7 @@ $this->registerJs('
                                         ]
                                     )?></div>
                                 <div class="col-md-3"><?=$form->field($createModel,'type')->dropDownList(
-                                        [0=>"非充值",1=>"充值"],
+                                        [0=>"非充值",1=>"金钻充值",2=>"其他充值"],
                                         [
                                             "class"=>"selectpicker form-control col-xs-2",
                                             "data-width"=>"fit",
@@ -171,16 +171,8 @@ $this->registerJs('
                         'footerOptions' => ['class'=>'hide'],
                     ],
                     [
-                        'attribute'=>'roleAccount',
-                        'label'=>'账号/角色',
-                        'value'=>function($model){
-                            if ($model->type==1)
-                            {
-                                return $model->roleAccount;
-                            }else{
-                                return $model->roleId;
-                            }
-                        },
+                        'attribute'=>'roleName',
+                        'label'=>'角色',
                         'footerOptions' => ['class'=>'hide'],
                     ],
                     [
@@ -194,12 +186,17 @@ $this->registerJs('
                         'label'=>'扶持类型',
                         'format'=>'html',
                         'value'=>function($model){
-                            $class="primary";
-                            $type="无充值积分";
+                            $class="default";
+                            $type="邮件发放";
                             if ($model->type==1)
                             {
-                                $class="info";
-                                $type="有充值积分";
+                                $class="primary";
+                                $type="模拟充值";
+                            }
+                            if($model->type==2)
+                            {
+                                $class="warning";
+                                $type="RMB道具";
                             }
                             return '<span class="label label-'.$class.'">'.$type.'</span>';
                         },
@@ -207,8 +204,21 @@ $this->registerJs('
                     ],
                     [
                         'attribute'=>'number',
-                        'label'=>'数量',
-                        'value'=>'number',
+                        'label'=>'物品',
+                        'value'=>function($model){
+                            if ($model->type==2)
+                            {
+                                $product=$model->product;
+                                if ($product)
+                                {
+                                    return $product->productName;
+                                }else{
+                                    return "商品:".$model->productId;
+                                }
+                            }else{
+                                return $model->number."金钻";
+                            }
+                        },
                         'footerOptions' => ['class'=>'hide'],
                     ],
                     [

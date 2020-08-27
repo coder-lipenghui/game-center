@@ -1,5 +1,7 @@
 function changeGame(sender,target) {
     getDistributor(target,true,$(sender).val(),null,"../");
+    console.log("游戏变化");
+    getProducts();
 };
 function changeDistributor(sender,target1,target2) {
     var gid=$(target1).val();
@@ -8,6 +10,30 @@ function changeDistributor(sender,target1,target2) {
 }
 function changeServer(sender) {
     // alert($("#servers").val());
+}
+function getProducts() {
+    var gameId=$("#games").val();
+    var documentid="#products";
+    $.ajax({
+        type: 'get',
+        data: {
+            gameId:gameId
+        },
+        dataType: "json",
+        url: "../support/product",
+        async: true,
+        success: function(data) {
+            if (data)
+            {
+                $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
+            }else{
+                console.log("数据获取异常");
+            }
+        },
+        error: function(data) {
+            console.log("获取数据失败");
+        }
+    });
 }
 function createSupport() {
     var form=$("#createSupportForm");
@@ -34,10 +60,10 @@ function createSupport() {
 function changeType() {
     var type=$("#supportType").val();
     if (type == 0) {
-        $("#roleName").removeClass("hidden");
+        $("#roleId").removeClass("hidden");
         $("#roleAccount").addClass("hidden");
     }else{
         $("#roleAccount").removeClass("hidden");
-        $("#roleName").addClass("hidden");
+        $("#roleId").addClass("hidden");
     }
 }
