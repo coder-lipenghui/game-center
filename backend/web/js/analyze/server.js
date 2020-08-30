@@ -95,8 +95,121 @@ function getPayData(documentId, type,url) {
         }
     });
 }
+function getConsumeData(documentId, type,url) {
+    $("#"+documentId).empty();
+    var gameId=$("#retainGames").val();
+    var distributorId=$("#retainDistributors").val();
+    var serverId=$("#retainServers1").val();
+    $.ajax({
+        type: 'get',
+        data: {
+            type: type,
+            gameId: gameId,
+            distributorId: distributorId,
+            serverId: serverId
+        },
+        dataType: "json",
+        url: (url == null ? "" : url) + "../server/consume-detail",
+        async: true,
+        success: function (data) {
+            console.log(data);
+            showConsumeLineBar(data);
+        },
+        error:function (data) {
+            console.log("获取数据失败");
+        }
+    });
+}
+function showConsumeLineBar(data) {
+    var info=JSON.parse(data);
+    var xAxis=[];
+    var ci=[];
+    var jinzuan=[];
+    for(var i=0;i<info.length;i++)
+    {
+        var tmp=info[i];
+        xAxis.push(tmp.itemname);
+        ci.push(tmp.number);
+        console.log(tmp.itemname+" "+tmp.number);
+        jinzuan.push(tmp.total);
+    }
+    var myChart = echarts.init(document.getElementById("lineBar"));
+    var option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        legend: {
+            data: ['次数', '金钻']
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: xAxis,
+                axisPointer: {
+                    type: 'shadow'
+                }
+            }
+        ],
+        yAxis:
+        [
+            {
+                type: 'value',
+                name: '金钻',
+                min: 100,
+                // max: 10000,
+                interval: 50000,
+                axisLabel: {
+                    formatter: '{value} 金钻'
+                }
+            },
+            {
+                type: 'value',
+                name: '次数',
+                min: 1,
+                // max: 10,
+                interval: 10,
+                axisLabel: {
+                    formatter: '{value} 次'
+                }
+            }
+        ],
+        series: [
+            {
+                name: '金钻',
+                type: 'bar',
+                data: jinzuan
+            },
+            {
+                name: '次数',
+                yAxisIndex: 1,
+                type: 'line',
+                data: ci
+            }
+        ]
+    };
+    myChart.setOption(option);
+    myChart.resize();
+    window.addEventListener("resize",function(){
+        myChart.resize();
+    });
+}
 function searchPayDashboard() {
     getPayData("temp",1,"");
+    getConsumeData("tmp",1,"");
 }
 function buildDataView(data) {
     var element="";

@@ -90,4 +90,18 @@ class ServerController extends Controller
         $pay=new ModelServerPayData();
         return $pay->getPayData();
     }
+    public function actionConsumeDetail()
+    {
+        \Yii::$app->response->format=Response::FORMAT_JSON;
+        $request=\Yii::$app->request;
+        $pay=new ModelServerPayData();
+        $pay->load(['ModelServerPayData'=>$request->getQueryParams()]);
+        if ($pay->validate())
+        {
+            return $pay->getConsumeDetail();
+        }else{
+            return $pay->getErrors();
+        }
+        return null;
+    }
 }

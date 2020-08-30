@@ -78,35 +78,14 @@ use yii\helpers\Html; ?>
                 <h3 id="arpu">-</h3>
             </div>
         </div>
-
-
     </div>
-    <div class="panel-body hidden">
-        <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#">付费用户</a></li>
-            <li role="presentation"><a href="#">付费额度</a></li>
-            <li role="presentation"><a href="#">Messages</a></li>
-        </ul>
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">金钻消耗分布<small>(开服至今)</small></div>
+    <div class="panel-body">
+        <div id="lineBar" style="width: 1200px;height: 600px;">
+
+        </div>
     </div>
 </div>
 

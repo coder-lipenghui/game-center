@@ -4,8 +4,10 @@
 namespace backend\models\analyze;
 
 use backend\models\report\ModelRoleLog;
+use backend\models\TabGames;
 use backend\models\TabOrders;
 use backend\models\TabServers;
+use common\helps\CurlHttpClient;
 use yii\base\Model;
 
 class ModelServerPayData extends Model
@@ -51,7 +53,6 @@ class ModelServerPayData extends Model
     {
         //开服至今的数据
         $query=TabServers::find()->where(['id'=>$sid]);
-//        exit($query->createCommand()->getRawSql());
         $server=$query->one();
         if ($server)
         {
@@ -71,7 +72,6 @@ class ModelServerPayData extends Model
     function getPayRoleCount($sid,$s,$e)
     {
         $query=TabOrders::find()->where(['gameId'=>$this->gameId,'distributorId'=>$this->distributorId,'gameServerId'=>$sid,'payStatus'=>'1'])->groupBy('gameAccount');
-//        exit($query->createCommand()->getRawSql());
         $result=$query->count();
         return $result;
     }
@@ -79,7 +79,6 @@ class ModelServerPayData extends Model
     function getPayAmountCount($sid,$s,$e)
     {
         $query=TabOrders::find()->where(['gameId'=>$this->gameId,'distributorId'=>$this->distributorId,'gameServerId'=>$sid,'payStatus'=>'1']);
-//        exit($query->createCommand()->getRawSql());
         $result=$query->sum('payAmount');
         return $result;
     }
@@ -95,5 +94,37 @@ class ModelServerPayData extends Model
     function getPayRoleTotal()
     {
 
+    }
+
+    /**
+     * 服务器记录的金钻消耗分布数据
+     * @param $sid
+     * @param $s
+     * @param $e
+     * @return |null
+     */
+    function getConsumeDetail()
+    {
+        $server=TabServers::find()->where(['id'=>$this->serverId])->one();
+        if (!empty($server->mingleServerId))
+        {
+            $server=TabServers::find()->where(['id'=>$server->mingleServerId])->one();
+        }
+        if (empty($server))
+        {
+            return null;
+        }
+        $game=TabGames::find()->where(['id'=>$server->gameId])->one();
+        if (empty($game)) return null;
+        $getBody=[
+            'sku'=>$game->sku,
+            'did'=>$server->distributorId,
+            'serverId'=>$server->index,
+            'db'=>3
+        ];
+        $url="http://".$server->url."/api/consume/dashboard?".http_build_query($getBody);
+        $curl=new CurlHttpClient();
+        $resultJson=$curl->fetchUrl($url);
+        return $resultJson;
     }
 }
