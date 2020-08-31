@@ -1,4 +1,6 @@
 <?php
+
+use kartik\datetime\DateTimePicker;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\menu;
@@ -168,7 +170,32 @@ $(function () {
     <div class="col-md-6">
         <div class="panel  panel-default">
             <div class="panel-heading">
-                月:
+                <div class="row">
+                    <div class="col-md-4">
+                        <?php
+                        echo DateTimePicker::widget([
+                            'name' => 'datetime_10',
+                            'options' => [
+                                'placeholder' => '选择时间',
+                                'id'=>'consumeTime',
+                            ],
+                            'value'=>date('Y-m'),
+                            'pluginOptions' => [
+                                'startView'=>3,
+                                'maxView'=>4,  //最大选择范围（年）
+                                'minView'=>3,  //最小选择范围（日）
+                                'todayHighlight' => true,
+                                'format'=>'yyyy-mm',
+                                'autoclose' => true,
+                            ]
+                        ]);
+                        ?>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="btn btn-primary" onclick="getMonthlyRevenue()">查询</div>
+                    </div>
+                </div>
+
             </div>
             <div class="panel-body">
                 <div id="monthlyPie" style="width: 600px;height:350px;">

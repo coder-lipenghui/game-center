@@ -189,10 +189,11 @@ function revenuePie(target,data,series,title) {
     });
 }
 function getMonthlyRevenue() {
+    var date=$("#consumeTime").val();
     $.ajax({
         type: 'get',
         data: {
-            'date':null
+            'date':date
         },
         dataType: "json",
         url:"../dashboard/get-monthly-revenue",
