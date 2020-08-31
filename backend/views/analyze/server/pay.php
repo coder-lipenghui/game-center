@@ -5,7 +5,9 @@ $this->registerJsFile("@web/js/echarts.min.js",['position'=>\yii\web\View::POS_H
 $this->registerJsFile("@web/js/common.js",['depends'=>'yii\web\YiiAsset']);
 $this->registerJsFile("@web/js/analyze/server.js",['position'=>\yii\web\View::POS_HEAD]);
 
-use yii\helpers\Html; ?>
+use yii\helpers\Html;
+//use kartik\datetime\DateTimePicker;
+?>
 
 <div class="panel panel-default">
     <div class="panel-body">
@@ -50,7 +52,7 @@ use yii\helpers\Html; ?>
     </div>
 </div>
 <div class="panel panel-default">
-    <div class="panel-heading">概况<small>(开服至今)</small></div>
+    <div class="panel-heading">概况<small id="openTime"></small></div>
     <div class="panel-body">
         <div class="row">
             <div class="col-sm-1">
@@ -81,9 +83,37 @@ use yii\helpers\Html; ?>
     </div>
 </div>
 <div class="panel panel-default">
-    <div class="panel-heading">金钻消耗分布<small>(开服至今)</small></div>
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-md-1">
+                金钻消耗分布
+            </div>
+            <div class="col-md-3">
+                <?php
+                echo DateTimePicker::widget([
+                    'name' => 'datetime_10',
+                    'options' => [
+                        'placeholder' => '选择时间',
+                        'id'=>'consumeTime',
+                    ],
+                    'pluginOptions' => [
+                        'startView'=>2,
+                        'maxView'=>3,  //最大选择范围（年）
+                        'minView'=>2,  //最小选择范围（日）
+                        'todayHighlight' => true,
+                        'format'=>'yyyy-mm-dd',
+                        'autoclose' => true,
+                    ]
+                ]);
+                ?>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-small" onclick="getConsumeData()">查询</button>
+            </div>
+        </div>
+    </div>
     <div class="panel-body">
-        <div id="lineBar" style="width: 1200px;height: 600px;">
+        <div id="lineBar" style="width: 1400px;height: 600px;">
 
         </div>
     </div>

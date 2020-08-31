@@ -77,6 +77,8 @@ function getPayData(documentId, type,url) {
         success: function (data) {
             if (data.code==1)
             {
+                // $("#consumeTime").val(data.openTime);
+                $("#openTime").text("("+data.openTime+"-至今)");
                 if (type==1)
                 {
                     var userNum=data.data[0];
@@ -95,15 +97,17 @@ function getPayData(documentId, type,url) {
         }
     });
 }
-function getConsumeData(documentId, type,url) {
-    $("#"+documentId).empty();
+function getConsumeData(url) {
+    // $("#lineBar").empty();
     var gameId=$("#retainGames").val();
     var distributorId=$("#retainDistributors").val();
     var serverId=$("#retainServers1").val();
+    var consumeTime=$("#consumeTime").val()
     $.ajax({
         type: 'get',
         data: {
-            type: type,
+            type: 1,
+            date:consumeTime,
             gameId: gameId,
             distributorId: distributorId,
             serverId: serverId
@@ -130,7 +134,6 @@ function showConsumeLineBar(data) {
         var tmp=info[i];
         xAxis.push(tmp.itemname);
         ci.push(tmp.number);
-        console.log(tmp.itemname+" "+tmp.number);
         jinzuan.push(tmp.total);
     }
     var myChart = echarts.init(document.getElementById("lineBar"));
@@ -159,6 +162,9 @@ function showConsumeLineBar(data) {
             {
                 type: 'category',
                 data: xAxis,
+                axisLabel:{
+                    rotate:30
+                },
                 axisPointer: {
                     type: 'shadow'
                 }
@@ -209,7 +215,7 @@ function showConsumeLineBar(data) {
 }
 function searchPayDashboard() {
     getPayData("temp",1,"");
-    getConsumeData("tmp",1,"");
+    getConsumeData();
 }
 function buildDataView(data) {
     var element="";

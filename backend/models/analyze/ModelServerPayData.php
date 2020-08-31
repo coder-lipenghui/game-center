@@ -17,6 +17,7 @@ class ModelServerPayData extends Model
     public $serverId;
     public $sDate;
     public $eDate;
+    public $date;
     public $day;
     public $num;
 
@@ -26,6 +27,7 @@ class ModelServerPayData extends Model
     {
         return [
             [['gameId','distributorId','type'],'required'],
+            [['date'],'string'],
             [['gameId','distributorId','type','serverId'],'integer']
         ];
     }
@@ -40,7 +42,10 @@ class ModelServerPayData extends Model
             $result['code']=1;
             if ($this->type==1)
             {
-                $result['data']=$this->dashboard($this->serverId);
+                $query=TabServers::find()->where(['id'=>$this->serverId]);
+                $server=$query->one();
+                $result['openTime']=$server->openDateTime;
+                $result['data']=$this->dashboard($server);
             }
         }
         else{
@@ -49,19 +54,19 @@ class ModelServerPayData extends Model
         return $result;
     }
     //概况
-    public function dashboard($sid)
+    public function dashboard($server)
     {
         //开服至今的数据
-        $query=TabServers::find()->where(['id'=>$sid]);
-        $server=$query->one();
+//        $query=TabServers::find()->where(['id'=>$sid]);
+//        $server=$query->one();
         if ($server)
         {
             $st=$server->openDateTime;
             $et=date('Y-m-d',time());
 
-            $roleNum=$this->getRoleNumCount($sid,$st,$et);
-            $payRoleNum=$this->getPayRoleCount($sid,$st,$et);
-            $payAmount=$this->getPayAmountCount($sid,$st,$et);
+            $roleNum=$this->getRoleNumCount($server->id,$st,$et);
+            $payRoleNum=$this->getPayRoleCount($server->id,$st,$et);
+            $payAmount=$this->getPayAmountCount($server->id,$st,$et);
             return [$roleNum,$payRoleNum,$payAmount];
 
         }else{
@@ -120,9 +125,12 @@ class ModelServerPayData extends Model
             'sku'=>$game->sku,
             'did'=>$server->distributorId,
             'serverId'=>$server->index,
-            'db'=>3
+            'db'=>3,
+            'date'=>$this->date
         ];
         $url="http://".$server->url."/api/consume/dashboard?".http_build_query($getBody);
+//        $url="http://gampapi.com:8888/consume/dashboard?".http_build_query($getBody);
+//        exit($url);
         $curl=new CurlHttpClient();
         $resultJson=$curl->fetchUrl($url);
         return $resultJson;
