@@ -11,18 +11,13 @@ use backend\models\TabOrders;
  */
 class TabOrdersExport extends TabOrders
 {
-    public $dists=[];
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-//            ['gameid', 'distributor', 'gameServerId', 'isDebug'], 'integer'],
-//            [['orderid', 'distributorOrderid', 'player_id', 'gameRoleid', 'gameRoleName', 'gameAccount', 'goodName', 'ispay', 'payTime', 'orderTime', 'deviceId', 'delivered'], 'safe'],
-//            [['total', 'vcoinRatio', 'paymoney'], 'number'],
-            [['dists','gameid','payTime'],'required'],
-
+            [['distributorId','payTime'],'required'],
         ];
     }
 
@@ -31,7 +26,6 @@ class TabOrdersExport extends TabOrders
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -61,11 +55,12 @@ class TabOrdersExport extends TabOrders
             $query->where('0=1');
             return $dataProvider;
         }
-        $query->andFilterWhere(['distributor'=>$this->dists])
-            ->andFilterWhere(['ispay'=>'1'])
-            ->andFilterWhere(['like', 'payTime', $this->payTime])
-            ->select(['distributor','orderid','distributorOrderid','paymoney','payTime'])->asArray()
-            ->orderBy('distributor');
+        $query->andFilterWhere(['distributorId'=>$this->distributorId])
+            ->andFilterWhere(['payStatus'=>'1'])
+//            ->andFilterWhere(['like', 'payTime', $this->payTime])
+            ->andFilterWhere(["FROM_UNIXTIME(payTime,'%Y-%m')"=>$this->payTime])
+            ->select(['gameId','orderId','distributionOrderId','payAmount','payTime'=>'FROM_UNIXTIME(payTime,\'%Y-%m-%d %H:%i:%s\')'])->asArray()
+            ->orderBy('gameId');
 //        exit($query->createCommand()->getRawSql());
         return $query->all();
     }
