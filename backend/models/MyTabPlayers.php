@@ -136,13 +136,11 @@ class MyTabPlayers extends TabPlayers
     public static function getYesterdayRegister($gameId)
     {
         $distributions=self::getDistributions($gameId);
-        if ($distributions)
-        {
-            $query=self::find()
-                ->where(['like','regTime',date('Y-m-d',strtotime(date('Y-m-d'))-86400000)])
-                ->andWhere(['distributionId'=>$distributions]);
-            $data=$query->count();
-
+        if ($distributions) {
+            $query = self::find()
+                ->where(['like', 'regTime', date('Y-m-d', strtotime(date('Y-m-d')) - 86400)])
+                ->andWhere(['distributionId' => $distributions]);
+            $data = $query->count();
             return $data;
         }
         return 0;
@@ -175,7 +173,7 @@ class MyTabPlayers extends TabPlayers
     public static function getYesterdayRegisterDevice($gameId)
     {
         $query=self::find()
-            ->where(['like','regtime',date('Y-m-d',strtotime(date('Y-m-d'))-86400000)])
+            ->where(['like','regtime',date('Y-m-d',strtotime(date('Y-m-d'))-86400)])
             ->groupBy('regdeviceid');
         $data=$query->count();
         return $data;
