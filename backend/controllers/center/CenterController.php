@@ -8,6 +8,7 @@
 
 namespace backend\controllers\center;
 
+use backend\events\PreTestEvent;
 use backend\models\AutoCDKEYModel;
 use backend\models\center\ActivateCdkey;
 use backend\models\center\CreateOrder;
@@ -41,6 +42,7 @@ use common\helps\LoggerHelper;
 use yii\base\Exception;
 use yii\caching\Cache;
 use yii\web\Controller;
+use backend\events\EventDefine;
 /**
  * 渠道登录、充值相关
  * 登录：
@@ -95,6 +97,12 @@ class CenterController extends Controller
     protected $paymentOrderNotFound="ORDER NOT FOUND";
 
     protected $paymentOrderStatusFailed="ORDER STATUS FAILED";
+
+    public function __construct($id, $module, $config = [])
+    {
+        $this->on(EventDefine::$EVENT_REPORT_ENTER_SCENE,['backend\models\MyTabOrdersPretest','deliver']);
+        parent::__construct($id, $module, $config);
+    }
 
     /**
      * 供SDK调用的登录验证接口
@@ -600,40 +608,45 @@ class CenterController extends Controller
             $resultJson=$curl->fetchUrl($url);
         }
         $result=json_decode($resultJson,true);
-
-        $code=$result['error_code'];
-        switch ($code)
+        if (empty($result['error_code']))
         {
-            case 1:
-                $msg=$result['ticket'];
-                break;
-            case -1:
-                $msg="参数不正确";
-                break;
-            case -2:
-                $msg="登录会话过期";
-                break;
-            case -3:
-                $msg="sign验证失败";
-                break;
-            case -4:
-                $msg="数据库连接失败";
-                break;
-            case -5:
-                $msg="记录玩家登录数据出错";
-                break;
-            case -6:
-                $msg="玩家登录数据更新失败";
-                break;
-            case -7:
-                $msg="防沉迷数据库连接失败";
-                break;
-            case -8:
-                $msg="玩家数据记录失败";
-                break;
-            default:
-                $msg="登录出现未知异常";
+            $code=-9;
+            $msg="登录出现未知异常";
+        }else{
+            $code=$result['error_code'];
+            switch ($code)
+            {
+                case 1:
+                    $msg=$result['ticket'];
+                    break;
+                case -1:
+                    $msg="参数不正确";
+                    break;
+                case -2:
+                    $msg="登录会话过期";
+                    break;
+                case -3:
+                    $msg="sign验证失败";
+                    break;
+                case -4:
+                    $msg="数据库连接失败";
+                    break;
+                case -5:
+                    $msg="记录玩家登录数据出错";
+                    break;
+                case -6:
+                    $msg="玩家登录数据更新失败";
+                    break;
+                case -7:
+                    $msg="防沉迷数据库连接失败";
+                    break;
+                case -8:
+                    $msg="玩家数据记录失败";
+                    break;
+                default:
+                    $msg="登录出现未知异常";
 
+            }
         }
         return ['code'=>$code."",'msg'=>$msg];
     }
@@ -682,6 +695,9 @@ class CenterController extends Controller
             {
                 $gameId=$game->id;
                 $distributionId=$requestData['distributionId'];
+                $distributionUserId=$requestData['distributionUserId'];
+                $serverId=$requestData['serverId'];
+                $account=$requestData['account'];
                 $distribution=MyTabDistribution::find()->where(['id'=>$distributionId])->one();
                 if ($distribution)
                 {
@@ -700,6 +716,20 @@ class CenterController extends Controller
                             return $createRole->doRecord($requestData);
                             break;
                         case self::$REPORT_TYPE_ENTER_GAME:
+
+                            $roleId=$requestData['roleId'];
+                            $roleName=$requestData['roleName'];
+
+                            $pretestEvent=new PreTestEvent();
+                            $pretestEvent->distributionId=$distributionId;
+                            $pretestEvent->gameId=$gameId;
+                            $pretestEvent->serverId=$serverId;
+                            $pretestEvent->roleId=$roleId;
+                            $pretestEvent->roleName=$roleName;
+                            $pretestEvent->distributionUserId=$distributionUserId;
+                            $pretestEvent->account=$account;
+                            $this->trigger(EventDefine::$EVENT_REPORT_ENTER_SCENE,$pretestEvent);
+
                             ModelLoginLog::TabSuffix($gameId,$distributorId);
                             $roleLogin=new ModelLoginLog();
                             return $roleLogin->doRecord($requestData);
