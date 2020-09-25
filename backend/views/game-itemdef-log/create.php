@@ -3,6 +3,7 @@
 use kartik\datetime\DateTimePicker;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\TabGameItemdefLog */
@@ -17,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="panel-body">
             <?php $form = ActiveForm::begin(); ?>
 
-            <?= $form->field($model, 'gameId')->dropDownList($games) ?>
+            <?= $form->field($model, 'gameId')->dropDownList(ArrayHelper::map(\backend\models\TabGameVersion::find()->select(['id','name'])->asArray()->all(),'id','name')) ?>
 
             <?= $form->field($model, 'version')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model,'file')->fileInput() ?>

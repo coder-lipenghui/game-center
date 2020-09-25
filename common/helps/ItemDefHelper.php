@@ -27,8 +27,9 @@ class ItemDefHelper
         {
             $name=$cache->get($key);
         }else{
+            $game=TabGames::find()->select(['versionId'])->where(['id'=>$gameId])->one();
             $db=Yii::$app->get('db_log');
-            $sql="select * from tab_itemdef_$gameId where id=$id limit 1";
+            $sql="select * from tab_itemdef_".$game->versionId." where id=$id limit 1";
             $itemdef=$db->createCommand($sql)->queryOne();
             try{
                 $name=$itemdef['name'];
@@ -43,15 +44,10 @@ class ItemDefHelper
     public static function getIdByName($gameId,$name)
     {
         $db=Yii::$app->get('db_log');
-
         $id=null;
         try{
             $game=TabGames::find()->where(['id'=>$gameId])->one();
-            if (!empty($game) && !empty($game->mingleGameId))
-            {
-                $gameId=$game->mingleGameId;
-            }
-            $sql="select * from tab_itemdef_$gameId where `name`='$name' limit 1";
+            $sql="select * from tab_itemdef_".$game->versionId." where `name`='$name' limit 1";
             $itemdef=$db->createCommand($sql)->queryOne();
            $id=$itemdef['id'];
         }catch (\Exception $e)

@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ['class' => 'yii\grid\SerialColumn'],
 
                             'id',
-                    'gameId',
+                    ['attribute'=>'gameId','label'=>'游戏版本'],
                     'version',
                     'logTime:datetime',
 

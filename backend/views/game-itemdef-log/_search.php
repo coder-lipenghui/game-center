@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'gameId') ?>
+    <?= $form->field($model, 'gameId')->label("游戏版本") ?>
 
     <?= $form->field($model, 'version') ?>
 

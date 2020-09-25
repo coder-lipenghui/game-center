@@ -31,9 +31,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                        'id',
-            'gameId',
-            'version',
+//                        'id',
+            ['attribute'=>'gameId','label'=>'游戏版本'],
+            ['attribute'=>'version','label'=>'版本记录'],
             'logTime:datetime',
             ],
             ]) ?>

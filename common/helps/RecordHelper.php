@@ -19,12 +19,12 @@ class RecordHelper
     {
         $cache=\Yii::$app->cache;
         $name=null;
-        $versoin=TabGames::find()->select(['versionId'])->where(['id'=>$gameId])->one();
         $key="src_".$gameId."_".$id;
         if($cache->get($key))
         {
             $name=$cache->get($key);
         }else{
+            $versoin=TabGames::find()->select(['versionId'])->where(['id'=>$gameId])->one();
             $db=Yii::$app->get('db_log');
             $sql="select * from tab_src_$versoin->versionId where actionId=$id limit 1";
             $record=$db->createCommand($sql)->queryOne();
