@@ -127,11 +127,23 @@ class MyTabRebate extends TabOrdersRebate
                     $paymentKey = $game->paymentKey;
 
                     $requestBody['flag'] = md5($requestBody['type'] . $requestBody['payscript'] . $requestBody['paynum'] . $requestBody['roleid'] . urlencode($requestBody['paytouser']) . $requestBody['paygold'] . $requestBody['paytime'] . $paymentKey);
-
-                    $url = "http://" . $server->url . "/app/ckcharge.php?" . http_build_query($requestBody);
-
                     $curl = new CurlHttpClient();
-                    $resultJson = $curl->fetchUrl($url);
+                    $url="http://" . $server->url;
+                    $resultJson=[];
+                    if (true)//新后台的发货接口
+                    {
+                        $getBody=[
+                            'sku'=>$game->sku,
+                            'did'=>$distribution->distributorId,
+                            'serverId'=>$server->index,
+                            'db'=>$requestBody['type']==1?2:1 //脚本类型的需要走octgame,常规类型走ocenter
+                        ];
+                        $url = $url. "/api/payment?" . http_build_query($getBody);
+                        $resultJson =$curl->sendPostData($url,$requestBody);
+                    }else{
+                        $url = $url. "/app/ckcharge.php?" . http_build_query($requestBody);
+                        $resultJson = $curl->fetchUrl($url);
+                    }
                     $result = json_decode($resultJson, true);
                     $msg = "";
                     switch ($result['code']) {
