@@ -23,20 +23,22 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="panel-body">
             <?php Pjax::begin(); ?>
             <?php
-//                echo $this->render('_search', ['model' => $searchModel]);
+                echo $this->render('_search', ['model' => $searchModel]);
+                echo("<hr/>");
             ?>
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
+//                'filterModel' => $searchModel,
                 'columns' => ['id',
                     [
                         'attribute'=>'gameId',
-                        'value'=>'game.name'
+                        'value'=>'game.name',
+                        'label'=>'游戏名称'
                     ],
                     ['attribute'=>'distributorId','label'=>'分销商','value'=>'distributor.name'],
-                    'name',
+                    ['attribute'=>'name','label'=>'区服名称'],
                     ['attribute'=>'index','label'=>'区Index'],
-                    'status',
+                    ['attribute'=>'status','label'=>'区服状态'],
                     'url:url',
 //                    'netPort',
 //                    'masterPort',

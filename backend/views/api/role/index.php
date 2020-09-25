@@ -357,7 +357,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                                 <button id="btnAllowLogin" class="btn btn-info" data-toggle="modal" data-target="#denyLogin">禁止登录</button>
                                 <button id="btnDenyLogin" class="btn btn-info" data-toggle="modal" data-target="#allowLogin">允许登录</button>
                                 <button class="btn btn-info hidden" data-toggle="modal" data-target="#myModal">强制下线</button>
-                                <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">申请元宝</button>
+                                <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">扶持申请</button>
                                 <button class="btn btn-info hidden">IP禁止登录</button>
                                 <button class="btn btn-info hidden">设备禁止登录</button>
                                 <button class="btn btn-info hidden">账号禁止登录</button>

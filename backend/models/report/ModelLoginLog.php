@@ -88,7 +88,10 @@ class ModelLoginLog extends  TabLogLogin
     {
         return $this->getLoginDeviceNumberByDay(7);
     }
-
+    public function getYesterdayLoginUserNumber()
+    {
+        return $this->getLoginUserNumberByDay(1);
+    }
     public function getTodayLoginUserNumber()
     {
         return $this->getLoginUserNumberByDay(0);

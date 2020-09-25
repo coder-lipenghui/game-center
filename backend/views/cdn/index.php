@@ -7,7 +7,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\TabCdnSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tab Cdns');
+$this->title = Yii::t('app', '热更地址及资源下载地址');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-cdn-index">
@@ -27,11 +27,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
 
-                            'id',
-            'gameId',
-            'updateUrl',
-            'assetsUrl',
-            'platform',
+//                            'id',
+            ['attribute'=>'gameId','label'=>'游戏'],
+            ['attribute'=>'updateUrl','label'=>'热更地址'],
+            ['attribute'=>'assetsUrl','label'=>'资源地址'],
+            ['attribute'=>'platform','label'=>'服务商'],
             //'secretId',
             //'secretKey',
             //'comment',

@@ -40,7 +40,7 @@ $this->registerJs("
         <div class="panel panel-heading">
             安卓打包参数&nbsp;<span class="glyphicon glyphicon-duplicate" id="btnCopy"></span>
         </div>
-        <div class="panel panel-body" id="packageParam"><?php echo ("<label class='text-lowercase'>".$model->game->sku."</label> {<br/>
+        <div class="panel panel-body" id="packageParam"><?php echo ("<label class='text-lowercase'>".$model->game->name."</label> {<br/>
 applicationId \"$model->packageName\"<br/>
 versionName \"$model->versionName\"<br/>
 versionCode $model->versionCode<br/>

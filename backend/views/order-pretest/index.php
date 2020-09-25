@@ -27,13 +27,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['attribute'=>'total','label'=>'充值金钻'],
                     ['attribute'=>'rate','label'=>'返利比例(%)'],
                     //'type',
-                    ['attribute'=>'got','label'=>'是否领取'],
+                    ['attribute'=>'got','label'=>'是否领取','value'=>function($model){return $model['got']==1?"已领取":"-";}],
                     //'rcvRoleId',
-                    ['attribute'=>'rcvRoleName','label'=>'领取角色'],
-                    ['attribute'=>'rcvServerId','label'=>'领取区服'],
-                    ['attribute'=>'rcvTime','label'=>'领取时间'],
+                    ['attribute'=>'rcvRoleName','label'=>'领取角色','value'=>function($model){return urldecode($model['rcvRoleName']);}],
+                    ['attribute'=>'rcvServerId','label'=>'领取区服','value'=>'server.name'],
+                    ['attribute'=>'rcvTime','label'=>'领取时间','value'=>function($model){return empty($model['rcvTime'])?"-":date('Y-m-d H:i:s',$model['rcvTime']);}],
 
-//                    ['class' => 'yii\grid\ActionColumn'],
+                    ['class' => 'yii\grid\ActionColumn'],
                 ],
                 ]); ?>
             

@@ -2,7 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-
+use backend\models\TabGames;
+use yii\helpers\ArrayHelper;
 /* @var $this yii\web\View */
 /* @var $model backend\models\TabServersSearch */
 /* @var $form yii\widgets\ActiveForm */
@@ -19,27 +20,27 @@ use yii\widgets\ActiveForm;
     ]); ?>
     <div class="row">
         <div class="col-md-2">
-            <?= $form->field($model, 'gameId')->label(false) ?>
+            <?= $form->field($model, 'gameId')->dropDownList(ArrayHelper::map(TabGames::find()->select(['id','name'])->asArray()->all(),'id','name'))->label("游戏") ?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($model, 'distributorId')->label(false) ?>
+            <?= $form->field($model, 'url')->label("域名") ?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($model, 'name')->label(false) ?>
+            <?= $form->field($model, 'name')->label("区服名称") ?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($model, 'index')->label(false) ?>
+            <?= $form->field($model, 'index')->label("区服Index") ?>
         </div>
+    </div>
+    <div class="row">
         <div class="col-md-2">
             <div class="form-group">
-                <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-                <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-outline-secondary']) ?>
+                <?= Html::submitButton(Yii::t('app', '查询'), ['class' => 'btn btn-primary']) ?>
+                <?= Html::resetButton(Yii::t('app', '重置'), ['class' => 'btn btn-outline-secondary']) ?>
             </div>
         </div>
         <?php // echo $form->field($model, 'id')->label(false) ?>
         <?php // echo $form->field($model, 'status') ?>
-
-        <?php // echo $form->field($model, 'url') ?>
 
         <?php // echo $form->field($model, 'netPort') ?>
 

@@ -87,7 +87,7 @@ $this->registerJs("
                                               <span class=\"input-group-addon\">
                                                 <input type=\"checkbox\" onclick='watch(this)' value='".$vv['id']."' class='server_input page_checkbox_$k' id='server_".$vv['id']."' aria-label=\"...\">
                                               </span >
-                                            <input id='server_label_".$vv['id']."' type = \"text\" class=\"form-control\" aria-label=\"$k\" value='".$vv['name']."区' readonly=\"readonly\"/>
+                                            <input id='server_label_".$vv['id']."' type = \"text\" class=\"form-control\" aria-label=\"$k\" value='".$vv['serverName']."' readonly=\"readonly\"/>
                                             <input id='server_name_".$vv['id']."' type='hidden' class='server_name' value='".$vv['serverName']."'/>
                                             <input id='server_url_".$vv['id']."' type='hidden' class='server_url' value='".$vv['url']."'/>
                                             <input id='server_port_".$vv['id']."' type='hidden' class='server_name' value='".$vv['port']."'/>
