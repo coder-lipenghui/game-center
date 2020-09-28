@@ -12,9 +12,9 @@ use yii\helpers\ArrayHelper;
 
 class MyTabServers extends TabServers
 {
-    public static function searchGameServers($gameId,$distributoin,$distributionUserId,$ip)
+    public static function searchGameServers($game,$distributoin,$distributionUserId,$ip)
     {
-        self::openServer($gameId,$distributoin->distributorId);
+        self::openServer($game->id,$distributoin->distributorId);
         $filter=[];
         if (!empty($distributionUserId))
         {
@@ -28,8 +28,18 @@ class MyTabServers extends TabServers
                 $filter=[];
             }
         }
+        //渠道为测试状态时只能进入测试服
+        if ($distributoin->isDebug)
+        {
+            $query=TabDebugServers::find()
+                ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
+                ->where(['versionId'=>$game->versionId])
+                ->andWhere($filter)
+                ->asArray();
+            return $query->all();
+        }
         #区服冠名信息
-        $serverNames=TabServerNaming::find()->select(['serverId','naming'])->where(['gameId'=>$gameId,'distributorId'=>$distributoin->distributorId])->asArray()->all();
+        $serverNames=TabServerNaming::find()->select(['serverId','naming'])->where(['gameId'=>$game->id,'distributorId'=>$distributoin->distributorId])->asArray()->all();
         if (!empty($serverNames))
         {
             $serverNames=ArrayHelper::index($serverNames,'serverId');
@@ -50,7 +60,7 @@ class MyTabServers extends TabServers
         }
         $query=TabServers::find()
             ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
-            ->where(['gameId'=>$gameId,'distributorId'=>$distributoin->distributorId])
+            ->where(['gameId'=>$game->id,'distributorId'=>$distributoin->distributorId])
             ->andWhere($filter)
             ->asArray();
         if ($mingleServerId>0)

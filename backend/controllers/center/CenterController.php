@@ -183,7 +183,7 @@ class CenterController extends Controller
      */
     protected function getServers($game,$distribution,$distributionUserId,$ip)
     {
-        $servers=MyTabServers::searchGameServers($game->id,$distribution,$distributionUserId,$ip);
+        $servers=MyTabServers::searchGameServers($game,$distribution,$distributionUserId,$ip);
         return $servers;
     }
 
