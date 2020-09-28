@@ -57,4 +57,13 @@ class TabCdn extends \yii\db\ActiveRecord
             'comment' => Yii::t('app', 'Comment'),
         ];
     }
+
+    public function getGame()
+    {
+        return $this->hasOne(TabGames::className(),['id'=>'gameId']);
+    }
+    public function getGameVersion()
+    {
+        return $this->hasOne(TabGameVersion::className(),['id'=>'versionId']);
+    }
 }

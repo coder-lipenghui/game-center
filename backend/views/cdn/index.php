@@ -7,13 +7,13 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\TabCdnSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', '热更地址及资源下载地址');
+$this->title = Yii::t('app', '热更、资源下载地址');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-cdn-index">
     <div class="panel panel-default">
         <div class="panel-body">
-            <?= Html::a(Yii::t('app', 'Create Tab Cdn'), ['create'], ['class' => 'btn btn-success']) ?>
+            <?= Html::a(Yii::t('app', '新增版本CDN'), ['create'], ['class' => 'btn btn-success']) ?>
         </div>
     </div>
     <div class="panel panel-default">
@@ -25,10 +25,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
         'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
+//                ['class' => 'yii\grid\SerialColumn'],
 
 //                            'id',
-            ['attribute'=>'gameId','label'=>'游戏'],
+            ['attribute'=>'versionId','label'=>'版本','value'=>'gameVersion.name'],
+            ['attribute'=>'gameId','label'=>'游戏','value'=>'game.name'],
             ['attribute'=>'updateUrl','label'=>'热更地址'],
             ['attribute'=>'assetsUrl','label'=>'资源地址'],
             ['attribute'=>'platform','label'=>'服务商'],

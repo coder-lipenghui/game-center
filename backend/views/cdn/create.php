@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\TabCdn */
 
-$this->title = Yii::t('app', 'Create Tab Cdn');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tab Cdns'), 'url' => ['index']];
+$this->title = Yii::t('app', '指定游戏版本CDN');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'CDN列表'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tab-cdn-create">
