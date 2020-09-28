@@ -50,7 +50,7 @@ $this->registerJsFile('@web/js/api/mail.js',['depends'=>'yii\web\YiiAsset']);
                                 "class"=>"selectpicker form-control col-xs-2",
                                 "data-width"=>"fit",
                                 "id"=>"games",
-                                "onchange"=>"changeGame(this)",
+                                "onchange"=>"onChangeGame(this)",
                                 "title"=>"选择游戏"
                             ]
                         );?>
@@ -97,7 +97,7 @@ $this->registerJsFile('@web/js/api/mail.js',['depends'=>'yii\web\YiiAsset']);
         </div>
         <div class="row">
             <div class="col-md-3">
-                <?=$form->field($searchModel,'playerName')->textInput(['placeholder'=>'玩家名称','id'=>'playerName'])?>
+                <?=$form->field($searchModel,'playerName')->textInput(['placeholder'=>'玩家ID','id'=>'playerName'])?>
             </div>
         </div>
         <div class="row">
@@ -147,7 +147,7 @@ $this->registerJsFile('@web/js/api/mail.js',['depends'=>'yii\web\YiiAsset']);
                         echo Html::dropDownList(
                                 "selectItems",
                                 null,
-                                \yii\helpers\ArrayHelper::map(\common\helps\ItemDefHelper::getAllItem(1),'id','name'),
+                                [],
                                 [
                                     'id'=>'selectItems',
                                     'class'=>'selectpicker',

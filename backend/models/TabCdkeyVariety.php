@@ -12,7 +12,8 @@ use Yii;
  * @property string $name 激活码名称
  * @property string $items 激活码对应的物品
  * @property int $once 只能使用1次 1:一次 0:可以重复
- * @property int $type 激活码类型:通用激活码，普通激活码
+ * @property int $type 激活码类型:1普通 2通用
+ * @property int $deliverType 发放类型:1 脚本发放 2 邮件发放 
  */
 class TabCdkeyVariety extends \yii\db\ActiveRecord
 {
@@ -31,7 +32,7 @@ class TabCdkeyVariety extends \yii\db\ActiveRecord
     {
         return [
             [['gameId', 'name', 'items'], 'required'],
-            [['gameId', 'once', 'type'], 'integer'],
+            [['gameId', 'once', 'type', 'deliverType'], 'integer'],
             [['name', 'items'], 'string', 'max' => 100],
         ];
     }
@@ -48,6 +49,7 @@ class TabCdkeyVariety extends \yii\db\ActiveRecord
             'items' => Yii::t('app', 'Items'),
             'once' => Yii::t('app', 'Once'),
             'type' => Yii::t('app', 'Type'),
+            'deliverType' => Yii::t('app', 'Deliver Type'),
         ];
     }
     public function getVersion()

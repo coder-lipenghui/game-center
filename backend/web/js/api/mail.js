@@ -10,6 +10,11 @@ function doSub() {
     }
     $("#itemNum").val(num);
 }
+function onChangeGame(sender)
+{
+    getDistributor("#platform",true,$("#games").val(),null,"../");
+    getItemsByGame("selectItems",$("#games").val(),"../");
+}
 function changeType(sender) {
     var selectIndex=$(sender).val()
     if (selectIndex==1)
@@ -35,6 +40,7 @@ function btnOk() {
         $("#cmdmail-items").val(curr+","+item+","+num+","+bind);
     }
 }
+
 function doMailAjaxSubmit() {
     var form=$("#mailForm");
     var formData = form.serialize();

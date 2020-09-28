@@ -157,22 +157,53 @@ function getDistributor(documentid,async,gameId,selectedId,url) {
         }
     });
 }
-function getItems(documentid,gid,url) {
+function getItemsByGame(documentid,gameId,url)
+{
     var async = arguments[1] ? arguments[1] : false;
-    $(documentid).empty();
+    $("#"+documentid).empty();
     $.ajax({
         type: 'get',
         data:{
-            gameId:gid
+            gameId:gameId
         },
         dataType: "json",
         url: (url==null?"":url)+"../permission/get-items",
         async: true,
         success: function(data) {
+            console.log(documentid);
             $.each(data, function(i) {
-                $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
+                if(i>0)
+                {
+                    $("<option value='" + i+ "'>" + data[i] + "</option>").appendTo($("#"+documentid));
+                }
             });
-            $(documentid).selectpicker('refresh');
+            $("#"+documentid).selectpicker('refresh');
+        },
+        error: function(data) {
+            alert('获取数据失败');
+        }
+    });
+}
+function getItemsByVersion(documentid,versionId,url) {
+    var async = arguments[1] ? arguments[1] : false;
+    $("#"+documentid).empty();
+    $.ajax({
+        type: 'get',
+        data:{
+            versionId:versionId
+        },
+        dataType: "json",
+        url: (url==null?"":url)+"../permission/get-items",
+        async: true,
+        success: function(data) {
+            console.log(documentid);
+            $.each(data, function(i) {
+                if(i>0)
+                {
+                    $("<option value='" + i+ "'>" + data[i] + "</option>").appendTo($("#"+documentid));
+                }
+            });
+            $("#"+documentid).selectpicker('refresh');
         },
         error: function(data) {
             alert('获取数据失败');

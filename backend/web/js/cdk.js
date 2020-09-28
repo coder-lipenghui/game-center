@@ -136,7 +136,6 @@ function handleGenerate() {
             $("#alertDiv").append(alert);
         },
         error: function(data) {
-            console.log("失败");
             var alert="<div class='alert alert-dismissible alert-error' role='alert' id='generateAlter'>"+
                 "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>"+
                 "<label class='text-error' id='generateMsg'>出现异常</label>"+
@@ -145,26 +144,46 @@ function handleGenerate() {
         }
     });
 }
-// function hnadleDistributorsChange(documentid) {
-//     var gameId=$("#cdkeyGames").val();
-//     //var distributorId=$("#cdkeyDistributors").val();
-//     $(documentid).empty();
-//     $.ajax({
-//         type: 'get',
-//         data: {
-//             gameId: gameId
-//         },
-//         dataType: "json",
-//         url: "../cdkey-variety/list",
-//         async: true,
-//         success: function(data) {
-//             $.each(data, function(i) {
-//                 $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
-//             });
-//             $(documentid).selectpicker('refresh');
-//         },
-//         error: function(data) {
-//             alert('获取数据失败');
-//         }
-//     });
-// }
+function handleDeliverTypeChange()
+{
+    var deliverType=$("#tabcdkeyvariety-delivertype").val()
+    if (deliverType==1)
+    {
+        $("#btnAdd").hide();
+    }else{
+        $("#btnAdd").show()
+    }
+}
+function handleGameVersionChange()
+{
+    var versionId=$("#tabcdkeyvariety-gameid").val();
+    getItemsByVersion("selectItems",versionId,"../");
+}
+function addOneItem()
+{
+    var item=$("#selectItems").val();
+    var num=$("#itemNum").val();
+    var curr=$("#tabcdkeyvariety-items").val();
+    var bind=0;
+    if ($('#ckBind').is(':checked'))
+    {
+        bind=1;
+    }
+    var deliverType=$("#tabcdkeyvariety-delivertype").val();
+    if (deliverType==1)
+    {
+        $("#tabcdkeyvariety-items").val(item);
+    }else{
+        if (curr=="")
+        {
+            $("#tabcdkeyvariety-items").val(curr+item+","+num+","+bind);
+        }else{
+            if (curr.indexOf(",")<0)
+            {
+                $("#tabcdkeyvariety-items").val(item+","+num+","+bind);
+            }else{
+                $("#tabcdkeyvariety-items").val(curr+","+item+","+num+","+bind);
+            }
+        }
+    }
+}

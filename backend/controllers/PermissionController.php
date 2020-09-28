@@ -2,10 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\TabGames;
+use common\helps\ItemDefHelper;
 use Yii;
 use backend\models\TabPermission;
 use backend\models\TabPermissionSearch;
 use backend\models\MyTabPermission;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -184,10 +187,21 @@ class PermissionController extends Controller
     public function actionGetItems()
     {
         $request=Yii::$app->request;
-        if ($request->get('gameId'))
+        $versionId=$request->get('versionId');
+        $gameId=$request->get('gameId');
+        if (!empty($versionId))
         {
-            $data=TabItemdefDzy::find()->select(['id','name'])->asArray()->all();
-            return json_encode($data);
+            $items=ArrayHelper::map(ItemDefHelper::getAllItem($versionId),'id','name');
+            return json_encode($items);
+        }
+        if (!empty($gameId) && empty($versionId))
+        {
+            $game=TabGames::find()->select(['versionId'])->where(['id'=>$gameId])->one();
+            if (!empty($game))
+            {
+                $items=ArrayHelper::map(ItemDefHelper::getAllItem($game->versionId),'id','name');
+                return json_encode($items);
+            }
         }
         return json_encode([]);
     }
