@@ -6,7 +6,7 @@
         CDN的版本存放结构：
         <ul>
             <li>
-                |-gameId
+                |-versionId(游戏版本ID)
                 <ul>
                     <li>|-default
                         <ul>

@@ -8,18 +8,16 @@ use Yii;
  * This is the model class for table "tab_game_update".
  *
  * @property int $id
+ * @property int $versionId 版本ID
  * @property int $gameId 游戏ID
  * @property int $distributionId 分销渠道ID
- * @property string $versionFile
- * @property string $projectFile
- * @property int $version 版本信息
+ * @property string $versionFile 更新版本号描述文件
+ * @property string $projectFile 更新内容描述文件
+ * @property int $version 版本号
  * @property int $executeTime 开启时间
  * @property int $enable 是否开启
  * @property string $svn SVN版本号
  * @property string $comment 备注信息
- *
- * @property TabDistribution $distribution
- * @property TabGames $game
  */
 class TabGameUpdate extends \yii\db\ActiveRecord
 {
@@ -37,8 +35,10 @@ class TabGameUpdate extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'versionFile', 'projectFile','executeTime','version'], 'required'],
-            [['gameId', 'distributionId', 'enable','version'], 'integer'],
+            [['versionId', 'versionFile', 'projectFile', 'version', 'executeTime', 'svn', 'comment'], 'required'],
+            [['versionId', 'gameId', 'distributionId', 'version', 'enable'], 'integer'],
+            [['versionFile', 'projectFile'], 'string', 'max' => 100],
+            [['svn', 'comment'], 'string', 'max' => 255],
             [['executeTime'],'filter','filter'=>function(){
                 return strtotime($this->executeTime);
             }],
@@ -48,10 +48,6 @@ class TabGameUpdate extends \yii\db\ActiveRecord
             [['projectFile'],'filter','filter'=>function(){
                 return $this->projectFile.".manifest";
             }],
-            [['versionFile', 'projectFile'], 'string', 'max' => 100],
-            [['svn', 'comment'], 'string', 'max' => 255],
-            [['distributionId'], 'exist', 'skipOnError' => true, 'targetClass' => TabDistribution::className(), 'targetAttribute' => ['distributionId' => 'id']],
-            [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
         ];
     }
 
@@ -62,18 +58,18 @@ class TabGameUpdate extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'gameId' => Yii::t('app', '游戏'),
-            'distributionId' => Yii::t('app', '渠道'),
-            'versionFile' => Yii::t('app', '版本文件'),
-            'projectFile' => Yii::t('app', '内容文件'),
-            'version' => Yii::t('app', '版本号'),
-            'executeTime' => Yii::t('app', '更新时间'),
-            'enable' => Yii::t('app', '是否启用'),
-            'svn' => Yii::t('app', 'Svn信息'),
-            'comment' => Yii::t('app', '备注'),
+            'versionId' => Yii::t('app', 'Version ID'),
+            'gameId' => Yii::t('app', 'Game ID'),
+            'distributionId' => Yii::t('app', 'Distribution ID'),
+            'versionFile' => Yii::t('app', 'Version File'),
+            'projectFile' => Yii::t('app', 'Project File'),
+            'version' => Yii::t('app', 'Version'),
+            'executeTime' => Yii::t('app', 'Execute Time'),
+            'enable' => Yii::t('app', 'Enable'),
+            'svn' => Yii::t('app', 'Svn'),
+            'comment' => Yii::t('app', 'Comment'),
         ];
     }
-
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -81,12 +77,15 @@ class TabGameUpdate extends \yii\db\ActiveRecord
     {
         return $this->hasOne(TabDistribution::className(), ['id' => 'distributionId']);
     }
-
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getGame()
     {
         return $this->hasOne(TabGames::className(), ['id' => 'gameId']);
+    }
+    public function getGameVersion()
+    {
+        return $this->hasOne(TabGameVersion::className(),['id'=>'versionId']);
     }
 }

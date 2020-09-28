@@ -72,10 +72,12 @@ function handleVarietyChange() {
             if (data==1)
             {
                 $("#generateNum").empty();
+                $("#generateNum").show();
                 $("#cdkeyInput").addClass("hidden");
                 $("#cdkey").val("自动生成");
             }else{
                 $("#generateNum").val(1);
+                $("#generateNum").hide();
                 $("#cdkeyInput").removeClass("hidden");
                 $("#cdkey").val("");
             }

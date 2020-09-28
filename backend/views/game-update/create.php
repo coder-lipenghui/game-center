@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use backend\models\TabGames;
+use backend\models\TabGameVersion;
 use yii\helpers\ArrayHelper;
 use kartik\datetime\DateTimePicker;
 /* @var $this yii\web\View */
@@ -22,6 +23,20 @@ $this->registerJsFile("@web/js/gameUpdate.js",['depends'=>'yii\web\YiiAsset']);
             <?php $form = ActiveForm::begin(); ?>
             <table class="table table-condensed">
                 <tr>
+                    <td class="col-md-1">版本：</td>
+                    <td class="col-md-2">
+                        <?= $form->field($model, 'versionId')->dropDownList(
+                            ArrayHelper::map(TabGameVersion::find()->select(['id','name'])->all(),'id','name'),
+                            [
+                                'title'=>'选择版本',
+                                'id'=>'gameUpdateVersions',
+                                'onchange'=>'handleVersionChange()',
+                                "class"=>"selectpicker form-control col-xs-2",
+                            ])->label(false) ?>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr class="hidden">
                     <td class="col-md-1">游戏：</td>
                     <td class="col-md-2">
                         <?= $form->field($model, 'gameId')->dropDownList(
@@ -33,9 +48,9 @@ $this->registerJsFile("@web/js/gameUpdate.js",['depends'=>'yii\web\YiiAsset']);
                                 "class"=>"selectpicker form-control col-xs-2",
                             ])->label(false) ?>
                     </td>
-                    <td>备注</td>
+                    <td></td>
                 </tr>
-                <tr>
+                <tr class="hidden">
                     <td>渠道：</td>
                     <td>
                         <?= $form->field($model, 'distributionId')->dropDownList([],
@@ -47,26 +62,26 @@ $this->registerJsFile("@web/js/gameUpdate.js",['depends'=>'yii\web\YiiAsset']);
                     </td>
                     <td><label class="text-info">非必选,如果某个渠道需要单独维护则需要制定分销渠道ID</label></td>
                 </tr>
-                <tr class="warning">
+                <tr class="warning hidden">
                     <td>version：</td>
                     <td>
-                        <?= $form->field($model, 'versionFile')->textInput(['maxlength' => true])->label(false) ?>
+                        <?= $form->field($model, 'versionFile')->textInput(['maxlength' => true,'value'=>'version'])->label(false) ?>
                     </td>
                     <td>.manifest</td>
                 </tr>
-                <tr class="warning">
+                <tr class="warning hidden">
                     <td>project：</td>
                     <td>
-                        <?= $form->field($model, 'projectFile')->textInput(['maxlength' => true])->label(false) ?>
+                        <?= $form->field($model, 'projectFile')->textInput(['maxlength' => true,'value'=>'project'])->label(false) ?>
                     </td>
                     <td>.manifest</td>
                 </tr>
                 <tr>
-                    <td>版本号：</td>
+                    <td>本次版本：</td>
                     <td>
                         <?= $form->field($model, 'version')->textInput(['maxlength' => true])->label(false) ?>
                     </td>
-                    <td></td>
+                    <td><label id="txtVersion"/></td>
                 </tr>
                 <tr class="vertical-align: middle">
                     <td>更新时间：</td>
@@ -88,16 +103,16 @@ $this->registerJsFile("@web/js/gameUpdate.js",['depends'=>'yii\web\YiiAsset']);
                     <td>未到时间不会开启更新</td>
                 </tr>
                 <tr>
-                    <td>SVN记录：</td>
+                    <td>SVN版本号：</td>
                     <td>
                         <?= $form->field($model, 'svn')->textInput(['maxlength' => true])->label(false) ?>
                     </td>
-                    <td>SVN版本号</td>
+                    <td></td>
                 </tr>
                 <tr>
-                    <td>备注：</td>
+                    <td>更新内容：</td>
                     <td>
-                        <?= $form->field($model, 'comment')->textInput(['maxlength' => true])->label(false) ?>
+                        <?= $form->field($model, 'comment')->textarea(['maxlength' => true])->label(false) ?>
                     </td>
                     <td></td>
                 </tr>

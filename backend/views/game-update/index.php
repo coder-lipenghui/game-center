@@ -27,22 +27,12 @@ $this->params['breadcrumbs'][] = $this->title;
 //                    'filterModel' => $searchModel,
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn'],
-                        [
-                            'attribute'=>'gameId',
-                            'value'=>'game.name'
-                        ],
-//                        'distributionId',
-                        [
-                            'attribute'=>'distributionId',
-                            'value'=>'distribution.id'
-                        ],
-                        'versionFile',
-                        'projectFile',
-                        //'version',
+                        ['attribute'=>'versionId','value'=>'gameVersion.name','label'=>'版本'],
+                        ['attribute'=>'gameId','value'=>'game.name'],
+                        'version',
+                        'svn',
+                        'comment',
                         'executeTime:datetime',
-                        //'enable',
-                        //'svn',
-                        //'comment',
                         ['class' => 'yii\grid\ActionColumn'],
                     ],
                 ]); ?>

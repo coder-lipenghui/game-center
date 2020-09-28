@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\TabGames;
+use backend\models\TabGameUpdate;
 use common\helps\ItemDefHelper;
 use Yii;
 use backend\models\TabPermission;
@@ -204,6 +205,18 @@ class PermissionController extends Controller
             }
         }
         return json_encode([]);
+    }
+    public function actionGetGameUpdateVersion()
+    {
+        $request=Yii::$app->request;
+        $versionId=$request->get('versionId');
+        if (!empty($versionId))
+        {
+            $upateInfo=TabGameUpdate::find()->where(['versionId'=>$versionId])->orderBy('version DESC')->one();
+            return $upateInfo['version']."";
+        }
+
+        return "0";
     }
     /**
      * Finds the TabPermission model based on its primary key value.
