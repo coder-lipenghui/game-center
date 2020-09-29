@@ -394,7 +394,12 @@ class MyTabOrders extends TabOrders
             LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg,"");
         }else {
             if ($order->payStatus > 0) {
-                $server = TabServers::find()->where(['id' => $order->gameServerId])->one();
+                $server=null;
+                if($distribution->isDebug || $distribution->isDebug==1) {
+                    $server = TabDebugServers::find()->where(['id' => $order->gameServerId])->one();
+                }else{
+                    $server = TabServers::find()->where(['id' => $order->gameServerId])->one();
+                }
                 if ($server === null) {
                     $msg = "区服不存在";
                     LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $server->getFirstError());
@@ -414,7 +419,7 @@ class MyTabOrders extends TabOrders
                     LoggerHelper::OrderError($order->gameId, $order->distributionId, $msg, $distribution->getFirstError());
                     return false;
                 }
-                $game = TabGames::find()->where(['id' => $server->gameId])->one();
+                $game = TabGames::find()->where(['id' => $order->gameId])->one();
                 if(empty($game))
                 {
                     $msg = "游戏不存在";
