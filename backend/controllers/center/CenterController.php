@@ -30,6 +30,8 @@ use backend\models\report\ModelRoleLog;
 use backend\models\report\ModelStartLog;
 use backend\models\TabBlacklist;
 use backend\models\MyTabDistribution;
+use backend\models\TabDebugServers;
+use backend\models\TabDistribution;
 use backend\models\TabGames;
 use backend\models\TabOrders;
 use backend\models\TabOrdersDebug;
@@ -541,13 +543,20 @@ class CenterController extends Controller
         $distributionId=$token['distributionId'];
         $distributionUserId=$token['distributionUserId'];
 
+        $distribution=TabDistribution::find()->where(['id'=>$distributionId])->one();
+        if (empty($distribution)) return['code'=>-14,'msg'=>'未知渠道'];
+
         $game=TabGames::find()->where(['id'=>$gameId])->one();
         if(empty($game))return ['code'=>-11,'msg'=>'未知游戏'];
 
         $player=TabPlayers::find()->where(['account'=>$account,'gameId'=>$gameId])->one();
         if (empty($player))return ['code'=>-10,'msg'=>'无效玩家'];
-
-        $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$enterModle->serverId])->one();
+        if ($distribution->isDebug)
+        {
+            $server=TabDebugServers::find()->where(['id'=>$enterModle->serverId])->one();
+        }else{
+            $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$enterModle->serverId])->one();
+        }
         if (empty($server))return ['code'=>-9,'msg'=>'无效区服'];
 
         if (!empty($server->mergeId))
@@ -571,7 +580,7 @@ class CenterController extends Controller
         $sign      = md5($account . $loginTime . $game->loginKey);
         $getBody=[
             'sku'=>$game->sku,
-            'did'=>$server->distributorId,
+            'did'=>$distribution->distributorId,
             'serverId'=>$server->index,
             'db'=>2
         ];
