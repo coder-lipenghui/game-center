@@ -20,7 +20,10 @@ use yii\widgets\ActiveForm;
     ]); ?>
     <div class="row">
         <div class="col-md-3">
-            <?= $form->field($model, 'gameId')->label("游戏ID") ?>
+            <?= $form->field($model, 'type')->dropDownList([1=>'生产环境',2=>'测试环境'])->label("环境") ?>
+        </div>
+        <div class="col-md-3">
+            <?= $form->field($model, 'gameId')->dropDownList($games) ->label("游戏ID") ?>
         </div>
         <div class="col-md-3">
             <?php  echo $form->field($model, 'distributionUserId')->label("渠道用户") ?>
@@ -43,7 +46,6 @@ use yii\widgets\ActiveForm;
 
     </div>
     <div class="row">
-
         <div class="col-md-3">
             <?= $form->field($model, 'orderId')->label("我方订单号") ?>
         </div>

@@ -28,7 +28,7 @@ $(function(){
         <div class="row">
             <div class="col-md-3">
                 <?=$form->field($model,'distributorId')->dropDownList(
-                ArrayHelper::map(\backend\models\TabDistributor::find()->all(),'id','name'),
+                array_merge([0=>"全部"],ArrayHelper::map(\backend\models\TabDistributor::find()->all(),'id','name')),
                 [
                 "class"=>"selectpicker form-control col-xs-2",
                 "data-width"=>"fit",

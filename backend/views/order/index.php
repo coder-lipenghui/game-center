@@ -18,32 +18,22 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="panel panel-default">
     <div class="panel-body">
         <?php Pjax::begin(); ?>
-        <?php  echo $this->render('_search', ['model' => $searchModel]); ?>
+        <?php  echo $this->render('_search', ['model' => $searchModel,'games'=>$games]); ?>
         <hr/>
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
 //            'filterModel' => $searchModel,
             'columns' => [
-//                ['class' => 'yii\grid\SerialColumn'],
-
-//                'id',
                 ['attribute'=>'gameId','label'=>'游戏','value'=>'game.name'],
                 ['attribute'=>'gameServerId','label'=>'区','value'=>'server.index'],
-//                'distributionId',
                 ['attribute'=>'orderId','label'=>'订单号'],
-//                'distributionOrderId',
-//                'distributionUserId',
-                //'gameRoleId',
 
                 ['attribute'=>'gameAccount','label'=>'账号'],
                 ['attribute'=>'gameRoleName','label'=>'角色名'],
-                //'gameServername',
-                //'productName',
                 ['attribute'=>'payAmount','label'=>'金额(元)','value'=>function($model){return $model->payAmount/100;}],
                 ['attribute'=>'payStatus','label'=>'状态','value'=>function($model){return $model->payStatus==1?"已支付":"未支付";}],
 //                ['attribute'=>'payMode','label'=>'方式'],
                 'payTime:datetime',
-                //'createTime:datetime',
                 ['attribute'=>'delivered','label'=>'发货','value'=>function($model){return $model->delivered==1?"已发":"未发";}],
                 [
                     'class' => 'yii\grid\ActionColumn',

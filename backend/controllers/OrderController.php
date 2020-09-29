@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\MyTabOrders;
+use backend\models\MyTabPermission;
 use backend\models\TabDistribution;
 use backend\models\TabDistributor;
 use backend\models\TabGames;
@@ -43,10 +44,12 @@ class OrderController extends Controller
     {
         $searchModel = new TabOrdersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $permissionModel=new MyTabPermission();
+        $games=$permissionModel->allowAccessGame();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'games'=>$games
         ]);
     }
 
