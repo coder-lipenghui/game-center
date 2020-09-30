@@ -551,7 +551,7 @@ class CenterController extends Controller
 
         $player=TabPlayers::find()->where(['account'=>$account,'gameId'=>$gameId])->one();
         if (empty($player))return ['code'=>-10,'msg'=>'无效玩家'];
-        if ($distribution->isDebug)
+        if ($distribution->isDebug || $enterModle->serverId<15) //暂时用15以下的作为测试区，后面重新整理一下正式区跟测试区的规则
         {
             $server=TabDebugServers::find()->where(['id'=>$enterModle->serverId])->one();
         }else{

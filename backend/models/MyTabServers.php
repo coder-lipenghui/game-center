@@ -20,7 +20,7 @@ class MyTabServers extends TabServers
         {
             $whiteQuery=TabWhitelist::find();
             $whiteQuery->where(['or',"ip='$ip'","distributionUserId='$distributionUserId'"]);
-            $list=$whiteQuery->all();
+            $list=$whiteQuery->asArray()->all();
             if (empty($list))
             {
                 $filter=['<=','openDateTime',date('Y-m-d H:i:s',time())];
@@ -28,15 +28,16 @@ class MyTabServers extends TabServers
                 $filter=[];
             }
         }
-        //渠道为测试状态时只能进入测试服
-        if ($distributoin->isDebug)
+        //当前为测试渠道、或者在白名单内则同时拉取
+        $testServers=[];
+        if ($distributoin->isDebug || empty($filter))
         {
             $query=TabDebugServers::find()
                 ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
                 ->where(['versionId'=>$game->versionId])
                 ->andWhere($filter)
                 ->asArray();
-            return $query->all();
+            $testServers=$query->all();
         }
         #区服冠名信息
         $serverNames=TabServerNaming::find()->select(['serverId','naming'])->where(['gameId'=>$game->id,'distributorId'=>$distributoin->distributorId])->asArray()->all();
@@ -113,7 +114,7 @@ class MyTabServers extends TabServers
                 }
             }
         }
-        return $servers;
+        return array_merge($testServers,$servers);
     }
     public static function openServer($gameId,$distributorId)
     {
