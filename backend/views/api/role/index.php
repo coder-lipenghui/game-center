@@ -315,53 +315,59 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         <li role="presentation" ><a href="javascript:;" onclick="handlerTabSelected(this,'paramsAttribute')">玩家变量</a></li>
                     </ul>
                     <div class="row">
-                        <div  id="cloneAttrTarget" class="roleAttribute hidden">
-                            <table class="table table-condensed">
-                                <tr>
-                                    <td>名称:<label class="chrname"></label></td>
-                                    <td>账号:<label class="account"></label></td>
-                                </tr>
-                                <tr>
-                                    <td>唯一:<label class="seedname"></label></td>
-                                    <td>战神:<label class="herolv"></label></td>
-                                </tr>
-                                <tr>
-                                    <td>渠道:<label class="distributionUserId"></label></td>
-                                    <td>创建:<label class="create_time"></label></td>
-                                </tr>
-                                <tr>
-                                    <td>职业:<label class="job"></label></td>
-                                    <td>性别:<label class="gender"></label></td>
-                                </tr>
-                                <tr>
-                                    <td>金币:<label class="money"></label></td>
-                                    <td>元宝:<label class="vcoin"></label></td>
-                                </tr>
-                                <tr>
-                                    <td>等级:<label class="lv"></label></td>
-                                    <td>行会:<label class="guild"></td>
-                                </tr>
-                                <tr>
-                                    <td>血量:<label class="cur_hp"></label></td>
-                                    <td>蓝量:<label class="cur_mp"></label></td>
-
-                                </tr>
-                                <tr>
-                                    <td>登入:<label class="last_login_time"></label></td>
-                                    <td>登出:<label class="last_logout_time"></label></td>
-                                </tr>
-
-                            </table>
-                            <div class="row">
-                                <button id="btnUnvoice" class="btn btn-info" data-toggle="modal" data-target="#unvoice" onclick="">禁言</button>
-                                <button id="btnAllowLogin" class="btn btn-info" data-toggle="modal" data-target="#denyLogin">禁止登录</button>
-                                <button id="btnDenyLogin" class="btn btn-info" data-toggle="modal" data-target="#allowLogin">允许登录</button>
-                                <button class="btn btn-info hidden" data-toggle="modal" data-target="#myModal">强制下线</button>
-                                <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">扶持申请</button>
-                                <button class="btn btn-info hidden">IP禁止登录</button>
-                                <button class="btn btn-info hidden">设备禁止登录</button>
-                                <button class="btn btn-info hidden">账号禁止登录</button>
+                        <div class="col-md-12">
+                            <div  id="cloneAttrTarget" class="roleAttribute hidden">
+                                <table class="table table-condensed">
+                                    <tr>
+                                        <td>名称:<label class="chrname"></label></td>
+                                        <td>账号:<label class="account"></label></td>
+                                        <td>唯一:<label class="seedname"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>渠道ID:<label class="distributionUserId"></label></td>
+                                        <td>渠道账号:<label class="distributionAccount"></label></td>
+                                        <td>创建:<label class="create_time"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>战神:<label class="herolv"></label></td>
+                                        <td>职业:<label class="job"></label></td>
+                                        <td>性别:<label class="gender"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>等级:<label class="lv"></label></td>
+                                        <td>金币:<label class="money"></label></td>
+                                        <td>元宝:<label class="vcoin"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>行会:<label class="guild"></td>
+                                        <td>血量:<label class="cur_hp"></label></td>
+                                        <td>蓝量:<label class="cur_mp"></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>登入:<label class="last_login_time"></label></td>
+                                        <td>登出:<label class="last_logout_time"></label></td>
+                                        <td>状态:<label class="deleted"></label></td>
+                                    </tr>
+                                </table>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button id="btnUnvoice" class="btn btn-info" data-toggle="modal" data-target="#unvoice" onclick="">禁言</button>
+                                        <button id="btnAllowLogin" class="btn btn-info" data-toggle="modal" data-target="#denyLogin">禁止登录</button>
+                                        <button id="btnDenyLogin" class="btn btn-info" data-toggle="modal" data-target="#allowLogin">允许登录</button>
+                                        <button class="btn btn-info hidden" data-toggle="modal" data-target="#myModal">强制下线</button>
+                                        <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">扶持申请</button>
+                                        <button class="btn btn-info hidden">IP禁止登录</button>
+                                        <button class="btn btn-info hidden">设备禁止登录</button>
+                                        <button class="btn btn-info hidden">账号禁止登录</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <input type="hidden" id="hiddenChrname"/>
+                                    <input type="hidden" id="hiddenAccount"/>
+                                    <input type="hidden" id="hiddenRoleId"/>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                     <div class="row hidden">

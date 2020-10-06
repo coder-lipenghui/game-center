@@ -13,15 +13,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="panel panel-default">
     <div class="panel-body">
         <?php Pjax::begin(); ?>
-        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+        <?php  echo $this->render('_search', ['model' => $searchModel]); ?>
 
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
             'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-
-//                'id',
                 [
                     'attribute'=>'gameId',
                     'value'=>'game.name'
@@ -34,9 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'account',
                 'distributionUserId',
                 //'distributionUserAccount',
-                //'regdeviceId',
+                'regip',
+                'regdeviceId',
                 'regtime',
-                //'regip',
 
                 [
                     'class' => 'yii\grid\ActionColumn',

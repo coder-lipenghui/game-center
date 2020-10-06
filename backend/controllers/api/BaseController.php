@@ -16,6 +16,7 @@ namespace backend\controllers\api;
 
 use backend\models\TabGames;
 use backend\models\TabServers;
+use common\helps\CurlHttpClient;
 use Yii;
 use yii\web\Controller;
 
@@ -29,7 +30,8 @@ class BaseController extends Controller
     //游戏API接口名称
     public $apiName="";
     public $apiUrl="";
-    public $apiParams="";  //RESTful查询接口 统一采用get形式 所以这边用http_build_query
+    public $apiParams=[];  //RESTful查询接口 统一采用get形式 所以这边用http_build_query
+    public $apiDeafultParams=[];
     public $apiDb=0;
 
 
@@ -57,19 +59,19 @@ class BaseController extends Controller
             }
             if($server)
             {
-                $defaultParam=[
+                unset($params['serverId']);
+                $this->apiDeafultParams=[
                     'sku'=>$game->sku,
                     'did'=>$did,
                     'serverId'=>$server->index,
                     'db'=>$this->apiDb];
-                $params=array_merge($params,$defaultParam);
+                $this->apiParams=$params;//$defaultParam;
                 if (false)//本地测试
                 {
                     $this->apiUrl="http://gameapi.com:8888/";
                 }else{
                     $this->apiUrl="http://".$server->url."/api/";
                 }
-                $this->apiUrl=$this->apiUrl.$this->apiName."?".http_build_query($params);
                 $this->inited=true;
             }else{
                 $this->inited=false;
@@ -90,7 +92,8 @@ class BaseController extends Controller
     {
         if ($this->inited)
         {
-            $ch = curl_init($this->apiUrl);
+            $url=$this->apiUrl.$this->apiName."?".http_build_query(array_merge($this->apiParams,$this->apiDeafultParams));
+            $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
             curl_setopt($ch, CURLOPT_POSTFIELDS,"");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
@@ -106,6 +109,29 @@ class BaseController extends Controller
         return null;
     }
 
+    /**
+     * 用于修改信息的PUT方法，需要提前构建好apiUrl及request form data
+     * @return json json结果
+     */
+    protected function put()
+    {
+        if ($this->inited)
+        {
+            $url=$this->apiUrl.$this->apiName."?".http_build_query($this->apiDeafultParams);
+
+            $curl=new CurlHttpClient();
+            $response=$curl->RESTfulApi($url,"PUT",$this->apiParams);
+            return $response;
+        }else{
+            exit("init failed");
+        }
+        Yii::error("未设置ApiUrl");
+        return null;
+    }
+    protected function delete()
+    {
+
+    }
     /**
      * 解析背包仓库的的二进制数据
      * @param $data base64过的二进制数据

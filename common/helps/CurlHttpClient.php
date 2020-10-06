@@ -292,6 +292,52 @@ class CurlHttpClient
 		return $result;
 	}
 
+    /**
+     * 对接游戏服务器上的RESTful接口
+     * @param $URL 地址
+     * @param $type 类型 PUT、DELETE、PATCH
+     * @param $params
+     * @param $headers
+     * @param int $timeout 超时时间
+     * @return bool|string
+     */
+    function RESTfulApi($url,$type,$params,$headers=[],$timeout=60)
+    {
+        if ($type=="GET")
+        {
+            $url=$url."&".http_build_query($params);
+        }
+        $ch = curl_init($url);
+        if(!empty($headers)){
+            curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
+        }
+        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        switch ($type){
+            case "GET" :
+                curl_setopt($ch, CURLOPT_HTTPGET, true);
+                break;
+            case "POST":
+                curl_setopt($ch, CURLOPT_POST,true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS,is_array($params)?http_build_query($params):$params);
+                break;
+            case "PUT" :
+                curl_setopt ($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                curl_setopt($ch, CURLOPT_POSTFIELDS,is_array($params)?http_build_query($params):$params);
+                break;
+            case "PATCH":
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+                curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($params)?http_build_query($params):$params);
+                break;
+            case "DELETE":
+                curl_setopt ($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+                curl_setopt($ch, CURLOPT_POSTFIELDS,is_array($params)?http_build_query($params):$params);
+                break;
+        }
+        $file_contents = curl_exec($ch);//获得返回值
+        curl_close($ch);
+        return $file_contents;
+    }
 	/**
 	 * Fetch data from target URL and store it directly into file
 	 *

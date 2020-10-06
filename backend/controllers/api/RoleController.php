@@ -92,4 +92,20 @@ class RoleController extends BaseController
             }
         }
     }
+    public function actionRecover()
+    {
+        $searchModel=new RoleInfo();
+        $request=Yii::$app->request;
+        $searchModel->load(['RoleInfo'=>$request->bodyParams]);
+        if ($searchModel->validate())
+        {
+            $queryBody=$searchModel->getAttributes();
+            $this->apiName=$this->apiName."/recover";
+            if($this->initApiUrl( $searchModel->gameId,$searchModel->distributorId , $searchModel->serverId,$queryBody)) {
+                return $this->put();
+            }
+        }else{
+            return json_encode($searchModel->getErrors());
+        }
+    }
 }

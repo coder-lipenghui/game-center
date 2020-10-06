@@ -157,10 +157,9 @@ function doAjaxSubmit() {
                     $("#roleList tbody").append(
                         "<tr>" +
                         "<td>" +
-                        "<span class='roleLabel' seedId='"+roleJson.seedId+"' onclick='showRoleInfo(this)'>"+
-                        roleJson.chrname+
-                        "</span>"+
-                        "<small>(lv:"+roleJson.lv+")</small>"+
+                        "<a class='btn btn-default roleLabel' href='#' seedId='"+roleJson.seedId+"' onclick='showRoleInfo(this)'>"+
+                        roleJson.chrname+"(lv:"+roleJson.lv+")"+
+                        "</a>"+
                         "</td>" +
                         "</tr>>");
                     var show=false;
@@ -176,7 +175,7 @@ function doAjaxSubmit() {
             }
         },
         error:function (msg) {
-            alert("请求失败"+msg);
+            console.log("请求失败"+msg);
         }
     });
 }
@@ -205,10 +204,12 @@ function showRoleInfo(sender) {
     $("#txtRoleId").val(seedName);
     $("#txtRoleName").val(roleName);
 
-    console.log(account+" "+seedName+" "+roleName);
     $("#unvoiceRoleName").val(roleName);
     $("#allowLoginRoleName").val(roleName);
     $("#denyLoginRoleName").val(roleName);
+    $("#hiddenAccount").val(account);
+    $("#hiddenChrname").val(roleName);
+    $("#hiddenRoleId").val(seedName);
 }
 /**
  * 构建玩家属性
@@ -223,7 +224,18 @@ function buildAttribute(data,show) {
         roleAttr.addClass("hidden");
     }
     for (var key in data) {
-        $("#role_attr_"+data.seedId+" ."+key).text(data[key]);
+        var val=data[key];
+        switch (key)
+        {
+            case "deleted":
+                var style=val==1?"label label-danger":"label label-success";
+                var text=val==1?"已删除":"正常";
+                var btnRecover=val==1?"<div class='btn btn-success btn-xs' id='btnRecoverRole' onclick='recoverRole()'>恢复</div>":"";
+                val="<span id='roleStatus' class=\""+style+"\">"+text+"</span>"+btnRecover;
+                $("#recoverRole").show();
+                break;
+        }
+        $("#role_attr_"+data.seedId+" ."+key).html(val);
     }
 }
 /**
@@ -308,7 +320,41 @@ function buildItemBag(seedid,data) {
         buildWearItem(seedid,wears);
     }
 }
-
+function recoverRole()
+{
+    var gameId=$("#games").val();
+    var cdistributorId=$("#platform").val();
+    var serverId=$("#servers").val();
+    var chrname=$("#hiddenChrname").val();
+    var account=$("#hiddenAccount").val();
+    $.ajax({
+        url:"recover",
+        type: "post",
+        dataType: "json",
+        data:{
+            'gameId':gameId,
+            'distributorId':cdistributorId,
+            'serverId':serverId,
+            'account':account,
+            'chrname':chrname
+        },
+        success:function (data) {
+            if (data['code']==1)
+            {
+                $("#btnRecoverRole").hide();
+                $("#roleStatus").removeClass("label-danger");
+                $("#roleStatus").addClass("label-success");
+                $("#roleStatus").text("正常");
+                alert("已恢复");
+            }else{
+                alert("恢复异常:"+data['msg']);
+            }
+        },
+        error:function (msg) {
+            alert("请求失败"+msg);
+        }
+    });
+}
 function prohibitLogin(type,account) {
      $.ajax({
         url:"../../blacklist/",
