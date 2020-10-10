@@ -47,17 +47,7 @@ $(function () {
                         ]
                     )->label('分销商') ?>
                 </div>
-                <div class="col-md-1">
-                    <?= $form->field($model, 'parentDT')->dropDownList(
-                        ArrayHelper::map(TabDistributor::find()->asArray()->all(),'id','name'),
-                        [
-                            "class"=>"selectpicker form-control col-xs-2",
-                            "data-width"=>"fit",
-                            "title"=>"选择分销商"
-                        ]
 
-                    )->label('分销渠道') ?>
-                </div>
                 <div class="col-md-1">
                     <?= $form->field($model, 'platform')->dropDownList(
                         [
@@ -160,6 +150,24 @@ $(function () {
             <div class="row">
                 <div class="col-md-2">
                     <?= $form->field($model, 'api')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+        </div>
+        <div class="panel-heading">
+            父级分销商:
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <?= $form->field($model, 'parentDT')->dropDownList(
+                        ArrayHelper::map(TabDistributor::find()->asArray()->all(),'id','name'),
+                        [
+                            "class"=>"selectpicker form-control col-xs-2",
+                            "data-width"=>"fit",
+                            "title"=>"父级分销商"
+                        ]
+
+                    )->label('父级分销商') ?>
                 </div>
             </div>
         </div>

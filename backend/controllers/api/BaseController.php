@@ -14,6 +14,7 @@
 
 namespace backend\controllers\api;
 
+use backend\models\TabDebugServers;
 use backend\models\TabGames;
 use backend\models\TabServers;
 use common\helps\CurlHttpClient;
@@ -52,10 +53,16 @@ class BaseController extends Controller
         $game=TabGames::find()->where(['id'=>$gid])->one();
         if ($game)
         {
-            $server=TabServers::find()->where(['id'=>$sid])->one();
-            if (!empty($server) && !empty($server->mergeId))
+            $server=null;
+            if ($sid<15)
             {
-                $server=TabServers::find()->where(['id'=>$server->mergeId])->one();
+                $server=TabDebugServers::find()->where(['id'=>$sid])->one();
+            }else{
+                $server=TabServers::find()->where(['id'=>$sid])->one();
+                if (!empty($server) && !empty($server->mergeId))
+                {
+                    $server=TabServers::find()->where(['id'=>$server->mergeId])->one();
+                }
             }
             if($server)
             {
@@ -66,6 +73,11 @@ class BaseController extends Controller
                     'serverId'=>$server->index,
                     'db'=>$this->apiDb];
                 $this->apiParams=$params;//$defaultParam;
+                if ($server->id<15)
+                {
+                    $this->apiDeafultParams['sku']='TEST';
+                    $this->apiDeafultParams['did']=$game->versionId;
+                }
                 if (false)//本地测试
                 {
                     $this->apiUrl="http://gameapi.com:8888/";

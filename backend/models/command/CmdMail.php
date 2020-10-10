@@ -10,6 +10,7 @@ namespace backend\models\command;
 
 
 use backend\models\TabAreas;
+use backend\models\TabDebugServers;
 use backend\models\TabGames;
 use backend\models\TabServers;
 use yii\db\Expression;
@@ -75,10 +76,17 @@ class CmdMail extends BaseCmd
         if ($game)
         {
             $key="longcitywebonline12345678901234567890";
-            $serverQuery=TabServers::find()
-                ->select(['id','name','port'=>'masterPort','ip'=>'url'])
-                ->where(['id'=>$this->serverId]);
-
+            $serverQuery=null;
+            if ($this->serverId<15)
+            {
+                $serverQuery=TabDebugServers::find()
+                    ->select(['id','name','port'=>'masterPort','ip'=>'url'])
+                    ->where(['id'=>$this->serverId]);
+            }else{
+                $serverQuery=TabServers::find()
+                    ->select(['id','name','port'=>'masterPort','ip'=>'url'])
+                    ->where(['id'=>$this->serverId]);
+            }
             $this->serverList=$serverQuery->asArray()->all();
             $serverData=ArrayHelper::map($serverQuery->all(),'id','name');
             for ($i=0;$i<count($this->serverList);$i++)

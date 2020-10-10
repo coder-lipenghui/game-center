@@ -69,10 +69,10 @@ $(function () {
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-2">
-                        <?= $form->field($model, 'loginKey')->textInput(['maxlength' => true,'placeholder'=>'登录验证KEY','value'=>substr(md5(time().'涛哥说不知道用什么规则'),0,20)]) ?>
+                        <?= $form->field($model, 'loginKey')->textInput(['maxlength' => true,'placeholder'=>'登录验证KEY','value'=>'KOSD6PXtEkb0fRj@Ce7evfltKCMo568S']) ?>
                     </div>
                     <div class="col-md-2">
-                        <?= $form->field($model, 'paymentKey')->textInput(['maxlength' => true,'placeholder'=>'发货验证KEY','value'=>substr(md5(time().'轮子说服务器有一个什么算法'),0,20)]) ?>
+                        <?= $form->field($model, 'paymentKey')->textInput(['maxlength' => true,'placeholder'=>'发货验证KEY','value'=>'MkH3!9f*KW1BguWS6cOEzn1EPq%TRA']) ?>
                     </div>
                 </div>
             </div>

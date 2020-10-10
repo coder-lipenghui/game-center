@@ -152,6 +152,8 @@ class MyTabPermission extends TabPermission
     }
     public function allowAccessServer($gameId,$distributorId)
     {
+        $distributors=[];
+        $distributors[]=$distributorId;
         $have=TabPermission::find()->select(['distributorId'])->where(['uid'=>Yii::$app->user->id,'gameId'=>$gameId,'distributorId'=>$distributorId])->count();
         if (!empty($have) && $have>0)
         {
@@ -160,13 +162,23 @@ class MyTabPermission extends TabPermission
             if (!empty($mingleDistributionId))
             {
                 $tmp=TabDistribution::find()->where(['id'=>$mingleDistributionId->mingleDistributionId])->one();
-                $distributorId=$tmp->distributorId;
+                $distributors[]=$tmp->distributorId;
             }
             $query=TabServers::find()
                 ->select(['name','id'])
-                ->where(['gameId'=>$gameId,'distributorId'=>$distributorId])
+                ->where(['gameId'=>$gameId,'distributorId'=>$distributors])
                 ->asArray();
             $data=$query->all();
+
+            $game=TabGames::find()->where(['id'=>$gameId])->one();
+            if (!empty($game))
+            {
+                $testServer=TabDebugServers::find()->select(['name','id'])->where(['versionId'=>$game->versionId])->asArray()->all();
+                if (!empty($testServer))
+                {
+                    $data=array_merge($data,$testServer);
+                }
+            }
             return $data;
         }
         return [];

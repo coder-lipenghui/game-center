@@ -584,6 +584,12 @@ class CenterController extends Controller
             'serverId'=>$server->index,
             'db'=>2
         ];
+        //测试服统一SKU及DID
+        if ($distribution->isDebug || $enterModle->serverId<15)
+        {
+            $getBody['sku']="TEST";
+            $getBody['did']=$game->versionId;
+        }
         $postBody=[
             'uname'     => $account,
             'channelId' => $distributionId,
@@ -621,6 +627,7 @@ class CenterController extends Controller
         {
             $code=-9;
             $msg="登录出现未知异常";
+            LoggerHelper::LoginError($get['sku'],$get['did'],$msg,$result);
         }else{
             $code=$result['error_code'];
             switch ($code)

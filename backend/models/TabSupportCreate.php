@@ -189,7 +189,13 @@ class TabSupportCreate extends TabSupport
                 'type' => $support->type,//1普通 2脚本触发
                 'port'=>''
             ];
-            $server=TabServers::find()->where(['id'=>$support->serverId])->one();
+            $server=null;
+            if ($support->serverId<15)
+            {
+                $server=TabDebugServers::find()->where(['id'=>$support->serverId])->one();
+            }else{
+                $server=TabServers::find()->where(['id'=>$support->serverId])->one();
+            }
             if ($server)
             {
                 if (!empty($server->mergeId))
@@ -208,10 +214,16 @@ class TabSupportCreate extends TabSupport
                 $curl=new CurlHttpClient();
                 $getBody=[
                     'sku'=>$game->sku,
-                    'did'=>$server->distributorId,
                     'serverId'=>$server->index,
                     'db'=>$requestBody['type']==1?2:1 //脚本类型的需要走octgame,常规类型走ocenter
                 ];
+                if ($support->serverId<15)
+                {
+                    $getBody['sku']='TEST';
+                    $getBody['did']=$game->versionId;
+                }else{
+                    $getBody['did']=$server->distributorId;
+                }
                 $url = $url. "/api/payment?" . http_build_query($getBody);
                 $resultJson =$curl->sendPostData($url,$requestBody);
                 $result=json_decode($resultJson,true);

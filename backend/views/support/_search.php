@@ -21,33 +21,40 @@ $this->registerJsFile("@webroot/bootstrap-select/css/bootstrap-select.css")
         ],
     ]); ?>
     <div class="row">
-        <div class="col-md-1">
+        <div class="col-md-3">
             <?= $form->field($model, 'gameId')->dropDownList($games)
             ?>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-3">
             <?= $form->field($model, 'distributorId')->dropDownList($distributors) ?>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-3">
             <?= $form->field($model, 'serverId')->dropDownList($servers) ?>
         </div>
-        <div class="col-md-1">
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
             <?php  echo $form->field($model, 'roleAccount') ?>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-3">
             <?php  echo $form->field($model, 'reason') ?>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-3">
             <?php  echo $form->field($model, 'type')->dropDownList([null=>'全部',0=>'非充值',1=>'算充值']) ?>
         </div>
-        <div class="col-md-1">
+    </div>
+    <div class="row">
+        <div class="col-md-3">
             <?php  echo $form->field($model, 'number') ?>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-3">
             <?php  echo $form->field($model, 'status')->dropDownList([0=>'未审核',1=>'已审核',2=>'已拒绝']) ?>
         </div>
-        <div class="col-md-1">
-            <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <?= Html::submitButton(Yii::t('app', '查询'), ['class' => 'btn btn-primary']) ?>
         </div>
     </div>
     <?php ActiveForm::end(); ?>
