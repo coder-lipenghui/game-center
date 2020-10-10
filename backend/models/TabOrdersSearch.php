@@ -11,13 +11,15 @@ use backend\models\TabOrders;
  */
 class TabOrdersSearch extends TabOrders
 {
+    public $type=1;
+    public $payStatus='1';
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'gameId','distributorId', 'distributionId', 'gameServerId', 'payTime', 'createTime'], 'integer'],
+            [['id', 'gameId','distributorId', 'distributionId', 'gameServerId', 'payTime', 'createTime','type'], 'integer'],
             [['orderId', 'distributionOrderId', 'distributionUserId', 'gameRoleId', 'gameRoleName', 'gameServername', 'gameAccount', 'productName', 'payStatus', 'payMode', 'delivered'], 'safe'],
             [['payAmount'], 'number'],
         ];
@@ -41,16 +43,19 @@ class TabOrdersSearch extends TabOrders
      */
     public function search($params)
     {
+
         $query = TabOrders::find();
 
         // add conditions that should always apply here
-
+        $this->load($params);
+//        exit(json_encode($params));
+        if ($this->type==2)
+        {
+            $query=TabOrdersDebug::find();
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
-        $this->load($params);
-
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -80,6 +85,7 @@ class TabOrdersSearch extends TabOrders
             ->andFilterWhere(['like', 'payStatus', $this->payStatus])
             ->andFilterWhere(['like', 'payMode', $this->payMode])
             ->andFilterWhere(['like', 'delivered', $this->delivered]);
+
 //        $query->orderBy('payStatus DESC');
         return $dataProvider;
     }

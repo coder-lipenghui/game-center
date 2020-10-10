@@ -50,7 +50,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'orderId')->label("我方订单号") ?>
         </div>
         <div class="col-md-3">
-            <?php  echo $form->field($model, 'payStatus')->label("支付状态") ?>
+            <?php  echo $form->field($model, 'payStatus')->dropDownList(['0'=>'未支付','1'=>'已支付']) ->label("支付状态") ?>
         </div>
         <div class="col-md-3">
             <?php  echo $form->field($model, 'payAmount')->label("付费金额") ?>
