@@ -76,19 +76,25 @@ class CmdMail extends BaseCmd
         if ($game)
         {
             $key="longcitywebonline12345678901234567890";
-            $serverQuery=null;
+            $servers=null;
             if ($this->serverId<15)
             {
                 $serverQuery=TabDebugServers::find()
                     ->select(['id','name','port'=>'masterPort','ip'=>'url'])
                     ->where(['id'=>$this->serverId]);
+                $servers=$serverQuery->asArray()->all();
             }else{
                 $serverQuery=TabServers::find()
-                    ->select(['id','name','port'=>'masterPort','ip'=>'url'])
+                    ->select(['id','name','port'=>'masterPort','ip'=>'url','mergeId'])
                     ->where(['id'=>$this->serverId]);
+                $servers=$serverQuery->asArray()->all();
+                if (!empty($servers[0]['mergeId']))
+                {
+                    $servers=TabServers::find()->select(['id','name','port'=>'masterPort','ip'=>'url'])->where(['id'=>$servers[0]['mergeId']])->asArray()->all();
+                }
             }
-            $this->serverList=$serverQuery->asArray()->all();
-            $serverData=ArrayHelper::map($serverQuery->all(),'id','name');
+            $this->serverList=$servers;
+            $serverData=ArrayHelper::map($servers,'id','name');
             for ($i=0;$i<count($this->serverList);$i++)
             {
                 $this->serverList[$i]['name']=$serverData[$this->serverList[$i]['id']];

@@ -113,6 +113,14 @@ return [
                     'logVars' => ['*'],
                     'logFile' => '@runtime/logs/bonus.log',
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'categories' => ['support'],
+                    'levels' => ['error'],
+//                    'logVars' => ['_POST','_GET','_FILES','_COOKIE'],
+                    'logVars' => ['*'],
+                    'logFile' => '@runtime/logs/support.log',
+                ],
             ],
         ],
         'errorHandler' => [

@@ -130,6 +130,7 @@ class TabSupportCreate extends TabSupport
                         }else{
                             $support->deliver=1;//发货失败
                             $support->save();
+                            LoggerHelper::SupportError($support->gameId,$support->distributorId,"[".$support->roleId."]邮件发放失败",$result);
                         }
                     }
                 }
