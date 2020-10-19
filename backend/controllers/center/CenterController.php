@@ -542,26 +542,31 @@ class CenterController extends Controller
         $account=$token['account'];
         $distributionId=$token['distributionId'];
         $distributionUserId=$token['distributionUserId'];
+        $game=TabGames::find()->where(['id'=>$gameId])->one();
+        if(empty($game))return ['code'=>-11,'msg'=>'未知游戏'];
 
         $distribution=TabDistribution::find()->where(['id'=>$distributionId])->one();
         if (empty($distribution)) return['code'=>-14,'msg'=>'未知渠道'];
 
-        $game=TabGames::find()->where(['id'=>$gameId])->one();
-        if(empty($game))return ['code'=>-11,'msg'=>'未知游戏'];
-
+        //混渠道模式
+        if (!empty($distribution->mingleDistributionId)){
+            $distribution=TabDistribution::find()->where(['id'=>$distribution->mingleDistributionId])->one();
+            $game=TabGames::find()->where(['id'=>$distribution->gameId])->one();
+        }
         $player=TabPlayers::find()->where(['account'=>$account,'gameId'=>$gameId])->one();
         if (empty($player))return ['code'=>-10,'msg'=>'无效玩家'];
-        if ($distribution->isDebug || $enterModle->serverId<15) //暂时用15以下的作为测试区，后面重新整理一下正式区跟测试区的规则
+        //获取测试服
+        if ($enterModle->serverId<15) //暂时用15以下的作为测试区，后面重新整理一下正式区跟测试区的规则
         {
             $server=TabDebugServers::find()->where(['id'=>$enterModle->serverId])->one();
         }else{
-            $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$enterModle->serverId])->one();
+            $server=TabServers::find()->where(['gameId'=>$game->id,'id'=>$enterModle->serverId])->one();
         }
-        if (empty($server))return ['code'=>-9,'msg'=>'无效区服'];
-
+        if (empty($server))return ['code'=>-19,'msg'=>'无效区服'];
+        //转至合服ID
         if (!empty($server->mergeId))
         {
-            $server=TabServers::find()->where(['gameId'=>$gameId,'id'=>$server->mergeId])->one();
+            $server=TabServers::find()->where(['gameId'=>$game->id,'id'=>$server->mergeId])->one();
             if (empty($server))return ['code'=>-9,'msg'=>'无效区服'];
         }
         $isWhite=false;
@@ -585,7 +590,7 @@ class CenterController extends Controller
             'db'=>2
         ];
         //测试服统一SKU及DID
-        if ($distribution->isDebug || $enterModle->serverId<15)
+        if ($enterModle->serverId<15)
         {
             $getBody['sku']="TEST";
             $getBody['did']=$game->versionId;
@@ -627,7 +632,8 @@ class CenterController extends Controller
         {
             $code=-9;
             $msg="登录出现未知异常";
-            LoggerHelper::LoginError($get['sku'],$get['did'],$msg,$result);
+            exit($resultJson);
+            LoggerHelper::LoginError($get['sku'],$get['did'],$msg,$resultJson);
         }else{
             $code=$result['error_code'];
             switch ($code)
@@ -848,13 +854,15 @@ class CenterController extends Controller
             $player->regdeviceId=$request['deviceId'];
             $player->regtime=date('Y-m-d H:i:s',time());
             $player->regip=$_SERVER["REMOTE_ADDR"];
-//            $player->timestamp=date('Y-m-d H:i:s',time());
+            if (!empty($request['channel']))
+            {
+                $player->channel=$request['channel'];
+            }
             if($player->save())
             {
                 return $player;
             }else{
                 return null;
-//                exit(json_encode($player->getErrors()));
             }
         }
         return $player;

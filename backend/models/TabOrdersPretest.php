@@ -60,4 +60,8 @@ class TabOrdersPretest extends \yii\db\ActiveRecord
             'rcvTime' => Yii::t('app', 'Rcv Time'),
         ];
     }
+    public function getServer()
+    {
+        return $this->hasOne(TabServers::className(),['id'=>'rcvServerId']);
+    }
 }

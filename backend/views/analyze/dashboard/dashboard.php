@@ -92,7 +92,7 @@ $this->registerJsFile("@web/js/echarts.min.js",['position'=>\yii\web\View::POS_H
 $this->registerJsFile("@web/js/analyze/dashboard.js",['position'=>\yii\web\View::POS_HEAD]);
 $this->registerJs("
 getDashboardInfo();
-getOrderDistribution();
+//getOrderDistribution();
 getMonthlyRevenue();
 $(function () {
   $('[data-toggle=\"tooltip\"]').tooltip()
@@ -225,7 +225,7 @@ $(function () {
         </table>
     </div>
 </div>
-<div class="panel panel-default">
+<div class="panel panel-default hidden">
     <div class="panel-heading">充值分布</div>
     <div class="panel-body" id="orderDistribution" style="width: 1400px;height:500px;">
 

@@ -45,12 +45,7 @@ class MyTabServers extends TabServers
         {
             $serverNames=ArrayHelper::index($serverNames,'serverId');
         }
-
-        $mingleServerId=0;
-        if (!empty($distributoin->mingleServerId))
-        {
-            $mingleServerId=$distributoin->mingleServerId;
-        }
+        $mingleServerId=$distributoin->mingleServerId;
         if (!empty($distributoin->mingleDistributionId))
         {
             $tmp=TabDistribution::find()->where(['id'=>$distributoin->mingleDistributionId])->one();
@@ -61,20 +56,20 @@ class MyTabServers extends TabServers
         }
         $query=TabServers::find()
             ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
-            ->where(['gameId'=>$game->id,'distributorId'=>$distributoin->distributorId])
+            ->where(['gameId'=>$distributoin->gameId,'distributorId'=>$distributoin->distributorId])
             ->andWhere($filter)
             ->asArray();
-        if ($mingleServerId>0)
+        if (!empty($mingleServerId) && $mingleServerId>0)
         {
             $query->andWhere(['>=','index',$mingleServerId]);
         }
-
         $servers=$query->all();
         if (empty($servers))
         {
             $tmpQuery=TabServers::find()
                 ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
                 ->where(['>=','openDateTime',date('Y-m-d H:i:s',time())])
+                ->andWhere(['gameId'=>$distributoin->gameId,'distributorId'=>$distributoin->distributorId])
                 ->asArray()
                 ->limit(1);
             $servers=$tmpQuery->all();

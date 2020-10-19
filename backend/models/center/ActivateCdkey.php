@@ -12,6 +12,7 @@ use backend\models\AutoCDKEYModel;
 use backend\models\command\CmdMail;
 use backend\models\TabCdkeyRecord;
 use backend\models\TabCdkeyVariety;
+use backend\models\TabDebugServers;
 use backend\models\TabDistribution;
 use backend\models\TabGames;
 use backend\models\TabPlayers;
@@ -28,9 +29,9 @@ class ActivateCdkey extends TabCdkeyRecord
             [['sku', 'distributionId','serverId', 'account', 'roleId', 'roleName', 'cdkey'], 'required'],
             [['distributionId', 'logTime','serverId','varietyId'], 'integer'],
             [['account', 'roleId', 'roleName', 'cdkey','sku'], 'string', 'max' => 100],
-            [['distributionId'], 'exist', 'skipOnError' => true, 'targetClass' => TabDistribution::className(), 'targetAttribute' => ['distributionId' => 'id']],
+//            [['distributionId'], 'exist', 'skipOnError' => true, 'targetClass' => TabDistribution::className(), 'targetAttribute' => ['distributionId' => 'id']],
 //            [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
-            [['serverId'], 'exist', 'skipOnError' => true, 'targetClass' => TabServers::className(), 'targetAttribute' => ['serverId' => 'id']],
+//            [['serverId'], 'exist', 'skipOnError' => true, 'targetClass' => TabServers::className(), 'targetAttribute' => ['serverId' => 'id']],
         ];
     }
 
@@ -98,7 +99,13 @@ class ActivateCdkey extends TabCdkeyRecord
                         if ($this->save())
                         {
                             //区服
-                            $server=TabServers::findOne(['id'=>$this->serverId]);
+                            $server=null;
+                            if($this->serverId<15)
+                            {
+                                $server=TabDebugServers::findOne(['id'=>$this->serverId]);
+                            }else{
+                                $server=TabServers::findOne(['id'=>$this->serverId]);
+                            }
                             if (!empty($server->mergeId))
                             {
                                 $tmp=TabServers::find()->where(['id'=>$server->mergeId])->one();
@@ -124,10 +131,16 @@ class ActivateCdkey extends TabCdkeyRecord
                                 ];
                                 $get=[
                                     'sku'=>$game->sku,
-                                    'did'=>$server->distributorId,
                                     'serverId'=>$server->index,
                                     'db'=>1
                                 ];
+                                if($this->serverId<15)
+                                {
+                                    $get['sku']="TEST";
+                                    $get['did']=$game->versionId;
+                                }else{
+                                    $get['did']=$server->distributorId;
+                                }
                                 $json=null;
                                 $url=$server->url;
                                 if (true)//新接口

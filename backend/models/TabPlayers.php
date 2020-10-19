@@ -8,8 +8,9 @@ use Yii;
  * This is the model class for table "tab_players".
  *
  * @property int $id
- * @property int $distributionId 渠道编号
- * @property int $distributorId 分销商ID
+ * @property int $distributionId 分校渠道ID
+ * @property int $distributorId 渠道商ID
+ * @property int $channel 子渠道编号，QUICK等聚合SDK使用
  * @property int $gameId 游戏编号
  * @property string $account 系统分配的唯一标识
  * @property string $distributionUserId 分销商用户ID
@@ -17,8 +18,6 @@ use Yii;
  * @property string $regdeviceId 设备ID
  * @property string $regtime 注册时间
  * @property string $regip 注册IP
- *
- * @property TabGames $game
  */
 class TabPlayers extends \yii\db\ActiveRecord
 {
@@ -36,12 +35,11 @@ class TabPlayers extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['distributionId','distributorId', 'gameId', 'account', 'distributionUserId', 'distributionUserAccount'], 'required'],
-            [['distributionId','distributionId', 'gameId'], 'integer'],
+            [['distributionId', 'gameId', 'account', 'distributionUserId', 'distributionUserAccount'], 'required'],
+            [['distributionId', 'distributorId', 'channel', 'gameId'], 'integer'],
             [['regtime'], 'safe'],
             [['account', 'distributionUserId', 'regdeviceId', 'regip'], 'string', 'max' => 255],
             [['distributionUserAccount'], 'string', 'max' => 100],
-            [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
         ];
     }
 
@@ -53,7 +51,8 @@ class TabPlayers extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'distributionId' => Yii::t('app', 'Distribution ID'),
-            'distributorId'=>Yii::t('app','Distributor ID'),
+            'distributorId' => Yii::t('app', 'Distributor ID'),
+            'channel' => Yii::t('app', 'Channel'),
             'gameId' => Yii::t('app', 'Game ID'),
             'account' => Yii::t('app', 'Account'),
             'distributionUserId' => Yii::t('app', 'Distribution User ID'),
@@ -63,7 +62,6 @@ class TabPlayers extends \yii\db\ActiveRecord
             'regip' => Yii::t('app', 'Regip'),
         ];
     }
-
     /**
      * @return \yii\db\ActiveQuery
      */

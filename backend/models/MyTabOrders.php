@@ -457,10 +457,20 @@ class MyTabOrders extends TabOrders
                         'serverId'=>$server->index,
                         'db'=>$requestBody['type']==1?2:1 //脚本类型的需要走octgame,常规类型走ocenter
                     ];
-                    if ($distribution->isDebug==1 || $server->id<=15)
+                    if ($server->id<=15)
                     {
                         $getBody['sku']="TEST";
                         $getBody['did']=$game->versionId;
+                    }
+                    if (!empty($distribution->mingleDistributionId))
+                    {
+                        $tmp=TabDistribution::find()->where(['id'=>$distribution->mingleDistributionId])->one();
+                        $tmpGame=TabGames::find()->where(['id'=>$tmp->gameId])->one();
+                        if (!empty($tmp)&& !empty($tmpGame))
+                        {
+                            $getBody['sku']=$tmpGame->sku;
+                            $getBody['did']=$tmp->distributorId;
+                        }
                     }
                     $url = $url. "/api/payment?" . http_build_query($getBody);
                     $resultJson =$curl->sendPostData($url,$requestBody);
