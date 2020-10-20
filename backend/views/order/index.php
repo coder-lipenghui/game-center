@@ -33,6 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ['attribute'=>'payAmount','label'=>'金额(元)','value'=>function($model){return $model->payAmount/100;}],
                 ['attribute'=>'payStatus','label'=>'状态','value'=>function($model){return $model->payStatus==1?"已支付":"未支付";}],
 //                ['attribute'=>'payMode','label'=>'方式'],
+                ['attribute'=>'productName','label'=>'商品'],
                 'payTime:datetime',
                 ['attribute'=>'delivered','label'=>'发货','value'=>function($model){return $model->delivered==1?"已发":"未发";}],
                 [

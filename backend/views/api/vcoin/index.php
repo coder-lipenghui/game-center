@@ -41,7 +41,7 @@ $this->registerJsFile('@web/js/api/dropdown_menu.js',['depends'=>'yii\web\YiiAss
                     $src=$model['src'];
                     $name="";
                     try {
-                        $name = \common\helps\RecordHelper::getNameById(1,$model['src']);
+                        $name = \common\helps\RecordHelper::getNameById($model['gameId'],$model['src']);
                     }catch(Exception $e){
 
                     }

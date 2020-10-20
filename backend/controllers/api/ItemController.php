@@ -68,7 +68,6 @@ class ItemController extends BaseController
                     {
                         $arrayData['items'][$i]['gameId']=$searchModel->gameId;
                     }
-                    //exit(json_encode($arrayData['items']));
                     $dataProvider->setModels($arrayData['items']);
                     unset($arrayData['_links']);
                     $dataProvider->setPagination([
