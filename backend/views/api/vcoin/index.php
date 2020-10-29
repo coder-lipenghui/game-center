@@ -7,13 +7,8 @@
  */
 
 use yii\widgets\Pjax;
-use yii\widgets\ActiveForm;
-use yii\helpers\Html;
 use yii\grid\GridView;
-use yii\widgets\LinkPager;
-use backend\models\TabActionType;
-use yii\helpers\ArrayHelper;
-
+use common\helps\RecordHelper;
 $this->title = Yii::t('app', '元宝获取/移除日志');
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/api/itemSearch.js',['depends'=>'yii\web\YiiAsset']);
@@ -41,7 +36,7 @@ $this->registerJsFile('@web/js/api/dropdown_menu.js',['depends'=>'yii\web\YiiAss
                     $src=$model['src'];
                     $name="";
                     try {
-                        $name = \common\helps\RecordHelper::getNameById($model['gameId'],$model['src']);
+                        $name = RecordHelper::getNameById($model['gameId'],$model['src']);
                     }catch(Exception $e){
 
                     }
