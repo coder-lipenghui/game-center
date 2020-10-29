@@ -37,13 +37,12 @@ class MyTabRebate extends TabOrdersRebate
                     $account=TabPlayers::find()->where(['account'=>$target->passivityAccount])->one();
                     if ($account)
                     {
-                        $orderId=substr(md5($order->orderId.time()),8,16);
+                        $orderId=substr(md5($order->orderId),8,16);
 
 //                  绑定好友的信息
                         $this->gameAccount=$target->passivityAccount;
                         $this->gameRoleId=$target->passivityRoleId;
                         $this->productName="好友充值返利";
-
                         $this->orderId=$orderId; //需要重新生成一个ID
 //              原来的订单信息
                         $this->distributionUserId=$account->distributionUserId;

@@ -453,6 +453,7 @@ class CenterController extends Controller
                     $result['data']=[
                         'orderId'=>$order->orderId,
                         'distributionOrderId'=>$distributionOrderId,
+                        'productId'=>$order->productId,
                         'productName'=>$order->productName,
                         'productPrice'=>$order->payAmount,
                     ];

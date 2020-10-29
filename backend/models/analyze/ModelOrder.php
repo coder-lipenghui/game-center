@@ -52,6 +52,7 @@ class ModelOrder extends TabOrders
             ->orderBy('productId')
             ->asArray();
         $data=$query->all();
+
         $legend=ArrayHelper::getColumn($products,'productId');
         $xAxis=ArrayHelper::getColumn($games,'name');
         $series=[];

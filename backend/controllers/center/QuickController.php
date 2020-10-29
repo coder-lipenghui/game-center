@@ -84,7 +84,7 @@ class QuickController extends CenterController
         }else
         {
             LoggerHelper::OrderError($distribution->gameId,$distribution->id,"验证失败",$request->getBodyParams());
-            return false;
+            return null;
         }
     }
 //    public function getOrderFromDistribution($request,$distribution,$order)

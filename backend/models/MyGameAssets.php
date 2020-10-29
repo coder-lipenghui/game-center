@@ -29,24 +29,17 @@ class MyGameAssets extends TabGameAssets
             $game=TabGames::find()->where(['sku'=>$this->sku])->one();
             if ($game)
             {
-                $cdn=TabCdn::find()->where(['gameId'=>$game->id])->one();
+                $cdn=TabCdn::find()->where(['versionId'=>$game->versionId,'gameId'=>$game->id])->one();
                 if (empty($cdn))
                 {
-                    if ($game->mingleGameId)
-                    {
-                        $tmp=TabGames::find()->where(['id'=>$game->mingleGameId])->one();
-                        if (!empty($tmp))
-                        {
-                            $game=$tmp;
-                            $cdn=TabCdn::find()->where(['gameId'=>$game->id])->one();
-                        }
-                    }
+                    $cdn=TabCdn::find()->where(['versionId'=>$game->versionId])->one();
                 }
                 if ($cdn)
                 {
                     //检测渠道差异更新
                     $query=$this->getQuery($game->id,$this->version,$this->distributionId,$this->versionCode);
-                    $data=$this->getData($query,$game->id,$this->distributionId,$cdn->assetsUrl);
+
+                    $data=$this->getData($query,$game->id,$game->versionId,$this->distributionId,$cdn->assetsUrl);
                     if ($data)
                     {
                         return $data;
@@ -54,7 +47,7 @@ class MyGameAssets extends TabGameAssets
                         //检测统一按游戏ID的更新
                         $query=$this->getQuery($game->id,$this->version);
 //                        exit($query->createCommand()->getRawSql());
-                        $data=$this->getData($query,$game->id,$this->distributionId,$cdn->assetsUrl);
+                        $data=$this->getData($query,$game->id,$game->versionId,$this->distributionId,$cdn->assetsUrl);
                         if ($data)
                         {
                             return $data;
@@ -72,14 +65,14 @@ class MyGameAssets extends TabGameAssets
             return ['code'=>-1,'msg'=>'参数错误','data'=>$this->getErrors()];
         }
     }
-    private function getData($query,$gameId,$distributionId,$cdnUrl)
+    private function getData($query,$gameId,$versionId,$distributionId,$cdnUrl)
     {
         $data=$query->one();
         if ($data)
         {
             if ($data['total']>$this->version && $this->version<=$data['total'])
             {
-                $url=$cdnUrl."/".$gameId."/assets/";
+                $url=$cdnUrl."/".$versionId."/assets/";
                 $data['url']=$url.($this->version+1)."/";
                 $data['version']=($this->version+1);
                 return ['code'=>1,'msg'=>'检到分包资源','data'=>$data];

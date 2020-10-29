@@ -64,7 +64,6 @@ class TabGameItemdefLogSearch extends TabGameItemdefLog
         ]);
 
         $query->andFilterWhere(['like', 'version', $this->version]);
-
         return $dataProvider;
     }
 }

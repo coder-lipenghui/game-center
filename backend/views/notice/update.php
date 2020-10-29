@@ -19,10 +19,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', '编辑');
         <div class="panel-body">
             <?php $form = ActiveForm::begin(); ?>
 
-            <?= $form->field($model, 'gameId')->textInput() ?>
-
-            <?= $form->field($model, 'distributions')->textInput() ?>
-
             <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'body')->textarea(['rows' => 6]) ?>

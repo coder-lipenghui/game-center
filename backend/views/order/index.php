@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ['attribute'=>'gameId','label'=>'游戏','value'=>'game.name'],
                 ['attribute'=>'gameServerId','label'=>'区','value'=>'server.index'],
                 ['attribute'=>'orderId','label'=>'订单号'],
-
+                ['attribute'=>'distributionOrderId','label'=>'订单号'],
                 ['attribute'=>'gameAccount','label'=>'账号'],
                 ['attribute'=>'gameRoleName','label'=>'角色名'],
                 ['attribute'=>'payAmount','label'=>'金额(元)','value'=>function($model){return $model->payAmount/100;}],

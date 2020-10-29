@@ -21,7 +21,7 @@ class MyTabServers extends TabServers
             $whiteQuery=TabWhitelist::find();
             $whiteQuery->where(['or',"ip='$ip'","distributionUserId='$distributionUserId'"]);
             $list=$whiteQuery->asArray()->all();
-            if (empty($list))
+            if (count($list)==0)
             {
                 $filter=['<=','openDateTime',date('Y-m-d H:i:s',time())];
             }else{
@@ -30,7 +30,7 @@ class MyTabServers extends TabServers
         }
         //当前为测试渠道、或者在白名单内则同时拉取
         $testServers=[];
-        if ($distributoin->isDebug || empty($filter))
+        if ($distributoin->isDebug || count($filter)==0)
         {
             $query=TabDebugServers::find()
                 ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
@@ -45,6 +45,7 @@ class MyTabServers extends TabServers
         {
             $serverNames=ArrayHelper::index($serverNames,'serverId');
         }
+        //混服模式区服
         $mingleServerId=$distributoin->mingleServerId;
         if (!empty($distributoin->mingleDistributionId))
         {
@@ -64,6 +65,7 @@ class MyTabServers extends TabServers
             $query->andWhere(['>=','index',$mingleServerId]);
         }
         $servers=$query->all();
+        //展示未开的首服
         if (empty($servers))
         {
             $tmpQuery=TabServers::find()
@@ -130,6 +132,7 @@ class MyTabServers extends TabServers
      */
     public static function getServersByGameId($gameId)
     {
+
         $query=self::find()
             ->select([
                 "name"=>"tab_games.name",
@@ -145,7 +148,20 @@ class MyTabServers extends TabServers
             ])->join("LEFT JOIN","tab_games","tab_games.id=tab_servers.gameId")
             ->groupBy(['url'])
             ->asArray();
-        return $query->all();
+        $game=TabGames::find()->where(['id'=>$gameId])->one();
+        $servers=$query->all();
+        $testServers=[];
+        if (!empty($game))
+        {
+            $testServers=TabDebugServers::find()
+                ->select(['serverName'=>'name','id','index','port'=>'netPort','url'])
+                ->where(['versionId'=>$game->versionId])->asArray()->all();
+            foreach ($testServers as $k=>$v)
+            {
+                $testServers[$k]['name']='测试';
+            }
+        }
+        return array_merge($testServers,$servers);
     }
     public static function todayOpen()
     {
@@ -153,10 +169,8 @@ class MyTabServers extends TabServers
         $query=TabServers::find()
             ->asArray()
             ->where($cond);
-
         $todayOpen=$query->count('*');
         $todayOpen=$todayOpen?$todayOpen:0;
-
         return $todayOpen;
     }
 }
