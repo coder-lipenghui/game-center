@@ -23,9 +23,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
                 ],
                 ]) ?>
+                <?= Html::a(Yii::t('app', '补发'), ['reissue', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
             </p>
         </div>
     </div>
+    <?php
+        if (!empty($model->msg))
+        {
+            $class=$model->msg=="补发成功"?"alert-success":"alert-danger";
+            echo("<div class='alert $class' role='alert'>$model->msg</div>");
+        }
+    ?>
     <div class="panel panel-default">
         <div class="panel-body">
             <?= DetailView::widget([

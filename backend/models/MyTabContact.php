@@ -44,7 +44,12 @@ class MyTabContact extends TabContact
             $game=TabGames::find()->where(['sku'=>$this->sku])->one();
             if (!empty($game))
             {
-                $server=TabServers::find()->where(['id'=>$this->serverId])->one();
+                $query=TabServers::find();
+                if($this->serverId<15)
+                {
+                    $query=TabDebugServers::find();
+                }
+                $server=$query->where(['id'=>$this->serverId])->one();
                 if (!empty($server))
                 {
                     $role=new ModelRoleLog();

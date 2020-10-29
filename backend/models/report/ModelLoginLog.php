@@ -4,6 +4,7 @@
 namespace backend\models\report;
 
 
+use backend\models\TabDebugServers;
 use backend\models\TabPlayers;
 use backend\models\TabServers;
 
@@ -44,7 +45,12 @@ class ModelLoginLog extends  TabLogLogin
             $player=TabPlayers::find()->where(['distributionUserId'=>$this->distributionUserId])->one();
             if ($player)
             {
-                $server=TabServers::find()->where(['id'=>$this->serverId])->one();
+                $query=TabServers::find();
+                if ($this->serverId<15)
+                {
+                    $query=TabDebugServers::find();
+                }
+                $server=$query->where(['id'=>$this->serverId])->one();
                 if ($server)
                 {
                     if($this->save())

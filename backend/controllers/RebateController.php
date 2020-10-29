@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\MyTabRebate;
 use Yii;
 use backend\models\TabOrdersRebate;
 use backend\models\TabOrdersRebateSearch;
@@ -108,7 +109,19 @@ class RebateController extends Controller
 
         return $this->redirect(['index']);
     }
-
+    public function actionReissue($id)
+    {
+        $model = $this->findModel($id);
+        if ($model)
+        {
+            $msg="补发失败";
+            if(MyTabRebate::deliver($model->orderId))
+            {
+                $msg="补发成功";
+            }
+            return $this->redirect(['view', 'id' => $model->id,'msg'=>$msg]);
+        }
+    }
     /**
      * Finds the TabOrdersRebate model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -124,4 +137,5 @@ class RebateController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
 }

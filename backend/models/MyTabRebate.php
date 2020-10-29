@@ -15,7 +15,7 @@ class MyTabRebate extends TabOrdersRebate
         {
             $contact=new MyTabContact();
             $contact::TabSuffix($order->gameId,$order->distributorId);
-            $contactQuery=$contact::find()->where(['activeRoleId'=>$order->gameRoleId]);
+            $contactQuery=$contact::find()->where(['activeRoleId'=>$order->gameRoleId.""]);
             $target=$contactQuery->one();
             if (!empty($target))
             {
@@ -88,7 +88,7 @@ class MyTabRebate extends TabOrdersRebate
         if ($order===null)
         {
             $msg="订单不存在";
-            \Yii::error($msg." orderId:".$orderId,"order");
+            LoggerHelper::RebateError($orderId,$orderId,$msg." orderId:".$orderId,"order");
             return false;
         }
         if ($order->delivered>0)
@@ -97,16 +97,21 @@ class MyTabRebate extends TabOrdersRebate
             LoggerHelper::RebateError($order->gameId, $order->distributionId, $msg,"");
         }else {
             if ($order->payStatus > 0) {
-                $server = TabServers::find()->where(['id' => $order->gameServerId])->one();
+                $query=TabServers::find();
+                if ($order->gameServerId<15)
+                {
+                    $query=TabDebugServers::find();
+                }
+                $server = $query->where(['id' => $order->gameServerId])->one();
                 if ($server === null) {
                     $msg = "区服不存在";
-                    LoggerHelper::RebateError($order->gameId, $order->distributionId, $msg, $server->getFirstError());
+                    LoggerHelper::RebateError($order->gameId, $order->distributionId, $msg,"");
                     return false;
                 }
                 $distribution = TabDistribution::find()->where(['id' => $order->distributionId])->one();
                 if ($distribution === null) {
                     $msg = "渠道不存在";
-                    LoggerHelper::RebateError($order->gameId, $order->distributionId, $msg, $distribution->getFirstError());
+                    LoggerHelper::RebateError($order->gameId, $order->distributionId, $msg,"");
                     return false;
                 }
                 $requestBody = [
@@ -121,8 +126,10 @@ class MyTabRebate extends TabOrdersRebate
                     'paytime' => $order->payTime,
                     'serverid' => $order->gameServerId,
                     'type' => 1, // 1 普通充值，2 脚本触发类型
+                    'port'=>$server->masterPort
                 ];
-                $game = TabGames::find()->where(['id' => $server->gameId])->one();
+
+                $game = TabGames::find()->where(['id' => $order->gameId])->one();
                 if ($game) {
                     $paymentKey = $game->paymentKey;
 
@@ -138,6 +145,21 @@ class MyTabRebate extends TabOrdersRebate
                             'serverId'=>$server->index,
                             'db'=>$requestBody['type']==1?2:1 //脚本类型的需要走octgame,常规类型走ocenter
                         ];
+                        if ($server->id<=15)
+                        {
+                            $getBody['sku']="TEST";
+                            $getBody['did']=$game->versionId;
+                        }
+                        if (!empty($distribution->mingleDistributionId))
+                        {
+                            $tmp=TabDistribution::find()->where(['id'=>$distribution->mingleDistributionId])->one();
+                            $tmpGame=TabGames::find()->where(['id'=>$tmp->gameId])->one();
+                            if (!empty($tmp)&& !empty($tmpGame))
+                            {
+                                $getBody['sku']=$tmpGame->sku;
+                                $getBody['did']=$tmp->distributorId;
+                            }
+                        }
                         $url = $url. "/api/payment?" . http_build_query($getBody);
                         $resultJson =$curl->sendPostData($url,$requestBody);
                     }else{
