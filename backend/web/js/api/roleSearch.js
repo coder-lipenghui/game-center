@@ -8,6 +8,7 @@ function changeGame(sender) {
     $("#supportGames").val($("#games").val());
     getDistributor("#platform",true,$("#games").val(),null,"../");
     getDistributor("#supportDistributors",true,$("#games").val(),null,"../");
+    getItemsByGame("selectItems",$("#games").val(),"../");
     getProducts();
 }
 function getProducts() {
@@ -67,7 +68,38 @@ function changeSupportDistributor(sender,target1,target2) {
     var did=$(sender).val();
     getServers(target2,true, gid, did,null,"../");
 }
+function removeItem(target)
+{
+    $(target).parent().parent().remove();
+    buildSupporItemInfo();
+}
+function buildSupporItemInfo()
+{
+    var supporItems=[];
+    $(".supporItemInfo").each(function(){
+        supporItems.push($(this).val());
+    });
+    $("#supporItems").val(supporItems.join(","));
+}
+function addItem() {
+    var itemId=$("#selectItems").val();
+    var itemName=$("#selectItems").find(":selected").text();
+    var num=$("#itemNum").val();
 
+    var bind=0;
+    if ($('#ckBind').is(':checked'))
+    {
+        bind=1;
+    }
+    var itemInfo=itemId+","+num+","+bind;
+    $("#tabSupporItems tr").eq(0).after("<tr><td class='supporItemName'><input class='supporItemInfo' type='hidden' id='supporItemId' value='"+itemInfo+"'/>"+itemName+"</td><td class='supporItemNum'>"+num+"</td><td class='supporItemBind'>"+bind+"</td><td><div class='btn btn-small btn-danger' onclick='removeItem(this)'>移除</div></td></tr>")
+    $("#selectItem").addClass("hidden")
+    buildSupporItemInfo();
+}
+function handleAddItem()
+{
+    $("#selectItem").removeClass("hidden");
+}
 /**
  * command操作
  */
@@ -83,10 +115,10 @@ function doCmdSubmit(form,url,modal) {
         success: function(data) {
             if (data.code==1 || data.code=="1")
             {
-                alert(data.msg);
+                alert("禁言成功");
                 $("#"+modal).modal("toggle");
             }else{
-                alert(data.msg);
+                alert("禁言失败");
             }
         },
         error: function(data) {
@@ -117,15 +149,26 @@ function allowCharacter() {
 }
 function changeSupportType() {
     var type=$("#supportType").val();
+    $("#number").addClass("hidden");
+    $("#trSupporItems").addClass("hidden");
+    $("#products").addClass("hidden");
+    $("#reason").addClass("hidden");
+    if (type==0 || type==1)
+    {
+        $("#reason").removeClass("hidden");
+        $("#number").removeClass("hidden");
+    }
     if (type==2)
     {
+        $("#reason").removeClass("hidden");
         $("#products").removeClass("hidden");
-        $("#number").addClass("hidden");
         $("#txtNumber").val(1);
-    }else{
-        $("#products").addClass("hidden");
-        $("#number").removeClass("hidden");
-        $("#txtNumber").val("");
+    }
+    if (type==3)
+    {
+        $("#reason").removeClass("hidden");
+        $("#trSupporItems").removeClass("hidden");
+        $("#txtNumber").val(1);
     }
 }
 function getPlayerName() {
@@ -211,6 +254,7 @@ function showRoleInfo(sender) {
     $("#hiddenChrname").val(roleName);
     $("#hiddenRoleId").val(seedName);
 }
+
 /**
  * 构建玩家属性
  * @param data

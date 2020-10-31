@@ -199,7 +199,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         <td>
                             <div class="row">
                                 <div class="col-md-3"><?=$form->field($supportModel,'type')->dropDownList(
-                                        [0=>"非充值",1=>"充值",2=>"其他"],
+                                        [0=>"非充值",1=>"充  值",2=>"计费商品",3=>"道具物品"],
                                         [
                                             "class"=>"selectpicker form-control col-xs-2",
                                             "data-width"=>"fit",
@@ -242,31 +242,70 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         </td>
                     </tr>
 
-                    <tr id="roleAccount">
+                    <tr id="roleAccount" class="hidden">
                         <td>角色账号:</td>
                         <td><?= $form->field($supportModel,'roleAccount')->textInput(['id'=>'txtRoleAccount'])?></td>
                     </tr>
-                    <tr id="roleId">
+                    <tr id="roleId" class="hidden">
                         <td>角色ID:</td>
                         <td><?= $form->field($supportModel,'roleId')->textInput(['id'=>'txtRoleId'])?></td>
                     </tr>
-                    <tr id="roleName">
+                    <tr id="roleName" class="hidden">
                         <td>角色名称:</td>
                         <td><?= $form->field($supportModel,'roleName')->textInput(['id'=>'txtRoleName'])?></td>
                     </tr>
-                    <tr>
+                    <tr id="reason" class="hidden">
                         <td>申请理由:</td>
                         <td><?= $form->field($supportModel,'reason')->textInput()?></td>
                     </tr>
-                    <tr id="products">
-                        <td>
-                            物品:
-                        </td>
+                    <tr id="products" class="hidden">
+                        <td>计费物品:</td>
                         <td>
                             <?= $form->field($supportModel,'productId')->dropDownList([],['id'=>'txtProducts'])?>
                         </td>
                     </tr>
-                    <tr id="number">
+                    <tr id="trSupporItems" class="hidden">
+                        <td>
+                            物品:
+                        </td>
+                        <td>
+                            <table class="table table-bordered table-condensed" id="tabSupporItems">
+                                <tr class="active">
+                                    <td>物品名</td>
+                                    <td>数量</td>
+                                    <td>绑定</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr id="selectItem" class="hidden">
+                                    <td>
+                                        <?php
+                                        echo Html::dropDownList(
+                                            "selectItems",
+                                            null,
+                                            [],
+                                            [
+                                                'id'=>'selectItems',
+                                                'class'=>'selectpicker',
+                                                'data-live-search'=>'true'
+                                            ]
+                                        );
+                                        ?>
+                                    </td>
+                                    <td><input size="5" value="1" id="itemNum"/></td>
+                                    <td><input type="checkbox" id="ckBind" checked="checked"/></td>
+                                    <td><div class="btn btn-small btn-success" id="btnAddItem" onclick="addItem()">确定</div></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" align="center">
+                                        <div class="btn btn-small btn-default" onclick="handleAddItem()">添加</div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <?= $form->field($supportModel,'items')->hiddenInput(['id'=>'supporItems'])?>
+                        </td>
+                    </tr>
+                    <tr id="number" class="hidden">
                         <td>申请数量:</td>
                         <td><?= $form->field($supportModel,'number')->textInput(['placeholder'=>'填写金钻数量。1RMB=100金钻','id'=>'txtNumber'])?></td>
                     </tr>
@@ -314,9 +353,9 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                         <li role="presentation" ><a href="javascript:;" onclick="handlerTabSelected(this,'itemsAttribute')">玩家物品</a></li>
                         <li role="presentation" ><a href="javascript:;" onclick="handlerTabSelected(this,'paramsAttribute')">玩家变量</a></li>
                     </ul>
-                    <div class="row">
+                    <div class="row hidden">
                         <div class="col-md-12">
-                            <div  id="cloneAttrTarget" class="roleAttribute hidden">
+                            <div  id="cloneAttrTarget" class="roleAttribute">
                                 <table class="table table-condensed">
                                     <tr>
                                         <td>名称:<label class="chrname"></label></td>
@@ -355,7 +394,7 @@ $this->registerJsFile('@web/js/api/roleSearch.js',['depends'=>'yii\web\YiiAsset'
                                         <button id="btnAllowLogin" class="btn btn-info" data-toggle="modal" data-target="#denyLogin">禁止登录</button>
                                         <button id="btnDenyLogin" class="btn btn-info" data-toggle="modal" data-target="#allowLogin">允许登录</button>
                                         <button class="btn btn-info hidden" data-toggle="modal" data-target="#myModal">强制下线</button>
-                                        <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">扶持申请</button>
+                                        <button class="btn btn-info" data-toggle="modal" data-target="#applyForVcion">道具申请</button>
                                         <button class="btn btn-info hidden">IP禁止登录</button>
                                         <button class="btn btn-info hidden">设备禁止登录</button>
                                         <button class="btn btn-info hidden">账号禁止登录</button>

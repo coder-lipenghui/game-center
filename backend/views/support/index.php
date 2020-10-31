@@ -198,6 +198,11 @@ $this->registerJs('
                                 $class="warning";
                                 $type="RMB道具";
                             }
+                            if ($model->type==3)
+                            {
+                                $class="info";
+                                $type="物品道具";
+                            }
                             return '<span class="label label-'.$class.'">'.$type.'</span>';
                         },
                         'footerOptions' => ['class'=>'hide'],
@@ -205,6 +210,7 @@ $this->registerJs('
                     [
                         'attribute'=>'number',
                         'label'=>'物品',
+                        'format'=>'html',
                         'value'=>function($model){
                             if ($model->type==2)
                             {
@@ -215,7 +221,26 @@ $this->registerJs('
                                 }else{
                                     return "商品:".$model->productId;
                                 }
-                            }else{
+                            }
+                            elseif ($model->type==3)
+                            {
+                                $items=mb_split(",",$model->items);
+                                $viewItems="";
+                                for ($i=0;$i<count($items);$i++)
+                                {
+                                    if (($i+1)%3==0)
+                                    {
+                                        $itemName=\common\helps\ItemDefHelper::getNameById($model->gameId,$items[$i-2]);
+                                        $itemNum=$items[$i-1];
+                                        $itemBind=$items[$i];
+//                                        $viewItems[]=$itemName."*".$itemNum.($itemBind?"(绑定)":"(非绑定)");
+                                        $class=$itemBind?"label-default glyphicon glyphicon-lock":"label-success";
+                                        $viewItems.="<p><span class='label $class'>".$itemName."<span class='badge'>".$itemNum."</span></span></p>";
+                                    }
+                                }
+                                return  $viewItems;
+                            }
+                            else{
                                 return $model->number."金钻";
                             }
                         },

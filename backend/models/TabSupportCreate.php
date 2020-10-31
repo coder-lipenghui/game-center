@@ -20,16 +20,20 @@ class TabSupportCreate extends TabSupport
     private static $TYPE_SIMULATE_MAIL=0;//不算充值
     private static $TYPE_SIMULATE_NORMAL=1;//算充值 货币
     private static $TYPE_SIMULATE_SCRIPT=2;//算充值 脚本触发类型物品:月卡等
+    private static $TYPE_SIMULATE_ITEM=3;//道具物品
     public function rules()
     {
         return [
             [['gameId','distributorId','serverId','type','number','roleName','roleAccount','roleId'],'required'],
             [['sponsor', 'gameId', 'distributorId', 'serverId', 'type', 'number', 'status', 'verifier','productId'], 'integer'],
             [['gameId', 'distributorId', 'serverId','reason', 'type', 'number'], 'required'],
-            [['roleAccount','roleName', 'reason','roleId'], 'string', 'max' => 255],
+            [['roleAccount','roleName', 'reason','roleId','items'], 'string', 'max' => 255],
 
             ['productId','required','when'=>function($model){
                 return $model->type == self::$TYPE_SIMULATE_SCRIPT;
+            }],
+            [['items'],'required','when'=>function($model){
+                return $model->type == self::$TYPE_SIMULATE_ITEM;
             }],
             [['gameId'], 'exist', 'skipOnError' => true, 'targetClass' => TabGames::className(), 'targetAttribute' => ['gameId' => 'id']],
             [['roleAccount'],'exist','skipOnError' => false,'targetClass'=>TabPlayers::className(),'targetAttribute'=>['roleAccount'=>'account']]
@@ -95,7 +99,7 @@ class TabSupportCreate extends TabSupport
                 $support->consentTime=date('Y-m-d H:i:s');
                 if($support->save())
                 {
-                    if ($support->type!=self::$TYPE_SIMULATE_MAIL)
+                    if ($support->type==self::$TYPE_SIMULATE_NORMAL)
                     {
                         //充值的走订单
                         if ($this->deliver($support))
@@ -112,13 +116,13 @@ class TabSupportCreate extends TabSupport
                         //普通的走邮件
                         $cmdMail=new CmdMail();
                         $cmdMail->playerName=$support->roleId;
-                        $cmdMail->title="金钻发放";
+                        $cmdMail->title=$support->type==self::$TYPE_SIMULATE_ITEM?"道具发放":"金钻发放" ;
                         $cmdMail->type=2;
-                        $cmdMail->content="[$support->number]金钻已到账，祝您游戏愉快。";
+                        $cmdMail->content=$support->type==self::$TYPE_SIMULATE_ITEM?"请查收":"[$support->number]金钻已到账，祝您游戏愉快。";
                         $cmdMail->gameId=$support->gameId;
                         $cmdMail->distributorId=$support->distributorId;
                         $cmdMail->serverId=$support->serverId;
-                        $cmdMail->items="19008,".$support->number.",0";
+                        $cmdMail->items=$support->type==self::$TYPE_SIMULATE_ITEM?$support->items:"19008,".$support->number.",0";
                         $cmdMail->buildCommand();
                         $cmdMail->buildServers();
                         $result=$cmdMail->execu();
