@@ -36,6 +36,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'bigDbPort')->textInput() ?>
 
     <?= $form->field($model, 'mergeId')->textInput() ?>
+    <?= $form->field($model, 'kUrl')->textInput() ?>
+    <?= $form->field($model, 'kPort')->textInput() ?>
 
     <?= $form->field($model, 'openDateTime')->widget(DateTimePicker::classname(), [
 

@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\TabDebugServers */
+/* @var $model backend\models\TabServersKuafu */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tab Debug Servers'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tab Servers Kuafus'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="tab-debug-servers-view">
+<div class="tab-servers-kuafu-view">
     <div class="panel panel-default">
         <div class="panel-body">
             <p>
@@ -31,9 +31,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                        'id',
-            'versionId',
-            'gameId',
+//                        'id',
+                ['attribute'=>'versionId','value'=>function($model){return $model->gameVersion->name;}],
+                ['attribute'=>'gameId','value'=>function($model){return $model->game->name;}],
             'name',
             'index',
             'status',
@@ -43,11 +43,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'contentPort',
             'smallDbPort',
             'bigDbPort',
-            'mergeId',
-            'kUrl',
-            'kPort',
-            'openDateTime',
-            'createTime',
             ],
             ]) ?>
         </div>

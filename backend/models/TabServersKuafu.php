@@ -5,12 +5,11 @@ namespace backend\models;
 use Yii;
 
 /**
- * This is the model class for table "tab_servers".
+ * This is the model class for table "tab_servers_kuafu".
  *
  * @property int $id
+ * @property int $versionId 版本ID
  * @property int $gameId 游戏ID
- * @property int $distributorId 分销商ID
- * @property string $distributions 分销管理ID，非分销商ID
  * @property string $name 区服名称
  * @property int $index 根据分销渠道的递增ID
  * @property int $status 区服状态,1:新服 2:正常 3:白名单 4:维护中 5:未开区 6:自动开区
@@ -20,20 +19,15 @@ use Yii;
  * @property int $contentPort 游戏Content端口
  * @property int $smallDbPort 游戏主数据库端口
  * @property int $bigDbPort 游戏日志数据库端口
- * @property int $mergeId 合区主区ID
- * @property string $kUrl 跨服URL
- * @property int $kPort 跨服Content端口
- * @property string $openDateTime 开服时间
- * @property string $createTime 创建时间
  */
-class TabServers extends \yii\db\ActiveRecord
+class TabServersKuafu extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'tab_servers';
+        return 'tab_servers_kuafu';
     }
 
     /**
@@ -42,10 +36,9 @@ class TabServers extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['gameId', 'name', 'openDateTime'], 'required'],
-            [['gameId', 'distributorId', 'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId', 'kPort'], 'integer'],
-            [['openDateTime', 'createTime'], 'safe'],
-            [['distributions', 'name', 'url', 'kUrl'], 'string', 'max' => 255],
+            [['versionId', 'gameId', 'name'], 'required'],
+            [['versionId', 'gameId', 'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort'], 'integer'],
+            [['name', 'url'], 'string', 'max' => 255],
         ];
     }
 
@@ -56,9 +49,8 @@ class TabServers extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
+            'versionId' => Yii::t('app', 'Version ID'),
             'gameId' => Yii::t('app', 'Game ID'),
-            'distributorId' => Yii::t('app', 'Distributor ID'),
-            'distributions' => Yii::t('app', 'Distributions'),
             'name' => Yii::t('app', 'Name'),
             'index' => Yii::t('app', 'Index'),
             'status' => Yii::t('app', 'Status'),
@@ -68,22 +60,14 @@ class TabServers extends \yii\db\ActiveRecord
             'contentPort' => Yii::t('app', 'Content Port'),
             'smallDbPort' => Yii::t('app', 'Small Db Port'),
             'bigDbPort' => Yii::t('app', 'Big Db Port'),
-            'mergeId' => Yii::t('app', 'Merge ID'),
-            'kUrl' => Yii::t('app', 'K Url'),
-            'kPort' => Yii::t('app', 'K Port'),
-            'openDateTime' => Yii::t('app', 'Open Date Time'),
-            'createTime' => Yii::t('app', 'Create Time'),
         ];
     }
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getGame()
     {
         return $this->hasOne(TabGames::className(), ['id' => 'gameId']);
     }
-    public function getDistributor()
+    public function getGameVersion()
     {
-        return $this->hasOne(TabDistributor::className(),['id'=>'distributorId']);
+        return $this->hasOne(TabGameVersion::className(),['id'=>'versionId']);
     }
 }

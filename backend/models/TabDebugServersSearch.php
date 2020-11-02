@@ -17,8 +17,8 @@ class TabDebugServersSearch extends TabDebugServers
     public function rules()
     {
         return [
-            [['id', 'versionId', 'gameId', 'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId'], 'integer'],
-            [['name', 'url', 'openDateTime', 'createTime'], 'safe'],
+            [['id', 'versionId', 'gameId', 'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId','kPort'], 'integer'],
+            [['name', 'url', 'openDateTime', 'createTime','kUrl'], 'safe'],
         ];
     }
 

@@ -17,9 +17,9 @@ class TabServersSearch extends TabServers
     public function rules()
     {
         return [
-            [['id', 'gameId',  'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId'], 'integer'],
+            [['id', 'gameId',  'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId','kPort'], 'integer'],
             [['distributions'],'string'],
-            [['name', 'url', 'openDateTime', 'createTime'], 'safe'],
+            [['name', 'url', 'openDateTime', 'createTime','kUrl'], 'safe'],
         ];
     }
 

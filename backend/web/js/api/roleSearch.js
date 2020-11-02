@@ -113,12 +113,12 @@ function doCmdSubmit(form,url,modal) {
         url: url,
         async: true,
         success: function(data) {
-            if (data.code==1 || data.code=="1")
+            if (data.code==1 || data.code=="1" || data[0].code==1 || data[0].code=="1")
             {
-                alert("禁言成功");
+                alert("完成");
                 $("#"+modal).modal("toggle");
             }else{
-                alert("禁言失败");
+                alert("操作失败");
             }
         },
         error: function(data) {

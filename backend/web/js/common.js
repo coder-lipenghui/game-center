@@ -8,7 +8,6 @@
  * @param async 是否异步获取
  */
 function getGame(documentid, async,selectedId,url) {
-    var async = arguments[1] ? arguments[1] : false;
     $(documentid).empty();
     $.ajax({
         type: 'post',
@@ -34,7 +33,7 @@ function getGame(documentid, async,selectedId,url) {
     });
 }
 /**
- * 根据游戏ID获取分销渠道
+ * 根据游戏版本ID获取游戏列表
  * @param documentid
  * @param async
  * @param selectedId
@@ -51,6 +50,7 @@ function getGamesByVersion(documentId, versionId,url) {
         url: (url==null?"":url)+"../permission/get-games-by-version",
         async: true,
         success: function(data) {
+            $("<option value='0'>选择游戏</option>").appendTo(documentId);
             $.each(data, function(i) {
                 $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentId);
             });

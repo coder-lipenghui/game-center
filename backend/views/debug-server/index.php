@@ -39,6 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'contentPort',
             'smallDbPort',
             'bigDbPort',
+            'kUrl',
+            'kPort',
             //'mergeId',
             'openDateTime:datetime',
             //'createTime',

@@ -20,6 +20,8 @@ use Yii;
  * @property int $smallDbPort 游戏主数据库端口
  * @property int $bigDbPort 游戏日志数据库端口
  * @property int $mergeId 合区主区ID
+ * @property string $kUrl
+ * @property int $kPort
  * @property string $openDateTime 开服时间
  * @property string $createTime 创建时间
  */
@@ -39,10 +41,10 @@ class TabDebugServers extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['versionId', 'name', 'index', 'url', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'openDateTime'], 'required'],
-            [['versionId', 'gameId', 'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId'], 'integer'],
+            [['versionId', 'name', 'index', 'url', 'openDateTime'], 'required'],
+            [['versionId', 'gameId', 'index', 'status', 'netPort', 'masterPort', 'contentPort', 'smallDbPort', 'bigDbPort', 'mergeId', 'kPort'], 'integer'],
             [['openDateTime', 'createTime'], 'safe'],
-            [['name', 'url'], 'string', 'max' => 255],
+            [['name', 'url', 'kUrl'], 'string', 'max' => 255],
         ];
     }
 
@@ -65,6 +67,8 @@ class TabDebugServers extends \yii\db\ActiveRecord
             'smallDbPort' => Yii::t('app', 'Small Db Port'),
             'bigDbPort' => Yii::t('app', 'Big Db Port'),
             'mergeId' => Yii::t('app', 'Merge ID'),
+            'kUrl' => Yii::t('app', 'K Url'),
+            'kPort' => Yii::t('app', 'K Port'),
             'openDateTime' => Yii::t('app', 'Open Date Time'),
             'createTime' => Yii::t('app', 'Create Time'),
         ];

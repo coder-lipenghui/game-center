@@ -33,7 +33,7 @@ class MyTabServers extends TabServers
         if ($distributoin->isDebug || count($filter)==0)
         {
             $query=TabDebugServers::find()
-                ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
+                ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)','kSocket'=>'CONCAT_WS(":",kUrl,kPort)'])
                 ->where(['versionId'=>$game->versionId])
                 ->andWhere($filter)
                 ->asArray();
@@ -56,7 +56,7 @@ class MyTabServers extends TabServers
             }
         }
         $query=TabServers::find()
-            ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
+            ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)','kSocket'=>'CONCAT_WS(":",kUrl,kPort)'])
             ->where(['gameId'=>$distributoin->gameId,'distributorId'=>$distributoin->distributorId])
             ->andWhere($filter)
             ->asArray();
@@ -69,7 +69,7 @@ class MyTabServers extends TabServers
         if (empty($servers))
         {
             $tmpQuery=TabServers::find()
-                ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)'])
+                ->select(['id','name','index','status','mergeId','socket'=>'CONCAT_WS(":",url,netPort)','kSocket'=>'CONCAT_WS(":",kUrl,kPort)'])
                 ->where(['>=','openDateTime',date('Y-m-d H:i:s',time())])
                 ->andWhere(['gameId'=>$distributoin->gameId,'distributorId'=>$distributoin->distributorId])
                 ->asArray()
