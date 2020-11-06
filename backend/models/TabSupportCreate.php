@@ -99,7 +99,7 @@ class TabSupportCreate extends TabSupport
                 $support->consentTime=date('Y-m-d H:i:s');
                 if($support->save())
                 {
-                    if ($support->type==self::$TYPE_SIMULATE_NORMAL)
+                    if ($support->type==self::$TYPE_SIMULATE_NORMAL || $support->type==self::$TYPE_SIMULATE_SCRIPT)
                     {
                         //充值的走订单
                         if ($this->deliver($support))
