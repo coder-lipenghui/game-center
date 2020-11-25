@@ -103,14 +103,15 @@ function getDistribution(documentId, game,distributor,url) {
  * @param pid 平台id
  * @param url 目录追加
  */
-function getServers(documentid,async,gameId,distributorId,selectedid,url) {
-    var async = arguments[1] ? arguments[1] : false;
+function getServers(documentid,withOutMerged,gameId,distributorId,selectedid,url) {
+    //var async = arguments[1] ? arguments[1] : false;
     $(documentid).empty();
     $.ajax({
         type: 'get',
         data: {
             gameId: gameId,
-            distributorId: distributorId
+            distributorId: distributorId,
+            withOutMerged:withOutMerged
         },
         dataType: "json",
         url: (url==null?"":url)+"../permission/get-server",
@@ -143,9 +144,12 @@ function getDistributor(documentid,async,gameId,selectedId,url) {
         async: true,
         success: function(data) {
             $.each(data, function(i) {
-                if (selectedId==data[i].id)
+                //console.log("共有渠道:",data.length)
+                var selected=selectedId==data[i].id || data.length==1;
+                if (selected)
                 {
                     $("<option selected = 'selected' value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
+                    $(documentid).trigger("onchange");
                 }else{
                     $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
                 }

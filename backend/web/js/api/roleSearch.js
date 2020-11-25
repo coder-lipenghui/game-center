@@ -40,8 +40,8 @@ function getProducts() {
 function changePt(sender) {
     var gid=$("#games").val();
     var pid=$("#platform").val();
-    getServers("#servers",true, gid, pid,null,"../");
-    getServers("#supportServers",true, gid, pid,null,"../");
+    getServers("#servers",false, gid, pid,null,"../");
+    getServers("#supportServers",false, gid, pid,null,"../");
 }
 function changeServer(sender) {
     var gameId=$("#games").val();

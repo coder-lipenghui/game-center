@@ -150,7 +150,7 @@ class MyTabPermission extends TabPermission
         }
         return [];
     }
-    public function allowAccessServer($gameId,$distributorId)
+    public function allowAccessServer($gameId,$distributorId,$withOutMerged=false)
     {
         $distributors=[];
         $distributors[]=$distributorId;
@@ -168,6 +168,10 @@ class MyTabPermission extends TabPermission
                 ->select(['name','id'])
                 ->where(['gameId'=>$gameId,'distributorId'=>$distributors])
                 ->asArray();
+            if ($withOutMerged)
+            {
+                $query->andWhere(['mergeId'=>null]);
+            }
             $data=$query->all();
 
             $game=TabGames::find()->where(['id'=>$gameId])->one();

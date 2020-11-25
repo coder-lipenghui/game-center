@@ -1,12 +1,19 @@
 function handleGameChange() {
     var gameId=$("#mergeGames").val();
-    getDistributor("#mergeDistributors",true,gameId,null,"../");
+    if (gameId && gameId>0)
+    {
+        getDistributor("#mergeDistributors",true,gameId,null,"../");
+    }
 }
 function handleDistributorChange() {
     var gameId=$("#mergeGames").val();
     var distributorId=$("#mergeDistributors").val();
-    getServers("#sourceServer",true,gameId,distributorId,null,"../");
-    getServers("#targetServer",true,gameId,distributorId,null,"../");
+    if (distributorId && distributorId>0)
+    {
+        getServers("#sourceServer",true,gameId,distributorId,null,"../");
+        getServers("#targetServer",true,gameId,distributorId,null,"../");
+    }
+
 }
 
 function doMerge() {

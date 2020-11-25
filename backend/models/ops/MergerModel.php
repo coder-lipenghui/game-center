@@ -194,6 +194,9 @@ class MergerModel extends Model
             $renameJson=$curl->sendPostData($passiveUrl,$post);
             $renameJsonArr=json_decode($renameJson,true);
             if ($renameJsonArr['res'] === 'true') {
+                $server=TabServers::find()->where(['id'=>$this->activeServerId])->one();
+                $server->mergeId=$this->passiveServerId;
+                $server->save();
                 return ['code'=>1,'msg'=>'success'];
             } elseif ($renameJsonArr['res'] === 'false') {
                 switch ($renameJsonArr['msg'])
@@ -207,10 +210,10 @@ class MergerModel extends Model
                     case "local file exists error05":
                     case "get hequgmsys error05":
                     case "extract zip error":
-                        return ['code'=>1,'msg'=>$renameJsonArr['msg']];
+                        return ['code'=>-2,'msg'=>$renameJsonArr['msg']];
                         break;
                     default:
-                        return ['code'=>-1,'msg'=>$renameJsonArr['msg']];
+                        return ['code'=>-3,'msg'=>$renameJsonArr['msg']];
                 }
             } else {
                 return ['code'=>-1,'msg'=>'系统错误'];

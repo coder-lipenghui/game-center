@@ -181,7 +181,8 @@ class PermissionController extends Controller
         $request=Yii::$app->request;
         if($request->get('gameId') && $request->get('distributorId'))
         {
-            return $model->allowAccessServer($request->get('gameId'),$request->get('distributorId'));
+            $withOutMerged=$request->get('withOutMerged')==null?false:true;
+            return $model->allowAccessServer($request->get('gameId'),$request->get('distributorId'),$withOutMerged);
         }
         return ['code'=>-1,'msg'=>'获取区服失败'];
     }

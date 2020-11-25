@@ -11,7 +11,7 @@ function changeGame(sender,target) {
 function changeDistributor(sender,target1,target2) {
     var gid=$(target1).val();
     var did=$(sender).val();
-    getServers(target2,true, gid, did,null,"../");
+    getServers(target2,false, gid, did,null,"../");
 }
 function changeCmd(sender) {
     var cmdId=$(sender).val();
