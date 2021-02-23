@@ -124,6 +124,29 @@ class ServerController extends Controller
             'model' => $model,
         ]);
     }
+    public function actionEditMergeId($id) {
+        $value = Yii::$app->request->post('value', '');
+        $oldValue = Yii::$app->request->post('old_value', '');
+        $attr = Yii::$app->request->post('attr', '');
+        if(empty($value) || empty($attr)) {
+            $data = [
+                'error' => 1,
+                'msg' => Yii::t('backend', 'params_error')
+            ];
+            return json_encode($data);
+        }
+
+        if($value != $oldValue) {
+            $model = $this->findModel($id);
+            $model->$attr = $value;
+            $model->save();
+            $data = [
+                'error' => 0,
+                'msg' => "修改成功",//Yii::t('backend', 'update_success')
+            ];
+            return json_encode($data);
+        }
+    }
     /**
      * Deletes an existing TabServers model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
