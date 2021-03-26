@@ -32,3 +32,9 @@ function doAjaxSubmit() {
         }
     });
 }
+function changeRecordType()
+{
+    var gameId=$("#games").val()
+    var typeId=$("#recordType").val()
+    getSrcType("#src",gameId,typeId,"","../")
+}

@@ -2,6 +2,45 @@
 /// 公用的JS调用方法：常规的获取游戏、平台、区服等
 ///
 /// create by 李鹏辉
+
+/**
+ * 获取日志记录类型
+ * @param documentid
+ * @param type 1 移除 2 获取
+ * @param selectedId
+ * @param url
+ */
+function getSrcType(documentid,gameId,type,selectedId,url)
+{
+    // console.log(gameId+" "+type);
+    $(documentid).empty();
+    $.ajax({
+        type: 'get',
+        data: {
+            gameId:gameId,
+            type:type
+        },
+        dataType: "json",
+        url: (url==null?"":url)+"../src/get-src",
+        async: true,
+        success: function(data) {
+            $.each(data, function(i) {
+                if (data[i].id==selectedId)
+                {
+                    $("<option selected = 'selected' value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
+                }else{
+                    $("<option value='" + data[i].id + "'>" + data[i].name + "</option>").appendTo(documentid);
+                }
+
+            });
+            $(documentid).selectpicker('refresh');
+        },
+        error: function(data) {
+            // alert('获取数据失败');
+            console.log("获取数据失败")
+        }
+    });
+}
 /**
  * 获取游戏列表
  * @param documentid

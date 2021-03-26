@@ -135,4 +135,16 @@ class MyTabSrc extends TabSrc
         }
         return true;
     }
+
+    /**
+     * @param $type 1获取或者2移除
+     */
+    function getSrcByType($type)
+    {
+        $query=self::find()->select(['id'=>'actionId','name'=>'actionName'])->where(['actionType'=>$type])->asArray();
+//        exit($query->createCommand()->getRawSql());
+        $result=$query->all();
+
+        return $result;
+    }
 }

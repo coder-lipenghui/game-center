@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\MyTabPermission;
 use backend\models\MyTabSrc;
+use backend\models\TabGames;
 use backend\models\TabGameVersion;
 use Yii;
 use backend\models\TabSrc;
@@ -124,7 +125,25 @@ class SrcController extends Controller
 
         return $this->redirect(['index']);
     }
+    public function actionGetSrc()
+    {
+        \Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        $request=Yii::$app->request;
+        $gameId=$request->get('gameId');
+        $typeId=$request->get('type');
+//        return $request->getQueryParams();
+        $game=TabGames::find()->where(['id'=>$gameId])->one();
+        if(empty($game))
+        {
+            return ['id'=>0,'name'=>'无记录'];
+        }else{
+//            MyTabSrc::TabSuffix($game->versionId);
+            $model=new MyTabSrc();
+            $model::TabSuffix($game->versionId);
+            return $model->getSrcByType($typeId);
+        }
 
+    }
     /**
      * Finds the TabSrc model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

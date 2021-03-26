@@ -54,6 +54,7 @@ $this->registerJsFile('@web/js/api/itemSearch.js',['depends'=>'yii\web\YiiAsset'
                             return $name==""?$src:$name."(".$src.")";
                         }
                     ],
+                    'mNumber',
                     [
                         'attribute'=>'mTypeID',
                         'label'=>'物品名称',

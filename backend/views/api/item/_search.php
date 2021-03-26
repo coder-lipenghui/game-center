@@ -67,9 +67,21 @@ use yii\widgets\Pjax;
                 [
                     "class"=>"selectpicker form-control col-md-2",
                     "data-width"=>"fit",
-                    "id"=>"servers",
-                    "onchange"=>"changeServer(this)",
+                    "id"=>"recordType",
+                    "onchange"=>"changeRecordType(this)",
                     "title"=>"记录类型"
+                ]
+            );?>
+        </div>
+        <div class="col-md-3">
+            <?=$form->field($searchModel,'src')->dropDownList(
+                [],
+                [
+                    "class"=>"selectpicker form-control col-md-2",
+                    "data-width"=>"fit",
+                    "data-live-search"=>"true",
+                    "id"=>"src",
+                    "title"=>"方式"
                 ]
             );?>
         </div>
