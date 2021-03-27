@@ -70,14 +70,22 @@ use yii\widgets\Pjax;
             [
                 "class"=>"selectpicker form-control",
                 "data-width"=>"fit",
-                "id"=>"servers",
-                "onchange"=>"changeServer(this)",
+                "id"=>"recordType",
+                "onchange"=>"changeRecordType(this)",
                 "title"=>"操作"
             ]
         );?>
+        <?=$form->field($searchModel,'src')->dropDownList(
+            [],
+            [
+                "class"=>"selectpicker form-control col-md-2",
+                "data-width"=>"fit",
+                "data-live-search"=>"true",
+                "id"=>"src",
+                "title"=>"方式"
+            ]
+        );?>
         <?=$form->field($searchModel,'playerName')->textInput(['placeholder'=>'玩家名称'])?>
-
-        <?=$form->field($searchModel,'src')->textInput(['placeholder'=>'操作方式'])?>
 
         <?=$form->field($searchModel,'addvc')->textInput(['placeholder'=>'>=元宝数量'])?>
 
